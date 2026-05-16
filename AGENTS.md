@@ -134,7 +134,6 @@ Synthetic data is acceptable for the first POC, but document its limits clearly.
 The first fine-tuning path should target **LFM2-350M** because the current POC is resource constrained and should prove the end-to-end workflow before spending compute on larger models.
 
 - Use LFM2-350M as the first base model candidate.
-- Treat Qwen 1.5B/3B/4B class models as later comparison candidates, not the first default.
 - Keep Phi small models and small Llama-family instruct models as optional future references only.
 
 Use LoRA or QLoRA first. Avoid full fine-tuning unless there is a clear reason and enough compute.
