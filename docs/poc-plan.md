@@ -182,6 +182,26 @@ port_scan_or_recon: 100-200
 
 รวมประมาณ 500-1,000 records
 
+สำหรับรอบแรกให้เริ่มที่ **500 records** ก่อน เพื่อให้เหมาะกับทรัพยากรจำกัดและ LFM2-350M:
+
+```text
+normal: 100
+failed_login_bruteforce: 100
+sql_injection_attempt: 100
+directory_traversal_attempt: 100
+port_scan_or_recon: 100
+```
+
+split รอบแรกใช้ `70/15/15`:
+
+```text
+train: 350 records
+validation: 75 records
+test: 75 records
+```
+
+ถ้า evaluator เห็นว่า label ใดคลุม edge case ไม่พอ ค่อยขยายเพิ่มเป็น 1,000 records ในรอบถัดไป โดยต้องคง fixed test split สำหรับ comparison หรือสร้าง test split version ใหม่ให้ชัด
+
 ตัวอย่างแหล่ง pattern ที่ใช้เป็น reference:
 
 - OWASP attack taxonomy สำหรับชื่อและความหมายของ attack pattern
