@@ -8,7 +8,7 @@
 
 - `docs/poc-plan.md` สำหรับ demo plan, definition of done และ timeline (source: docs/poc-plan.md)
 - `AGENTS.md` สำหรับ UI guidance และ security/privacy rules (source: AGENTS.md)
-- `References.md` สำหรับ reference mapping ที่ใช้เล่า rationale ของ repo (source: References.md)
+- `docs/References.md` สำหรับ reference mapping ที่ใช้เล่า rationale ของ repo (source: docs/References.md)
 - `llm-wiki/SKILL.md` สำหรับ page shape, related pages และ append-only log (source: SKILL.md)
 
 **Last updated**

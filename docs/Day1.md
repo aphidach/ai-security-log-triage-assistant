@@ -8,7 +8,7 @@
 
 - `AGENTS.md` สำหรับ mission, scope, schema และ working rules (source: AGENTS.md)
 - `docs/poc-plan.md` สำหรับ milestone และ timeline หลัก (source: docs/poc-plan.md)
-- `References.md` สำหรับแนวทางจาก Unsloth, Axolotl, TRL, lm-evaluation-harness, Loghub, SigmaHQ และ OWASP (source: References.md)
+- `docs/References.md` สำหรับแนวทางจาก Unsloth, Axolotl, TRL, lm-evaluation-harness, Loghub, SigmaHQ และ OWASP (source: docs/References.md)
 - `llm-wiki/SKILL.md` สำหรับแนวคิด page shape, source citation, related pages และ append-only log (source: SKILL.md)
 
 **Last updated**

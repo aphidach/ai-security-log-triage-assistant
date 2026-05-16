@@ -8,7 +8,7 @@
 
 - `docs/poc-plan.md` สำหรับ fine-tuning plan และ model candidate (source: docs/poc-plan.md)
 - `AGENTS.md` สำหรับ fine-tuning guidance และ separation ระหว่าง frontend กับ training code (source: AGENTS.md)
-- `References.md` สำหรับ Unsloth, Axolotl และ Hugging Face TRL (source: References.md)
+- `docs/References.md` สำหรับ Unsloth, Axolotl และ Hugging Face TRL (source: docs/References.md)
 - `docs/raw/What Small Language Model Is Best for Fine-Tuning.md` สำหรับเหตุผลที่เลือก LFM2-350M เป็น candidate แรกเมื่อทรัพยากรจำกัด (source: docs/raw/What Small Language Model Is Best for Fine-Tuning.md)
 - `llm-wiki/SKILL.md` สำหรับ source tracking และ append-only log (source: SKILL.md)
 

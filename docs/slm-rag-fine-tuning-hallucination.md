@@ -9,7 +9,7 @@
 - `docs/raw/Fine-tuning small language models for industrial retrieval-augmented generation Efficiency, factuality, and hallucination analysis.md` สำหรับ methodology, datasets, metrics, results, cost-efficiency และ hallucination taxonomy (source: docs/raw/Fine-tuning small language models for industrial retrieval-augmented generation Efficiency, factuality, and hallucination analysis.md)
 - `docs/poc-plan.md` สำหรับ evaluation metrics, fixed test split, baseline comparison และ fine-tuning path ของโปรเจกต์นี้ (source: docs/poc-plan.md)
 - `AGENTS.md` สำหรับ guardrail ว่าโปรเจกต์นี้เป็น security log triage ไม่ใช่ general document RAG และต้องไม่ overclaim detection (source: AGENTS.md)
-- `References.md` สำหรับแหล่งอ้างอิงด้าน fine-tuning และ evaluation ที่ repo ใช้เป็น design reference (source: References.md)
+- `docs/References.md` สำหรับแหล่งอ้างอิงด้าน fine-tuning และ evaluation ที่ repo ใช้เป็น design reference (source: docs/References.md)
 
 **Last updated**
 

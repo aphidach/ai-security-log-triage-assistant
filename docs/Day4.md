@@ -8,7 +8,7 @@
 
 - `docs/poc-plan.md` สำหรับ model baseline adapter และ prompt/schema requirement (source: docs/poc-plan.md)
 - `AGENTS.md` สำหรับ expected output schema และ implementation priority (source: AGENTS.md)
-- `References.md` สำหรับแนวคิด adapter separation จาก lm-evaluation-harness และ dataset formatting จาก TRL (source: References.md)
+- `docs/References.md` สำหรับแนวคิด adapter separation จาก lm-evaluation-harness และ dataset formatting จาก TRL (source: docs/References.md)
 - `llm-wiki/SKILL.md` สำหรับ page shape และ decision log (source: SKILL.md)
 
 **Last updated**

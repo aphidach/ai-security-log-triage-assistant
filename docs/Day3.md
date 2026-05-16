@@ -8,7 +8,7 @@
 
 - `docs/poc-plan.md` สำหรับ baseline plan และ evaluation metrics (source: docs/poc-plan.md)
 - `AGENTS.md` สำหรับ evaluation rules และ schema stability (source: AGENTS.md)
-- `References.md` สำหรับแนวคิดจาก lm-evaluation-harness และ SigmaHQ (source: References.md)
+- `docs/References.md` สำหรับแนวคิดจาก lm-evaluation-harness และ SigmaHQ (source: docs/References.md)
 - `llm-wiki/SKILL.md` สำหรับ append-only log และ related pages (source: SKILL.md)
 
 **Last updated**

@@ -8,7 +8,7 @@
 
 - `docs/poc-plan.md` สำหรับ evaluation plan และ report format (source: docs/poc-plan.md)
 - `AGENTS.md` สำหรับ evaluation rules และคำเตือนเรื่อง overclaim (source: AGENTS.md)
-- `References.md` สำหรับ lm-evaluation-harness, SigmaHQ และ Unsloth mapping (source: References.md)
+- `docs/References.md` สำหรับ lm-evaluation-harness, SigmaHQ และ Unsloth mapping (source: docs/References.md)
 - `llm-wiki/SKILL.md` สำหรับ log append-only และ related pages (source: SKILL.md)
 
 **Last updated**

@@ -8,7 +8,7 @@
 
 - `docs/poc-plan.md` สำหรับ dataset plan และ label scope (source: docs/poc-plan.md)
 - `AGENTS.md` สำหรับ JSONL record format และ privacy rules (source: AGENTS.md)
-- `References.md` สำหรับ Loghub, SigmaHQ และ OWASP ที่ใช้เป็นแนวทางด้าน dataset และ taxonomy (source: References.md)
+- `docs/References.md` สำหรับ Loghub, SigmaHQ และ OWASP ที่ใช้เป็นแนวทางด้าน dataset และ taxonomy (source: docs/References.md)
 - `llm-wiki/SKILL.md` สำหรับแนวคิด source citation และ append-only change log (source: SKILL.md)
 
 **Last updated**
