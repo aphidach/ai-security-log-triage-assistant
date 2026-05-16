@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-security-log-triage-assistant.local/schemas/triage-output.schema.json",
+  "title": "Security Log Triage Output",
+  "description": "Structured output contract for security log triage results.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "label",
+    "severity",
+    "is_suspicious",
+    "evidence",
+    "reason",
+    "recommended_action"
+  ],
+  "properties": {
+    "label": {
+      "description": "The most likely activity or attack pattern for the log line.",
+      "type": "string",
+      "enum": [
+        "normal",
+        "failed_login_bruteforce",
+        "sql_injection_attempt",
+        "directory_traversal_attempt",
+        "port_scan_or_recon"
+      ]
+    },
+    "severity": {
+      "description": "Investigation priority for the triage result.",
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "is_suspicious": {
+      "description": "Whether the log should be treated as suspicious for investigation.",
+      "type": "boolean"
+    },
+    "evidence": {
+      "description": "Concrete substrings or facts from the log that support the label.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "reason": {
+      "description": "Short explanation of why the label was selected.",
+      "type": "string",
+      "minLength": 1
+    },
+    "recommended_action": {
+      "description": "Next investigation action for an analyst.",
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
