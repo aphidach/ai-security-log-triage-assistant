@@ -80,6 +80,48 @@ TRL เป็น reference ที่ดีสำหรับเข้าใจ s
 - benchmark ในบทความไม่ได้เป็น security log triage โดยตรง จึงใช้เป็น rationale การเลือกโมเดล ไม่ใช่หลักฐานว่า LFM2-350M จะชนะในงานของเราแน่นอน
 - ต้องเทียบกับ heuristic baseline และรายงานข้อจำกัดตรง ๆ ตาม evaluation plan
 
+### Industrial SLM RAG Fine-Tuning And Hallucination Analysis
+
+- Link: https://doi.org/10.1016/j.csi.2026.104163
+- Local clipping: `docs/raw/Fine-tuning small language models for industrial retrieval-augmented generation Efficiency, factuality, and hallucination analysis.md`
+- Wiki note: `docs/slm-rag-fine-tuning-hallucination.md`
+- ใช้อ้างอิงเรื่อง: low-resource fine-tuning, RAG factuality metrics, hallucination taxonomy, และ `delta(metric)/GPU-hour`
+
+paper นี้ไม่ได้เป็นงาน security log triage โดยตรง แต่มีประโยชน์ต่อ repo นี้ในฐานะ design reference ด้าน evaluation โดยเฉพาะการไม่ดู accuracy อย่างเดียว และการแยกประเภท error หลัง fine-tune
+
+สิ่งที่ควรยืมมาใช้กับ repo นี้:
+
+- บันทึก training time หรือ GPU-hour เพื่อดูความคุ้มค่าของ fine-tuning
+- เพิ่ม error taxonomy สำหรับ triage output เช่น fabricated evidence, unsupported label, missed suspicious pattern และ wrong severity
+- ใช้หลาย metric พร้อมกัน เช่น schema validity, label accuracy, evidence match, severity accuracy และ latency
+
+สิ่งที่ต้องระวัง:
+
+- ไม่ควรเปลี่ยนโปรเจกต์นี้เป็น general document RAG
+- RAGAS-style metrics ใช้เป็นแรงบันดาลใจได้ แต่ evaluator หลักของเราต้องวัด structured JSON triage output
+- ผลของ paper มาจาก industrial RAG logs และภาษาจีนดั้งเดิม จึงไม่ใช่หลักฐานว่าโมเดลเดียวกันจะชนะใน security log triage
+
+### TinyLoRA / Learning To Reason In 13 Parameters
+
+- MarkTechPost summary: https://www.marktechpost.com/2026/03/24/this-ai-paper-introduces-tinylora-a-13-parameter-fine-tuning-method-that-reaches-91-8-percent-gsm8k-on-qwen2-5-7b/
+- Paper: https://ar5iv.labs.arxiv.org/html/2602.04118
+- Wiki note: `docs/tinylora-reasoning-13-parameters.md`
+- ใช้อ้างอิงเรื่อง: ultra-low-parameter fine-tuning, TinyLoRA, RL/GRPO efficiency, reward-based tuning และ parameter-efficiency metrics
+
+TinyLoRA เป็น reference เชิงวิจัยที่น่าสนใจสำหรับอนาคต เพราะแสดงว่า RL พร้อม reward ที่ตรวจได้อาจ train reasoning behavior ได้ด้วย trainable parameters น้อยมาก แต่ paper ทดสอบกับ math reasoning ไม่ใช่ security log triage
+
+สิ่งที่ควรยืมมาใช้กับ repo นี้:
+
+- คิด metric แบบ improvement ต่อ trainable parameter, training time หรือ GPU-hour
+- ออกแบบ evaluator ให้บางส่วนใช้เป็น reward ได้ในอนาคต เช่น JSON validity, label correctness และ evidence substring match
+- แยก TinyLoRA/RL-based tuning เป็น future experiment หลัง LoRA/QLoRA baseline พร้อมแล้ว
+
+สิ่งที่ต้องระวัง:
+
+- ไม่ควรใช้ TinyLoRA เป็น path หลักของ POC รอบแรก
+- ไม่ควรสรุปว่าผล GSM8K/math reasoning จะ transfer มางาน security log triage
+- RL/GRPO ต้องมี reward ที่น่าเชื่อถือก่อน ไม่อย่างนั้นอาจ optimize ผิดเป้า
+
 ## 2. Evaluation References
 
 ### EleutherAI lm-evaluation-harness
