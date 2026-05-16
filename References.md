@@ -61,6 +61,25 @@ TRL เป็น reference ที่ดีสำหรับเข้าใจ s
 
 สำหรับ POC แรก ให้ Unsloth เป็น path หลัก ส่วน TRL เป็น reference และ fallback
 
+### Distil Labs SLM Fine-Tuning Benchmark
+
+- Link: https://www.distillabs.ai/blog/what-small-language-model-is-best-for-fine-tuning/
+- Local clipping: `docs/raw/What Small Language Model Is Best for Fine-Tuning.md`
+- ใช้อ้างอิงเรื่อง: การเลือก small model สำหรับ fine-tuning, tunability, tradeoff ระหว่างขนาดโมเดลกับผลหลัง fine-tune
+
+บทความนี้ benchmark small language model หลายตระกูลและชี้ว่า LFM2-350M ได้อันดับหนึ่งด้าน tunability หรือ gain จาก fine-tuning เมื่อเทียบกับ base performance จุดนี้เข้ากับ POC รอบแรกของเรา เพราะทรัพยากรเครื่องจำกัดและต้องการพิสูจน์ workflow ให้จบก่อนขยายไปโมเดลใหญ่กว่า
+
+สิ่งที่ควรยืมมาใช้กับ repo นี้:
+
+- ตั้ง LFM2-350M เป็น base model candidate รอบแรก
+- เก็บ Qwen 1.5B/3B/4B เป็น candidate สำหรับรอบเปรียบเทียบภายหลัง
+- วัดผลหลัง fine-tune ด้วย fixed test split แทนการสรุปจากความรู้สึก
+
+สิ่งที่ต้องระวัง:
+
+- benchmark ในบทความไม่ได้เป็น security log triage โดยตรง จึงใช้เป็น rationale การเลือกโมเดล ไม่ใช่หลักฐานว่า LFM2-350M จะชนะในงานของเราแน่นอน
+- ต้องเทียบกับ heuristic baseline และรายงานข้อจำกัดตรง ๆ ตาม evaluation plan
+
 ## 2. Evaluation References
 
 ### EleutherAI lm-evaluation-harness

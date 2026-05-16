@@ -131,11 +131,11 @@ Synthetic data is acceptable for the first POC, but document its limits clearly.
 
 ## Fine-Tuning Guidance
 
-The first fine-tuning path should target small instruct models:
+The first fine-tuning path should target **LFM2-350M** because the current POC is resource constrained and should prove the end-to-end workflow before spending compute on larger models.
 
-- Qwen 1.5B or 3B class models
-- Phi small models
-- small Llama-family instruct models
+- Use LFM2-350M as the first base model candidate.
+- Treat Qwen 1.5B/3B/4B class models as later comparison candidates, not the first default.
+- Keep Phi small models and small Llama-family instruct models as optional future references only.
 
 Use LoRA or QLoRA first. Avoid full fine-tuning unless there is a clear reason and enough compute.
 
@@ -172,6 +172,7 @@ Useful reference projects and sources:
 - Unsloth: efficient LoRA and QLoRA fine-tuning
 - Axolotl: YAML-driven fine-tuning workflow
 - Hugging Face TRL: SFTTrainer and post-training patterns
+- Distil Labs SLM fine-tuning benchmark: rationale for starting with LFM2-350M under limited resources
 - EleutherAI lm-evaluation-harness: evaluation architecture
 - Loghub: log analytics datasets
 - Splunk BOTS: SOC training datasets

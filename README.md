@@ -4,6 +4,8 @@ POC สำหรับวิเคราะห์ security log ด้วย smal
 
 เป้าหมายคือพิสูจน์ workflow ให้ครบ: สร้าง dataset, ทำ baseline, fine-tune โมเดลขนาดเล็ก, evaluate ด้วย test set เดียวกัน แล้วเทียบผลก่อน-หลัง fine-tune ไม่ใช่ทำระบบ SOC อัตโนมัติหรือฟันธงว่าเครื่องถูกเจาะจาก log เส้นเดียว
 
+fine-tuning รอบแรกจะเริ่มจาก **LFM2-350M** ก่อน เพราะทรัพยากรเครื่องมีจำกัดและต้องการพิสูจน์ workflow ให้จบด้วยโมเดลที่เล็กมาก ส่วน Qwen 1.5B/3B/4B จะเก็บไว้เป็น candidate สำหรับรอบเปรียบเทียบภายหลัง
+
 ## Scope รอบแรก
 
 เริ่มจาก label เล็ก ๆ เพื่อให้วัดผลได้จริง:
@@ -22,6 +24,7 @@ POC สำหรับวิเคราะห์ security log ด้วย smal
 
 - มีแผน POC และแผนรายวันใน `docs/`
 - มี reference หลักใน `References.md`
+- เลือกทิศทาง fine-tuning รอบแรกเป็น LFM2-350M
 - มี local skill สำหรับดูแลเอกสารแบบ mini LLM-Wiki ใน `.codex/skills/llm-docs/`
 - มี Next.js scaffold ใน `frontend/`
 
@@ -53,7 +56,7 @@ npm run dev
 4. ทำ heuristic baseline ที่รันได้ local
 5. ทำ evaluation runner และ metrics
 6. เพิ่ม model adapters
-7. fine-tune small model ด้วย Unsloth LoRA/QLoRA
+7. fine-tune LFM2-350M ด้วย Unsloth LoRA/QLoRA
 8. ทำ report เทียบ baseline กับ fine-tuned model
 9. ทำ demo UI สำหรับ paste log, analyze และ highlight evidence
 
@@ -62,6 +65,7 @@ npm run dev
 - `docs/poc-plan.md` - แผน POC หลัก
 - `docs/Day1.md` ถึง `docs/Day7.md` - แผนรายวันพร้อม Work Log และ Decision Log
 - `References.md` - repo และเอกสารอ้างอิง
+- `docs/raw/What Small Language Model Is Best for Fine-Tuning.md` - clipping ที่ใช้เป็น rationale สำหรับ LFM2-350M
 - `AGENTS.md` - กติกาสำหรับ coding agents
 - `.codex/skills/llm-docs/` - skill สำหรับดูแลเอกสารของโปรเจกต์นี้
 
@@ -70,4 +74,3 @@ npm run dev
 ห้าม commit production logs, secrets, tokens, credentials หรือข้อมูลลูกค้า
 
 ระบบนี้ควรใช้ภาษาแบบ triage เช่น suspicious, likely pattern และ recommended investigation ไม่ควร claim ว่ายืนยันการถูก hack แล้วถ้าไม่มีหลักฐานจากระบบอื่นประกอบ
-

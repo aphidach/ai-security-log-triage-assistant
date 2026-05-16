@@ -38,7 +38,7 @@ This post answers four practical questions:
 
 **Winner: LFM2-350M** (average rank: 2.11)
 
-![Model tunability ranking](https://www.distillabs.ai/_astro/what-small-language-model-is-best-for-fine-tuning-thumbnail.C1Ako3oL_Z1yC5ip.webp)
+![[what-small-language-model-is-best-for-fine-tuning-thumbnail.C1Ako3oL_Z1yC5ip.webp|Model tunability ranking]]
 
 Tunability measures how effectively a model absorbs new training signal, calculated as the improvement from base to fine-tuned performance (finetuned\_score - base\_score). A highly tunable model responds strongly to task-specific training, making it an ideal candidate for fine-tuning workflows where you want maximum return on your training investment.
 
@@ -63,7 +63,7 @@ The larger models (Qwen3-8B, Qwen3-4B) rank near the bottom for tunability. This
 
 **Winner: Qwen3-8B** (average rank: 2.33)
 
-![Fine-tuned model ranking](https://www.distillabs.ai/_astro/what-slm-ft-02-model-ranking.m0y1x9M4_owkrL.webp)
+![[what-slm-ft-02-model-ranking.m0y1x9M4_owkrL.webp|Fine-tuned model ranking]]
 
 | Model | Average Rank | 95% CI |
 | --- | --- | --- |
@@ -84,7 +84,7 @@ The Llama family holds its own, with Llama-3.1-8B and Llama-3.2-3B tied at #3. N
 
 **Winner: Qwen3-8B** (average rank: 1.67)
 
-![Base model performance ranking](https://www.distillabs.ai/_astro/what-slm-ft-03-base-performance.BnRInOys_1lAp5k.webp)
+![[what-slm-ft-03-base-performance.BnRInOys_1lAp5k.webp|Base model performance ranking]]
 
 | Model | Average Rank | 95% CI |
 | --- | --- | --- |

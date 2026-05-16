@@ -225,16 +225,16 @@ adapter ทุกตัวควรคืน output schema เดียวกั
 
 ## 7. Fine-Tuning Plan
 
-รอบแรกใช้ supervised fine-tuning บน small instruct model
+รอบแรกใช้ supervised fine-tuning บน ultra-small model ก่อน เพราะทรัพยากรเครื่องมีจำกัด และเป้าหมายของ POC คือพิสูจน์ workflow ให้ครบตั้งแต่ dataset, baseline, fine-tune, evaluation และ report
 
-model ที่น่าลอง:
+model ที่เลือกใช้ก่อน:
 
-- Qwen 1.5B หรือ 3B class instruct model
-- Phi small instruct model
-- small Llama-family instruct model
+- LFM2-350M
 
 แนวทาง:
 
+- เลือก LFM2-350M เป็น candidate แรก เพราะมีขนาดเล็กมากและ benchmark ภายนอกจัดให้เป็นโมเดลที่ได้ gain จาก fine-tuning สูง เหมาะกับเครื่องที่มี GPU/VRAM จำกัด (source: docs/raw/What Small Language Model Is Best for Fine-Tuning.md)
+- เก็บ Qwen 1.5B/3B/4B เป็น candidate สำหรับรอบเปรียบเทียบภายหลัง ไม่ใช่ default รอบแรก
 - ใช้ LoRA หรือ QLoRA ก่อน
 - ใช้ Unsloth เป็น training path หลัก เพราะเหมาะกับงาน POC ที่อยาก fine-tune small model ด้วยทรัพยากรจำกัด
 - เก็บ script ไว้ใน `ml/unsloth/`
