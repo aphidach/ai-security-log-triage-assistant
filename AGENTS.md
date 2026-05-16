@@ -66,13 +66,13 @@ ml/
   notebooks/
 reports/
 scripts/
-src/
+frontend/
   app/
   components/
   lib/
 ```
 
-Prefer keeping shared triage logic under `src/lib/` and model training assets under `ml/`.
+Prefer keeping shared triage logic under `frontend/lib/` and model training assets under `ml/`.
 
 ## Implementation Priorities
 
@@ -139,7 +139,7 @@ The first fine-tuning path should target small instruct models:
 
 Use LoRA or QLoRA first. Avoid full fine-tuning unless there is a clear reason and enough compute.
 
-Keep training scripts separate from the web application. The web app should consume adapters or exported model endpoints, not import training code.
+Keep training scripts separate from the frontend. The frontend should consume adapters or exported model endpoints, not import training code.
 
 ## UI Guidance
 
@@ -190,4 +190,3 @@ Use these as design references, not as code to copy blindly.
 - Run available checks before finishing.
 - Never hide evaluation limitations.
 - Never overclaim that the model detects compromise. Say it triages suspicious patterns and recommends investigation.
-

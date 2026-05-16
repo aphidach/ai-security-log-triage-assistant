@@ -109,7 +109,7 @@ ai-security-log-triage-assistant/
     split-dataset.ts
     evaluate.ts
 
-  src/
+  frontend/
     app/
     components/
     lib/
@@ -144,8 +144,8 @@ ai-security-log-triage-assistant/
 
 - `data/` เก็บข้อมูลและ schema แยกจาก code
 - `scripts/` เก็บ command-line workflow ที่ใช้สร้าง dataset และวัดผล
-- `src/lib/` เป็นแกน logic ที่ UI, API และ CLI ใช้ร่วมกัน
-- `ml/` แยก training ออกจาก web app เพราะ fine-tune มี dependency และ environment คนละชุด
+- `frontend/lib/` เป็นแกน logic ที่ UI, API และ CLI ใช้ร่วมกัน
+- `ml/` แยก training ออกจาก frontend เพราะ fine-tune มี dependency และ environment คนละชุด
 - `reports/` เก็บผลที่นำไปโชว์หรือคุยกับ stakeholder ได้
 
 ## 5. Dataset Plan
@@ -474,7 +474,6 @@ Day 7: demo UI, README, video/demo script
 
 1. สร้าง project foundation ด้วย Next.js และ TypeScript
 2. เพิ่ม `data/schemas/triage-output.schema.json`
-3. เพิ่ม `src/lib/labels.ts` และ `src/lib/triage-schema.ts`
+3. เพิ่ม `frontend/lib/labels.ts` และ `frontend/lib/triage-schema.ts`
 4. เขียน `scripts/generate-dataset.ts`
 5. generate dataset รอบแรก แล้วค่อยเริ่ม baseline/evaluation
-

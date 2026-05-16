@@ -191,7 +191,7 @@ Hugging Face TRL
   -> dataset formatting reference
 
 lm-evaluation-harness
-  -> src/lib/evaluation/
+  -> frontend/lib/evaluation/
   -> scripts/evaluate.ts
   -> reports/*.json
 

@@ -128,13 +128,13 @@ ml/
   notebooks/
 reports/
 scripts/
-src/
+frontend/
   app/
   components/
   lib/
 ```
 
-แนวคิดหลักคือแยก training ออกจาก web app ให้ชัด `src/lib/` เป็นที่เก็บ logic ร่วมของ schema, label, baseline, prompt และ evaluator ส่วน `ml/` เก็บของที่ต้องใช้ environment ด้าน fine-tuning
+แนวคิดหลักคือแยก training ออกจาก frontend ให้ชัด `frontend/lib/` เป็นที่เก็บ logic ร่วมของ schema, label, baseline, prompt และ evaluator ส่วน `frontend/app/` เก็บหน้า demo และ API route ของ Next.js ขณะที่ `ml/` เก็บของที่ต้องใช้ environment ด้าน fine-tuning
 
 ## เส้นทาง implementation
 
