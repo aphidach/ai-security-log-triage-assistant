@@ -11,10 +11,14 @@
             "id": "349890ec50d8e5bc",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "dataset-input-output-format.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "dataset-input-output-format"
             }
           }
         ]
@@ -181,15 +185,21 @@
   },
   "active": "349890ec50d8e5bc",
   "lastOpenFiles": [
-    "label-taxonomy.md",
     "triage-output-schema.md",
-    "References.md",
-    "dataset-source-strategy.md",
-    "Gemma-3–4B-IT.md",
-    "raw/Fine-tuning small language models for industrial retrieval-augmented generation Efficiency, factuality, and hallucination analysis.md",
-    "evaluation-metrics-rationale.md",
-    "tinylora-reasoning-13-parameters.md",
+    "dataset-input-output-format.md",
     "slm-rag-fine-tuning-hallucination.md",
+    "tinylora-reasoning-13-parameters.md",
+    "evaluation-metrics-rationale.md",
+    "Gemma-3–4B-IT.md",
+    "index.md",
+    "label-taxonomy.md",
+    "log.md",
+    "poc-plan.md",
+    "project-structure-rationale.md",
+    "References.md",
+    "slm-fine-tuning-model-choice.md",
+    "dataset-source-strategy.md",
+    "raw/Fine-tuning small language models for industrial retrieval-augmented generation Efficiency, factuality, and hallucination analysis.md",
     "raw/assets/1-s2.0-S0920548926000371-gr6a.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr5a.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr4.jpg",
@@ -197,7 +207,6 @@
     "raw/assets/1-s2.0-S0920548926000371-gr2.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr1.jpg",
     "raw/What Small Language Model Is Best for Fine-Tuning.md",
-    "slm-fine-tuning-model-choice.md",
     "raw/assets/what-slm-ft-03-base-performance.BnRInOys_1lAp5k.webp",
     "raw/assets/what-slm-ft-02-model-ranking.m0y1x9M4_owkrL.webp",
     "raw/assets/what-small-language-model-is-best-for-fine-tuning-thumbnail.C1Ako3oL_Z1yC5ip.webp",
