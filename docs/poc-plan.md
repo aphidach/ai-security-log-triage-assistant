@@ -105,9 +105,13 @@ ai-security-log-triage-assistant/
     fine-tuning-notes.md
 
   scripts/
-    generate-dataset.ts
-    split-dataset.ts
-    evaluate.ts
+    generate_dataset.py
+    validate_dataset.py
+    baseline_heuristic.py
+    evaluate.py
+    model_adapters/
+      openai_compatible.py
+      local_ollama.py
 
   frontend/
     app/
@@ -116,15 +120,8 @@ ai-security-log-triage-assistant/
       labels.ts
       triage-schema.ts
       prompts.ts
-      baseline-analyzer.ts
-      model-adapters/
-        heuristic.ts
-        openai-compatible.ts
-        local-ollama.ts
-        fine-tuned.ts
-      evaluation/
-        metrics.ts
-        runner.ts
+      api-client.ts
+      sample-logs.ts
 
   ml/
     unsloth/
@@ -143,8 +140,8 @@ ai-security-log-triage-assistant/
 เหตุผลของโครงนี้:
 
 - `data/` เก็บข้อมูลและ schema แยกจาก code
-- `scripts/` เก็บ command-line workflow ที่ใช้สร้าง dataset และวัดผล
-- `frontend/lib/` เป็นแกน logic ที่ UI, API และ CLI ใช้ร่วมกัน
+- `scripts/` เก็บ command-line workflow ที่ใช้สร้าง dataset, validate dataset และวัดผล โดยให้ Python เป็น path หลักของ data/ML workflow
+- `frontend/lib/` เป็นแกน logic ของ UI และ integration ฝั่ง frontend ส่วน CLI/evaluator หลักอยู่ใน `scripts/`
 - `ml/` แยก training ออกจาก frontend เพราะ fine-tune มี dependency และ environment คนละชุด
 - `reports/` เก็บผลที่นำไปโชว์หรือคุยกับ stakeholder ได้
 
@@ -353,10 +350,10 @@ demo ควรเป็นเครื่องมือใช้งานจร
 
 สิ่งที่ทำ:
 
-- เขียน dataset generator
+- เขียน Python dataset generator
 - generate synthetic records
 - split train/validation/test
-- เขียน heuristic baseline
+- เขียน Python heuristic baseline
 
 ผลลัพธ์:
 
@@ -367,7 +364,7 @@ demo ควรเป็นเครื่องมือใช้งานจร
 
 สิ่งที่ทำ:
 
-- เขียน evaluator
+- เขียน Python evaluator
 - วัด metric หลัก
 - export report
 
@@ -495,5 +492,5 @@ Day 7: demo UI, README, video/demo script
 1. สร้าง project foundation ด้วย Next.js และ TypeScript
 2. เพิ่ม `data/schemas/triage-output.schema.json`
 3. เพิ่ม `frontend/lib/labels.ts` และ `frontend/lib/triage-schema.ts`
-4. เขียน `scripts/generate-dataset.ts`
+4. เขียน `scripts/generate_dataset.py`
 5. generate dataset รอบแรก แล้วค่อยเริ่ม baseline/evaluation

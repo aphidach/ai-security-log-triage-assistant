@@ -291,8 +291,7 @@ Hugging Face TRL
   -> dataset formatting reference
 
 lm-evaluation-harness
-  -> frontend/lib/evaluation/
-  -> scripts/evaluate.ts
+  -> scripts/evaluate.py
   -> reports/*.json
 
 Loghub
