@@ -1,0 +1,81 @@
+# Day 3: Heuristic Baseline And Evaluation Harness
+
+**Summary**
+
+วันที่สามทำ baseline ที่รันได้โดยไม่ต้องใช้ model key หรือ GPU แล้วสร้าง evaluator สำหรับวัดผลจาก fixed test split เป้าหมายคือให้ POC มีตัวเลขก่อน fine-tune ไม่ใช่มีแค่ demo ที่ตอบดูดี
+
+**Sources**
+
+- `docs/poc-plan.md` สำหรับ baseline plan และ evaluation metrics (source: docs/poc-plan.md)
+- `AGENTS.md` สำหรับ evaluation rules และ schema stability (source: AGENTS.md)
+- `References.md` สำหรับแนวคิดจาก lm-evaluation-harness และ SigmaHQ (source: References.md)
+- `llm-wiki/SKILL.md` สำหรับ append-only log และ related pages (source: SKILL.md)
+
+**Last updated**
+
+2026-05-16
+
+## Goal
+
+มี heuristic baseline และ evaluation runner ที่รันซ้ำได้จาก command เดียว พร้อม report ที่อ่านได้ทั้งคนและเครื่อง
+
+## Scope
+
+- เขียน `src/lib/model-adapters/heuristic.ts`
+- เขียน `src/lib/evaluation/metrics.ts`
+- เขียน `src/lib/evaluation/runner.ts`
+- เขียน `scripts/evaluate.ts`
+- export `reports/baseline-eval.json`
+- export `reports/comparison.md` เวอร์ชันเริ่มต้น
+
+## Checklist
+
+- [ ] เพิ่ม heuristic rule สำหรับ SQL injection
+- [ ] เพิ่ม heuristic rule สำหรับ directory traversal
+- [ ] เพิ่ม heuristic rule สำหรับ brute force
+- [ ] เพิ่ม heuristic rule สำหรับ port scan/recon
+- [ ] เพิ่ม fallback เป็น `normal`
+- [ ] วัด `label_accuracy`
+- [ ] วัด `json_parse_success_rate`
+- [ ] วัด `schema_success_rate`
+- [ ] วัด `severity_accuracy`
+- [ ] วัด `evidence_partial_match`
+- [ ] วัด `average_latency_ms`
+- [ ] เขียน baseline report
+
+## Acceptance Criteria
+
+- `npm run evaluate` หรือ command เทียบเท่ารันได้
+- evaluator ใช้ `data/splits/test.jsonl` เท่านั้น
+- report บอกจำนวน sample และ metric หลักครบ
+- heuristic baseline คืน output schema เดียวกับ model adapter
+- failure case ถูกนับ ไม่ถูกซ่อน
+
+## Work Log
+
+Append-only log สำหรับบันทึกว่าวันนี้ทำอะไรไปแล้ว ให้เพิ่ม row ใหม่ด้านล่างเสมอ
+
+| Date | Actor | Work | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| 2026-05-16 | Codex | Created Day 3 plan page | `docs/Day3.md` | Planned |
+
+## Decision Log
+
+Append-only log สำหรับบันทึกว่าตัดสินใจอะไร เพราะอะไร และกระทบส่วนไหน
+
+| Date | Decision | Rationale | Impact |
+| --- | --- | --- | --- |
+| 2026-05-16 | heuristic baseline เป็น mandatory floor | ถ้า model ไม่ชนะ rule ง่าย ๆ ต้องรู้ตั้งแต่แรก | ทำให้ comparison หลัง fine-tune มีความหมาย |
+| 2026-05-16 | evaluator ไม่ผูกกับ model implementation | ต้องรองรับ heuristic, base model และ fine-tuned model เหมือนกัน | adapter ทุกตัวต้องคืน schema เดียวกัน |
+
+## Notes
+
+baseline ที่ดีไม่จำเป็นต้องซับซ้อน แต่ต้องซื่อสัตย์ ถ้า rule-based จับ pattern ได้ดีมาก นั่นไม่ใช่ปัญหา มันช่วยบอกว่า fine-tune ควรชนะในเคสที่ ambiguous, noisy หรืออธิบาย evidence ได้ดีกว่า
+
+## Related pages
+
+- [[Day2]]
+- [[Day4]]
+- [[poc-plan]]
+- [[References]]
+
