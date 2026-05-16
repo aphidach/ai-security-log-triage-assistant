@@ -19,13 +19,17 @@ Local search engine for markdown content.
 
 ## MCP: `query`
 
+For this project, use the collection `ai-security-log-triage-assistant`.
+Do not use the generic example collection name `docs` unless that collection
+exists in `qmd collection list`.
+
 ```json
 {
   "searches": [
-    { "type": "lex", "query": "CAP theorem consistency" },
-    { "type": "vec", "query": "tradeoff between consistency and availability" }
+    { "type": "lex", "query": "LFM2 \"fine-tuning\"" },
+    { "type": "vec", "query": "Which model should the first fine tuning run use" }
   ],
-  "collections": ["docs"],
+  "collections": ["ai-security-log-triage-assistant"],
   "limit": 10
 }
 ```
@@ -50,6 +54,8 @@ Local search engine for markdown content.
 - Full natural language question
 - Be specific: `"how does the rate limiter handle burst traffic"`
 - Include context: `"in the payment service, how are refunds processed"`
+- Avoid hyphenated terms such as `fine-tuning` in `vec`/`hyde` lines; write
+  `fine tuning` instead. Keep hyphenated exact terms in `lex` lines.
 
 **hyde (hypothetical document)**
 - Write 50-100 words of what the *answer* looks like
@@ -100,7 +106,7 @@ Note: `-term` only works in lex queries, not vec/hyde.
 ### Collection Filtering
 
 ```json
-{ "collections": ["docs"] }              // Single
+{ "collections": ["ai-security-log-triage-assistant"] } // This project
 { "collections": ["docs", "notes"] }     // Multiple (OR)
 ```
 
