@@ -1,38 +1,12 @@
 # AI Security Log Triage Assistant
 
-POC นี้ทดลองทำระบบช่วยคัดกรอง security log ด้วยโมเดลขนาดเล็กและ fine-tuning
+POC สำหรับวิเคราะห์ security log ด้วย small model และ fine-tuning
 
-เป้าหมายไม่ใช่สร้าง SOC อัตโนมัติ หรือฟันธงว่าเครื่องถูกเจาะแล้วจาก log เส้นเดียว แต่คือพิสูจน์ให้ได้ว่าเราสร้าง dataset เล็ก ๆ, มี baseline ที่วัดได้, fine-tune โมเดล แล้วเทียบผลก่อน-หลัง fine-tune ได้อย่างเป็นระบบ
+เป้าหมายคือพิสูจน์ workflow ให้ครบ: สร้าง dataset, ทำ baseline, fine-tune โมเดลขนาดเล็ก, evaluate ด้วย test set เดียวกัน แล้วเทียบผลก่อน-หลัง fine-tune ไม่ใช่ทำระบบ SOC อัตโนมัติหรือฟันธงว่าเครื่องถูกเจาะจาก log เส้นเดียว
 
-ผลลัพธ์ที่ระบบต้องคืนกลับมาคือ triage แบบมีโครงสร้าง: เหตุการณ์ปกติหรือน่าสงสัย, เข้ากับ pattern ไหน, หลักฐานอยู่ตรงไหนใน log, severity เท่าไหร่, เหตุผลสั้น ๆ คืออะไร และควรตรวจอะไรต่อ
+## Scope รอบแรก
 
-## สถานะตอนนี้
-
-repo นี้ยังอยู่ช่วงวาง foundation
-
-ของที่มีแล้ว:
-
-- แผน POC ใน `docs/poc-plan.md`
-- กติกาการทำงานของ agent ใน `AGENTS.md`
-- README ฉบับตั้งต้นนี้
-
-ของที่ยังต้องทำ:
-
-- output schema และ label taxonomy ในโค้ด
-- synthetic dataset generator
-- train / validation / test split
-- heuristic baseline
-- evaluation runner
-- model adapters
-- Next.js demo UI
-- Unsloth LoRA / QLoRA training path
-- evaluation report
-
-## ขอบเขตรอบแรก
-
-รอบแรกตั้งใจคุม taxonomy ให้เล็กก่อน เพื่อให้ dataset และ evaluator เช็กคุณภาพได้จริง
-
-label ที่รองรับ:
+เริ่มจาก label เล็ก ๆ เพื่อให้วัดผลได้จริง:
 
 - `normal`
 - `failed_login_bruteforce`
@@ -40,161 +14,60 @@ label ที่รองรับ:
 - `directory_traversal_attempt`
 - `port_scan_or_recon`
 
-ยังไม่ทำในรอบแรก:
+ผลลัพธ์ของ analyzer ควรมี field หลัก: `label`, `severity`, `is_suspicious`, `evidence`, `reason`, `recommended_action`
 
-- malware classification เต็มรูปแบบ
-- incident response automation
-- SIEM integration จริง
-- multi-step attack chain reconstruction
-- RAG จาก policy หรือ knowledge base
-- การยืนยันว่า host ถูก compromise แล้วจริง
+## สถานะ
 
-## Output Schema
+ตอนนี้ repo อยู่ช่วง foundation:
 
-baseline, model adapter, API และ UI ควรใช้ schema เดียวกันทั้งหมด
+- มีแผน POC และแผนรายวันใน `docs/`
+- มี reference หลักใน `References.md`
+- มี local skill สำหรับดูแลเอกสารแบบ mini LLM-Wiki ใน `.codex/skills/llm-docs/`
+- มี Next.js scaffold ใน `frontend/`
 
-```json
-{
-  "label": "sql_injection_attempt",
-  "severity": "high",
-  "is_suspicious": true,
-  "evidence": ["admin' OR '1'='1"],
-  "reason": "The request contains a common SQL injection pattern.",
-  "recommended_action": "Review web application logs and block or rate-limit the source IP."
-}
-```
+ยังต้องทำต่อ: dataset generator, baseline, evaluator, model adapters, fine-tuning script และ demo UI จริง
 
-ถ้า schema เปลี่ยน ต้องอัปเดตพร้อมกันทั้ง dataset generator, evaluator, API, UI และเอกสาร เพราะไม่อย่างนั้นผล evaluation จะเทียบกันไม่ได้
-
-## Dataset
-
-ข้อมูลรอบแรกใช้ JSONL และเริ่มจาก synthetic data ก่อน เพื่อคุม label, evidence และ edge case ได้ง่าย
-
-ตัวอย่าง record:
-
-```json
-{
-  "id": "sample-000001",
-  "instruction": "Analyze this security log and classify whether it is suspicious.",
-  "input": "192.168.1.20 - - [10/May/2026] \"GET /login?user=admin' OR '1'='1 HTTP/1.1\" 200",
-  "output": {
-    "label": "sql_injection_attempt",
-    "severity": "high",
-    "is_suspicious": true,
-    "evidence": ["admin' OR '1'='1"],
-    "reason": "The request contains a common SQL injection pattern.",
-    "recommended_action": "Review web application logs and block or rate-limit the source IP."
-  }
-}
-```
-
-เป้าหมายตั้งต้นคือ 500-1,000 records แบ่งเป็น `train`, `validation` และ `test` ชัดเจน
-
-ข้อจำกัดสำคัญ: synthetic log มักง่ายกว่า log จริง ผลที่ได้จึงบอกได้แค่ว่า POC เริ่มแยก pattern พื้นฐานได้หรือยัง ไม่ใช่หลักฐานว่าระบบพร้อมใช้กับ production traffic
-
-## Baseline และ Evaluation
-
-หัวใจของ repo นี้คือการวัดผล ไม่ใช่แค่ทำ demo ให้ดูเหมือนฉลาด
-
-baseline แรกควรเป็น rule-based heuristic ที่รันได้ในเครื่องโดยไม่ต้องใช้ GPU หรือ API key เช่นจับ pattern ของ SQL injection, directory traversal, brute force และ port scan
-
-metric ที่ต้องเก็บอย่างน้อย:
-
-- `label_accuracy`
-- `json_parse_success_rate`
-- `schema_success_rate`
-- `severity_accuracy`
-- `evidence_partial_match`
-- `average_latency_ms`
-- `invalid_output_count`
-
-ถ้า fine-tuned model แพ้ heuristic baseline บาง metric ก็ต้องรายงานตรง ๆ เพราะนั่นคือข้อมูลสำคัญของ POC เหมือนกัน
-
-## โครงสร้าง repo ที่ตั้งใจ
-
-```text
-data/
-  raw/
-  generated/
-  splits/
-  schemas/
-docs/
-  poc-plan.md
-  data-card.md
-  evaluation-method.md
-  fine-tuning-notes.md
-ml/
-  unsloth/
-  notebooks/
-reports/
-scripts/
-frontend/
-  app/
-  components/
-  lib/
-```
-
-แนวคิดหลักคือแยก training ออกจาก frontend ให้ชัด `frontend/lib/` เป็นที่เก็บ logic ร่วมของ schema, label, baseline, prompt และ evaluator ส่วน `frontend/app/` เก็บหน้า demo และ API route ของ Next.js ขณะที่ `ml/` เก็บของที่ต้องใช้ environment ด้าน fine-tuning
-
-## เส้นทาง implementation
-
-ลำดับงานที่ควรทำ:
-
-1. เพิ่ม output schema และ label taxonomy
-2. เขียน synthetic JSONL dataset generator
-3. แบ่ง train / validation / test split แบบ deterministic
-4. ทำ heuristic baseline ที่รัน local ได้
-5. ทำ evaluation runner พร้อม metrics
-6. เพิ่ม model adapters สำหรับ OpenAI-compatible API, Ollama / LM Studio และ fine-tuned model
-7. ทำ Next.js demo UI สำหรับ paste log, วิเคราะห์ผล และ highlight evidence
-8. เพิ่ม Unsloth LoRA / QLoRA training script
-9. เขียน report เทียบ baseline กับ fine-tuned model
-
-## การใช้งานระหว่างพัฒนา
-
-ตอนนี้ยังไม่มี project scaffold หรือ command ที่รันได้จริง คำสั่ง setup, generate dataset, evaluate และ train จะเติมหลังทำ milestone ที่เกี่ยวข้องเสร็จแล้ว
-
-เริ่มอ่านจากแผนหลักได้ที่:
+## Run Frontend
 
 ```bash
-open docs/poc-plan.md
+cd frontend
+bun install
+bun run dev
 ```
 
-เมื่องาน foundation เสร็จ README นี้ควรมีคำสั่งอย่างน้อย:
+ถ้าไม่ใช้ Bun:
 
 ```bash
+cd frontend
 npm install
-npm run generate:dataset
-npm run evaluate
 npm run dev
 ```
 
-ส่วน fine-tuning ควรแยกเป็น path ของตัวเอง เช่น:
+เปิดที่ `http://localhost:3000`
 
-```bash
-cd ml/unsloth
-python train_lora.py --config config.example.yaml
-```
+## Planned Workflow
 
-## Security และ Privacy
+1. เพิ่ม output schema และ label taxonomy
+2. สร้าง synthetic JSONL dataset
+3. แบ่ง `train`, `validation`, `test`
+4. ทำ heuristic baseline ที่รันได้ local
+5. ทำ evaluation runner และ metrics
+6. เพิ่ม model adapters
+7. fine-tune small model ด้วย Unsloth LoRA/QLoRA
+8. ทำ report เทียบ baseline กับ fine-tuned model
+9. ทำ demo UI สำหรับ paste log, analyze และ highlight evidence
 
-ห้าม commit log production จริง, secret, credential, token, private IP inventory หรือข้อมูลลูกค้า
+## Docs
 
-ถ้าจะใช้ log จริงในอนาคต ต้อง sanitize อย่างน้อย:
+- `docs/poc-plan.md` - แผน POC หลัก
+- `docs/Day1.md` ถึง `docs/Day7.md` - แผนรายวันพร้อม Work Log และ Decision Log
+- `References.md` - repo และเอกสารอ้างอิง
+- `AGENTS.md` - กติกาสำหรับ coding agents
+- `.codex/skills/llm-docs/` - skill สำหรับดูแลเอกสารของโปรเจกต์นี้
 
-- IP address
-- hostname
-- username
-- cookie
-- authorization header
-- session ID
-- customer-specific field
+## Security Note
 
-ระบบนี้ควรใช้คำว่า suspicious, likely และ recommended investigation ไม่ควรเขียนว่า “ยืนยันว่าถูก hack แล้ว” เว้นแต่มีหลักฐานจากระบบอื่นประกอบ
+ห้าม commit production logs, secrets, tokens, credentials หรือข้อมูลลูกค้า
 
-## เอกสารที่เกี่ยวข้อง
+ระบบนี้ควรใช้ภาษาแบบ triage เช่น suspicious, likely pattern และ recommended investigation ไม่ควร claim ว่ายืนยันการถูก hack แล้วถ้าไม่มีหลักฐานจากระบบอื่นประกอบ
 
-- `docs/poc-plan.md` - แผน POC, milestone, risks และ definition of done
-- `AGENTS.md` - กติกาและขอบเขตสำหรับ coding agents ใน repo นี้
-
-README นี้จะมีประโยชน์ที่สุดเมื่อเดินคู่กับ evaluator เพราะสุดท้ายระบบ triage ที่ดีต้องอธิบายได้ทั้งคำตอบและคะแนนของตัวเอง
