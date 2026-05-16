@@ -1,0 +1,4 @@
+interface:
+  display_name: "LLM Docs"
+  short_description: "Maintain project docs as a small LLM wiki"
+  default_prompt: "Use $llm-docs to update this project documentation with sources, related pages, and append-only logs."
