@@ -17,15 +17,45 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.baseline_heuristic import analyze_log  # noqa: E402
+from scripts.model_adapters import (  # noqa: E402
+    AdapterResult,
+    FineTuneAdapter,
+    OpenAICompatibleAdapter,
+    TriageModelAdapter,
+)
 
 
 DEFAULT_SPLIT_PATH = ROOT / "data" / "splits" / "test.jsonl"
 DEFAULT_SCHEMA_PATH = ROOT / "data" / "schemas" / "triage-output.schema.json"
 DEFAULT_JSON_REPORT_PATH = ROOT / "reports" / "baseline-eval.json"
 DEFAULT_MARKDOWN_REPORT_PATH = ROOT / "reports" / "comparison.md"
+ADAPTER_CHOICES = ("heuristic", "openai-compatible", "openai-finetune")
 
 
 JsonObject = dict[str, Any]
+MappingStringAny = dict[str, Any]
+
+
+class HeuristicAdapter:
+    name = "heuristic"
+
+    def analyze(self, log_line: str) -> AdapterResult:
+        start = time.perf_counter()
+        try:
+            raw_output = analyze_log(log_line)
+        except Exception as exc:  # pragma: no cover - defensive path for future rule changes.
+            return AdapterResult(
+                raw_output=None,
+                latency_ms=round_latency((time.perf_counter() - start) * 1000),
+                error=f"{type(exc).__name__}: {exc}",
+                metadata={"adapter": self.name},
+            )
+        return AdapterResult(
+            raw_output=raw_output,
+            latency_ms=round_latency((time.perf_counter() - start) * 1000),
+            error=None,
+            metadata={"adapter": self.name},
+        )
 
 
 def load_jsonl(path: Path) -> list[JsonObject]:
@@ -50,10 +80,26 @@ def load_schema(path: Path) -> JsonObject:
     return schema
 
 
-def run_adapter(adapter: str, log_line: str) -> Any:
-    if adapter == "heuristic":
-        return analyze_log(log_line)
-    raise ValueError(f"Unsupported adapter: {adapter}")
+def create_adapter(name: str) -> TriageModelAdapter:
+    if name == "heuristic":
+        return HeuristicAdapter()
+    if name == "openai-compatible":
+        return OpenAICompatibleAdapter()
+    if name == "openai-finetune":
+        return FineTuneAdapter()
+    raise ValueError(f"Unsupported adapter: {name}")
+
+
+def default_json_report_path(adapter_name: str) -> Path:
+    if adapter_name == "heuristic":
+        return DEFAULT_JSON_REPORT_PATH
+    return ROOT / "reports" / f"{adapter_name}-eval.json"
+
+
+def default_markdown_report_path(adapter_name: str) -> Path:
+    if adapter_name == "heuristic":
+        return DEFAULT_MARKDOWN_REPORT_PATH
+    return ROOT / "reports" / f"{adapter_name}-eval.md"
 
 
 def parse_prediction(raw_prediction: Any) -> tuple[JsonObject | None, bool, str | None]:
@@ -157,20 +203,36 @@ def json_safe(value: Any) -> Any:
     return value
 
 
-def evaluate_record(item: JsonObject, adapter: str, schema: JsonObject) -> JsonObject:
+def stable_adapter_metadata(metadata: MappingStringAny) -> JsonObject:
+    return {
+        key: value
+        for key, value in metadata.items()
+        if key not in {"response_metadata", "usage_metadata"}
+    }
+
+
+def evaluate_record(item: JsonObject, adapter: TriageModelAdapter, schema: JsonObject) -> JsonObject:
     record_id = str(item.get("id", "<missing>"))
     expected = item.get("output", {})
     if not isinstance(expected, dict):
         expected = {}
 
-    start = time.perf_counter()
-    raw_prediction: Any = None
+    adapter_result: AdapterResult | None = None
     adapter_error: str | None = None
     try:
-        raw_prediction = run_adapter(adapter, str(item.get("input", "")))
+        adapter_result = adapter.analyze(str(item.get("input", "")))
     except Exception as exc:  # pragma: no cover - defensive path for future adapters.
         adapter_error = f"{type(exc).__name__}: {exc}"
-    latency_ms = (time.perf_counter() - start) * 1000
+
+    if adapter_result is None:
+        raw_prediction: Any = None
+        latency_ms = 0.0
+        adapter_metadata: MappingStringAny = {"adapter": adapter.name}
+    else:
+        raw_prediction = adapter_result.raw_output
+        latency_ms = adapter_result.latency_ms
+        adapter_error = adapter_result.error
+        adapter_metadata = dict(adapter_result.metadata)
 
     if adapter_error:
         prediction, parse_success, parse_error = None, False, adapter_error
@@ -186,6 +248,8 @@ def evaluate_record(item: JsonObject, adapter: str, schema: JsonObject) -> JsonO
     evidence_match = schema_success and evidence_partial_match(prediction_for_compare, expected)
 
     failure_reasons: list[str] = []
+    if adapter_error:
+        failure_reasons.append(f"adapter_error: {adapter_error}")
     if not parse_success:
         failure_reasons.append(f"json_parse_failed: {parse_error}")
     if parse_success and schema_errors:
@@ -204,6 +268,8 @@ def evaluate_record(item: JsonObject, adapter: str, schema: JsonObject) -> JsonO
         "prediction": prediction,
         "raw_prediction": json_safe(raw_prediction),
         "latency_ms": round_latency(latency_ms),
+        "adapter_error": adapter_error,
+        "adapter_metadata": json_safe(adapter_metadata),
         "json_parse_success": parse_success,
         "schema_success": schema_success,
         "schema_errors": schema_errors,
@@ -214,9 +280,21 @@ def evaluate_record(item: JsonObject, adapter: str, schema: JsonObject) -> JsonO
     }
 
 
-def build_report(records: list[JsonObject], adapter: str, split_path: Path, schema_path: Path, schema: JsonObject) -> JsonObject:
+def build_report(
+    records: list[JsonObject],
+    adapter: TriageModelAdapter,
+    split_path: Path,
+    schema_path: Path,
+    schema: JsonObject,
+) -> JsonObject:
     results = [evaluate_record(item, adapter, schema) for item in records]
     sample_count = len(results)
+    adapter_name = adapter.name
+    adapter_metadata = {"adapter": adapter_name}
+    if results:
+        first_metadata = results[0].get("adapter_metadata", {})
+        if isinstance(first_metadata, dict):
+            adapter_metadata = stable_adapter_metadata(first_metadata)
 
     parse_success_count = sum(bool(item["json_parse_success"]) for item in results)
     schema_success_count = sum(bool(item["schema_success"]) for item in results)
@@ -241,6 +319,8 @@ def build_report(records: list[JsonObject], adapter: str, split_path: Path, sche
             "prediction": item["prediction"],
             "schema_errors": item["schema_errors"],
             "latency_ms": item["latency_ms"],
+            "adapter_error": item["adapter_error"],
+            "adapter_metadata": item["adapter_metadata"],
         }
         for item in results
         if item["failure_reasons"]
@@ -258,6 +338,8 @@ def build_report(records: list[JsonObject], adapter: str, split_path: Path, sche
             "severity_correct": item["severity_correct"],
             "evidence_partial_match": item["evidence_partial_match"],
             "latency_ms": item["latency_ms"],
+            "adapter_error": item["adapter_error"],
+            "adapter_metadata": item["adapter_metadata"],
             "schema_errors": item["schema_errors"],
             "raw_prediction": item["raw_prediction"],
             "prediction": item["prediction"],
@@ -266,7 +348,8 @@ def build_report(records: list[JsonObject], adapter: str, split_path: Path, sche
     ]
 
     return {
-        "adapter": adapter,
+        "adapter": adapter_name,
+        "adapter_metadata": adapter_metadata,
         "split": str(split_path.relative_to(ROOT) if split_path.is_relative_to(ROOT) else split_path),
         "schema": str(schema_path.relative_to(ROOT) if schema_path.is_relative_to(ROOT) else schema_path),
         "sample_count": sample_count,
@@ -304,7 +387,7 @@ def write_markdown_report(report: JsonObject, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     metrics = report["metrics"]
     lines = [
-        "# Baseline Evaluation Report",
+        "# Triage Adapter Evaluation Report",
         "",
         f"- Adapter: `{report['adapter']}`",
         f"- Split: `{report['split']}`",
@@ -363,25 +446,31 @@ def print_summary(report: JsonObject, json_report_path: Path | None, markdown_re
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate a security log triage adapter against a JSONL split.")
-    parser.add_argument("--adapter", default="heuristic", choices=["heuristic"], help="Adapter to evaluate.")
+    parser.add_argument("--adapter", default="heuristic", choices=ADAPTER_CHOICES, help="Adapter to evaluate.")
     parser.add_argument("--split", type=Path, default=DEFAULT_SPLIT_PATH, help="JSONL split to evaluate.")
     parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA_PATH, help="Triage output JSON Schema path.")
-    parser.add_argument("--out", type=Path, default=DEFAULT_JSON_REPORT_PATH, help="JSON report output path.")
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="JSON report output path. Defaults to reports/<adapter>-eval.json.",
+    )
     parser.add_argument(
         "--comparison-out",
         type=Path,
-        default=DEFAULT_MARKDOWN_REPORT_PATH,
-        help="Markdown comparison report output path.",
+        default=None,
+        help="Markdown report output path. Defaults to reports/<adapter>-eval.md.",
     )
     parser.add_argument("--no-write", action="store_true", help="Run evaluation without writing report files.")
     args = parser.parse_args()
 
     records = load_jsonl(args.split)
     schema = load_schema(args.schema)
-    report = build_report(records, args.adapter, args.split, args.schema, schema)
+    adapter = create_adapter(args.adapter)
+    report = build_report(records, adapter, args.split, args.schema, schema)
 
-    json_report_path = None if args.no_write else args.out
-    markdown_report_path = None if args.no_write else args.comparison_out
+    json_report_path = None if args.no_write else args.out or default_json_report_path(args.adapter)
+    markdown_report_path = None if args.no_write else args.comparison_out or default_markdown_report_path(args.adapter)
     if json_report_path:
         write_json_report(report, json_report_path)
     if markdown_report_path:
