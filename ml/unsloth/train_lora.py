@@ -248,7 +248,7 @@ def main() -> int:
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not args.preflight_only:
         print(
-            "training preflight only for now; GPU training implementation is the next Day 5 step",
+            "training preflight only for now; GPU training implementation is the first Day 6 task",
             file=sys.stderr,
         )
     return 0

@@ -24,6 +24,7 @@
 - [[data-card]]: data card ของ synthetic dataset รอบแรก รวมที่มา วิธี generate split ข้อจำกัด และ privacy note
 - [[log-type-examples]]: คำอธิบาย log format ที่ dataset จำลองไว้ เช่น web access, SSH auth, WAF, IDS และ netflow-style log พร้อมตัวอย่าง
 - [[evaluation-metrics-rationale]]: เหตุผลที่ต้องวัด metric รอบแรก เช่น label accuracy, JSON/schema validity, evidence match และ latency
+- [[fine-tuning-notes]]: notes สำหรับ Unsloth fine-tuning path, Colab/GPU setup, limitation และ Day 6 handoff
 - [[dataset-source-strategy]]: กลยุทธ์เลือกและจัดลำดับแหล่ง dataset ภายนอก เช่น Loghub, OTRF/Mordor, BOTS, SigmaHQ, Splunk Attack Data และ Kaggle synthetic candidate
 - [[slm-fine-tuning-model-choice]]: สรุป benchmark SLM และเหตุผลที่ POC รอบแรกเริ่มจาก LFM2-350M
 - [[slm-rag-fine-tuning-hallucination]]: บทเรียนจาก industrial RAG fine-tuning เรื่อง cost-aware evaluation, factuality และ hallucination taxonomy
@@ -34,10 +35,10 @@
 - [[Day1]]: project foundation, schema, label taxonomy และ repo structure
 - [[Day2]]: dataset และ data card
 - [[Day3]]: heuristic baseline
-- [[Day4]]: evaluation runner
-- [[Day5]]: model adapters
-- [[Day6]]: demo UI
-- [[Day7]]: fine-tuning path และ evaluation comparison
+- [[Day4]]: model adapters และ evaluator integration
+- [[Day5]]: fine-tuning path ด้วย Unsloth, config, training format และ inference wiring
+- [[Day6]]: GPU training, fine-tuned evaluation และ comparison report
+- [[Day7]]: demo UI และ integration รอบถัดไป
 
 ## External References
 
@@ -65,6 +66,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-16 | Codex | Added dataset input/output format page to core docs | `docs/dataset-input-output-format.md` | Updated |
 | 2026-05-17 | Codex | Added first synthetic dataset data card to core docs | `docs/data-card.md` | Updated |
 | 2026-05-17 | Codex | Added log type examples page to core docs | `docs/log-type-examples.md` | Updated |
+| 2026-05-17 | Codex | Added fine-tuning notes page and refreshed day plan labels | `docs/fine-tuning-notes.md`, `docs/index.md` | Updated |
 
 ## Decision Log
 
