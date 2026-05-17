@@ -6,6 +6,7 @@ model:
   model_family: LFM2
   max_seq_length: 2048
   load_in_4bit: true
+  use_gradient_checkpointing: unsloth
   dtype: bfloat16
 
 data:
@@ -26,6 +27,42 @@ format:
     - evidence
     - reason
     - recommended_action
+
+lora:
+  r: 16
+  lora_alpha: 16
+  lora_dropout: 0.0
+  bias: none
+  task_type: CAUSAL_LM
+  random_state: 3407
+  use_rslora: false
+  loftq_config: null
+  # First-pass projection names. train_lora.py should verify these after loading LFM2.
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+training:
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 4
+  warmup_steps: 5
+  max_steps: 30
+  learning_rate: 0.0002
+  num_train_epochs: 1
+  optim: adamw_8bit
+  weight_decay: 0.001
+  lr_scheduler_type: linear
+  logging_steps: 5
+  eval_strategy: epoch
+  save_strategy: epoch
+  seed: 3407
+  report_to: none
 
 output:
   output_dir: ml/unsloth/outputs/lfm2-350m-security-triage-lora
