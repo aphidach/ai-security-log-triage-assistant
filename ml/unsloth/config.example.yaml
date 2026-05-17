@@ -1,0 +1,32 @@
+# Example config for the first Unsloth fine-tuning path.
+# Keep training values outside train_lora.py so each run is reproducible.
+
+model:
+  base_model: unsloth/LFM2-350M
+  model_family: LFM2
+  max_seq_length: 2048
+  load_in_4bit: true
+  dtype: bfloat16
+
+data:
+  train_path: data/splits/train.jsonl
+  validation_path: data/splits/validation.jsonl
+  input_field: input
+  output_field: output
+
+format:
+  prompt_version: triage-json-v1
+  training_record_format: chat_messages
+  use_tokenizer_chat_template: true
+  strict_output_schema: true
+  assistant_output_keys:
+    - label
+    - severity
+    - is_suspicious
+    - evidence
+    - reason
+    - recommended_action
+
+output:
+  output_dir: ml/unsloth/outputs/lfm2-350m-security-triage-lora
+  adapter_name: lfm2-350m-security-triage-lora
