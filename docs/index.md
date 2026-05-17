@@ -12,7 +12,7 @@
 
 **Last updated**
 
-2026-05-16
+2026-05-17
 
 ## Core Pages
 
@@ -21,6 +21,8 @@
 - [[triage-output-schema]]: อธิบาย `data/schemas/triage-output.schema.json` ซึ่งเป็น output contract กลางของ dataset, evaluator, model adapter และ UI
 - [[label-taxonomy]]: ความหมาย วิธีใช้ evidence และ caveat ของ label รอบแรกทั้ง 5 ตัว
 - [[dataset-input-output-format]]: รูปแบบ JSONL ของ `instruction`, `input`, `output`, ขนาด dataset รอบแรก และ validation rules
+- [[data-card]]: data card ของ synthetic dataset รอบแรก รวมที่มา วิธี generate split ข้อจำกัด และ privacy note
+- [[log-type-examples]]: คำอธิบาย log format ที่ dataset จำลองไว้ เช่น web access, SSH auth, WAF, IDS และ netflow-style log พร้อมตัวอย่าง
 - [[evaluation-metrics-rationale]]: เหตุผลที่ต้องวัด metric รอบแรก เช่น label accuracy, JSON/schema validity, evidence match และ latency
 - [[dataset-source-strategy]]: กลยุทธ์เลือกและจัดลำดับแหล่ง dataset ภายนอก เช่น Loghub, OTRF/Mordor, BOTS, SigmaHQ, Splunk Attack Data และ Kaggle synthetic candidate
 - [[slm-fine-tuning-model-choice]]: สรุป benchmark SLM และเหตุผลที่ POC รอบแรกเริ่มจาก LFM2-350M
@@ -61,6 +63,8 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-16 | Codex | Added triage output schema explanation page | `docs/triage-output-schema.md` | Updated |
 | 2026-05-16 | Codex | Added first-pass label taxonomy page to core docs | `docs/label-taxonomy.md` | Updated |
 | 2026-05-16 | Codex | Added dataset input/output format page to core docs | `docs/dataset-input-output-format.md` | Updated |
+| 2026-05-17 | Codex | Added first synthetic dataset data card to core docs | `docs/data-card.md` | Updated |
+| 2026-05-17 | Codex | Added log type examples page to core docs | `docs/log-type-examples.md` | Updated |
 
 ## Decision Log
 

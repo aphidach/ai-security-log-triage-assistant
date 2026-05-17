@@ -185,6 +185,8 @@
   },
   "active": "349890ec50d8e5bc",
   "lastOpenFiles": [
+    "log-type-examples.md",
+    "data-card.md",
     "triage-output-schema.md",
     "dataset-input-output-format.md",
     "slm-rag-fine-tuning-hallucination.md",
