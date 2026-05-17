@@ -38,7 +38,6 @@
 - [x] เพิ่ม system prompt สำหรับตอบ JSON เท่านั้น
 - [x] เพิ่ม OpenAI-compatible adapter
 - [x] เพิ่ม FineTuneAdapter สำหรับ fine-tuned OpenAI-compatible endpoint
-- [ ] เพิ่ม Ollama หรือ LM Studio adapter
 - [x] เพิ่ม timeout และ latency measurement
 - [x] เพิ่ม JSON parsing guard
 - [x] เพิ่ม schema validation guard
