@@ -9,7 +9,7 @@ import sys
 import time
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, TextIO
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,6 +34,42 @@ ADAPTER_CHOICES = ("heuristic", "openai-compatible", "openai-finetune")
 
 JsonObject = dict[str, Any]
 MappingStringAny = dict[str, Any]
+
+
+class ProgressReporter:
+    def __init__(self, *, total: int, adapter_name: str, enabled: bool, stream: TextIO = sys.stderr) -> None:
+        self.total = total
+        self.adapter_name = adapter_name
+        self.enabled = enabled
+        self.stream = stream
+        self.started_at = time.perf_counter()
+        self.one_line = stream.isatty()
+
+    def start(self) -> None:
+        self.update(0)
+
+    def update(self, completed: int, current_id: str | None = None) -> None:
+        if not self.enabled:
+            return
+
+        percent = 100 if self.total == 0 else int((completed / self.total) * 100)
+        elapsed_seconds = time.perf_counter() - self.started_at
+        line = (
+            f"progress: {progress_bar(percent)} {percent:3d}% "
+            f"({completed}/{self.total}) adapter={self.adapter_name} "
+            f"elapsed={elapsed_seconds:.1f}s"
+        )
+        if current_id:
+            line = f"{line} current={current_id}"
+
+        prefix = "\r" if self.one_line else ""
+        end = "" if self.one_line else "\n"
+        padding = " " * 8 if self.one_line else ""
+        print(f"{prefix}{line}{padding}", end=end, file=self.stream, flush=True)
+
+    def finish(self) -> None:
+        if self.enabled and self.one_line:
+            print(file=self.stream, flush=True)
 
 
 class HeuristicAdapter:
@@ -195,6 +231,12 @@ def round_latency(value: float) -> float:
     return round(value, 6)
 
 
+def progress_bar(percent: int, width: int = 24) -> str:
+    bounded_percent = max(0, min(100, percent))
+    filled = round(width * bounded_percent / 100)
+    return f"[{'#' * filled}{'-' * (width - filled)}]"
+
+
 def json_safe(value: Any) -> Any:
     try:
         json.dumps(value)
@@ -286,8 +328,20 @@ def build_report(
     split_path: Path,
     schema_path: Path,
     schema: JsonObject,
+    *,
+    show_progress: bool = True,
 ) -> JsonObject:
-    results = [evaluate_record(item, adapter, schema) for item in records]
+    progress = ProgressReporter(total=len(records), adapter_name=adapter.name, enabled=show_progress)
+    progress.start()
+    results: list[JsonObject] = []
+    for index, item in enumerate(records, start=1):
+        record_id = str(item.get("id", f"record-{index}"))
+        if progress.one_line:
+            progress.update(index - 1, current_id=record_id)
+        results.append(evaluate_record(item, adapter, schema))
+        progress.update(index, current_id=record_id)
+    progress.finish()
+
     sample_count = len(results)
     adapter_name = adapter.name
     adapter_metadata = {"adapter": adapter_name}
@@ -462,12 +516,13 @@ def main() -> None:
         help="Markdown report output path. Defaults to reports/<adapter>-eval.md.",
     )
     parser.add_argument("--no-write", action="store_true", help="Run evaluation without writing report files.")
+    parser.add_argument("--no-progress", action="store_true", help="Hide per-record progress output.")
     args = parser.parse_args()
 
     records = load_jsonl(args.split)
     schema = load_schema(args.schema)
     adapter = create_adapter(args.adapter)
-    report = build_report(records, adapter, args.split, args.schema, schema)
+    report = build_report(records, adapter, args.split, args.schema, schema, show_progress=not args.no_progress)
 
     json_report_path = None if args.no_write else args.out or default_json_report_path(args.adapter)
     markdown_report_path = None if args.no_write else args.comparison_out or default_markdown_report_path(args.adapter)
