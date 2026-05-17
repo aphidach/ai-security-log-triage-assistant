@@ -1,5 +1,7 @@
 # AI Security Log Triage Assistant
 
+![AI Security Log Triage Assistant hero](docs/assets/readme-hero.png)
+
 POC สำหรับวิเคราะห์ security log ด้วย small model และ fine-tuning
 
 เป้าหมายคือพิสูจน์ workflow ให้ครบ: สร้าง dataset, ทำ baseline, fine-tune โมเดลขนาดเล็ก, evaluate ด้วย test set เดียวกัน แล้วเทียบผลก่อน-หลัง fine-tune ไม่ใช่ทำระบบ SOC อัตโนมัติหรือฟันธงว่าเครื่องถูกเจาะจาก log เส้นเดียว
