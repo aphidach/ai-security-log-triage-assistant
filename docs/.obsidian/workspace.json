@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Day6.md",
+                "file": "fine-tuning-notes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Day6"
+              "title": "fine-tuning-notes"
             }
           }
         ]
@@ -185,23 +185,25 @@
   },
   "active": "349890ec50d8e5bc",
   "lastOpenFiles": [
-    "dataset-source-strategy.md",
+    "raw/Gemma4_(E2B)_Text.ipynb",
+    "triage-output-schema.md",
+    "tinylora-reasoning-13-parameters.md",
+    "slm-rag-fine-tuning-hallucination.md",
+    "poc-plan.md",
+    "Gemma-3–4B-IT.md",
     "fine-tuning-notes.md",
+    "Day6.md",
+    "dataset-source-strategy.md",
     "assets/readme-hero.png",
     "assets",
     "dataset-input-output-format.md",
     "data-card.md",
     "slm-fine-tuning-model-choice.md",
     "log-type-examples.md",
-    "triage-output-schema.md",
-    "slm-rag-fine-tuning-hallucination.md",
-    "tinylora-reasoning-13-parameters.md",
     "evaluation-metrics-rationale.md",
-    "Gemma-3–4B-IT.md",
     "index.md",
     "label-taxonomy.md",
     "log.md",
-    "poc-plan.md",
     "project-structure-rationale.md",
     "References.md",
     "raw/Fine-tuning small language models for industrial retrieval-augmented generation Efficiency, factuality, and hallucination analysis.md",
