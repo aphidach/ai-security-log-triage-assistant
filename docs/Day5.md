@@ -13,6 +13,7 @@
 - Hugging Face/Unsloth model card สำหรับ model id `unsloth/LFM2-350M` (source: https://huggingface.co/unsloth/LFM2-350M)
 - `scripts/model_adapters/prompt_contract.py` สำหรับ prompt contract ที่ใช้ร่วมกันระหว่าง adapter, evaluator และ training format (source: scripts/model_adapters/prompt_contract.py)
 - `data/schemas/triage-output.schema.json` สำหรับ required field และ enum ของ output เดิม (source: data/schemas/triage-output.schema.json)
+- `ml/unsloth/config.example.yaml` สำหรับ base model, LoRA, training และ output config รอบปัจจุบัน (source: ml/unsloth/config.example.yaml)
 - `ml/unsloth/train_lora.py` สำหรับ training config preflight และ split guard (source: ml/unsloth/train_lora.py)
 - `ml/unsloth/inference.py` สำหรับ checkpoint inference path หลัง train (source: ml/unsloth/inference.py)
 - `docs/fine-tuning-notes.md` สำหรับ Colab/GPU notes, known limitations และ Day 6 handoff (source: docs/fine-tuning-notes.md)
@@ -21,7 +22,7 @@
 
 **Last updated**
 
-2026-05-17
+2026-05-18
 
 ## Goal
 
@@ -133,11 +134,11 @@ python3 ml/unsloth/training_format.py --split data/splits/train.jsonl --preview 
 
 `method: qlora` ไม่ได้จำเป็นต้องอยู่ใน config ตอนนี้ เพราะ QLoRA ในทางปฏิบัติคือการใส่ LoRA adapter บน base model ที่โหลดแบบ quantized 4-bit ดังนั้น config ชุดนี้บอกความเป็น QLoRA ผ่าน `load_in_4bit: true` ใน section `model` และค่าของ LoRA ใน section `lora`
 
-training config ตั้ง `per_device_train_batch_size: 2`, `per_device_eval_batch_size: 2` และ `gradient_accumulation_steps: 4` เพื่อให้ effective batch size ประมาณ 8 ใช้ `warmup_steps: 5`, `max_steps: 30`, `learning_rate: 0.0002`, `num_train_epochs: 1`, `optim: adamw_8bit`, `weight_decay: 0.001`, scheduler แบบ `linear`, `seed: 3407` และ `report_to: none`
+training config ตั้ง `per_device_train_batch_size: 2`, `per_device_eval_batch_size: 2` และ `gradient_accumulation_steps: 4` เพื่อให้ effective batch size ประมาณ 8 ใช้ `warmup_steps: 5`, `max_steps: 90`, `learning_rate: 0.0001`, `num_train_epochs: 1`, `optim: adamw_8bit`, `weight_decay: 0.001`, scheduler แบบ `linear`, `seed: 3407` และ `report_to: none`
 
 `target_modules` รอบแรกใช้ projection names ทั่วไปของ causal LM: `q_proj`, `k_proj`, `v_proj`, `o_proj`, `gate_proj`, `up_proj`, `down_proj` แต่ค่านี้ยังต้อง verify ตอน `train_lora.py` โหลด LFM2 จริง ถ้า module name ไม่ตรง ให้แก้ config ไม่ใช่ hard-code ใน script
 
-ค่า SFTTrainer ที่เป็น boilerplate ซ้ำ ๆ ยังไม่ต้องอยู่ใน config รอบนี้ ให้ `train_lora.py` set เอง เช่น `remove_unused_columns=False`, `dataset_text_field=""`, `dataset_kwargs={"skip_prepare_dataset": True}` และ `max_length` ที่อิงจาก `model.max_seq_length`
+ค่า SFTTrainer ที่เป็น boilerplate ซ้ำ ๆ ยังไม่ต้องอยู่ใน config รอบนี้ ให้ `train_lora.py` set เอง เช่น `remove_unused_columns=False`, `dataset_text_field="text"`, `dataset_num_proc=1`, `packing=False` และ `max_length` ที่อิงจาก `model.max_seq_length`
 
 ### Split Guard
 
