@@ -78,6 +78,8 @@ python3 ml/unsloth/inference.py \
 
 `scripts/setup_gpu_env.sh` ใช้ `uv pip --python ...` เป็นตัวติดตั้งหลัก และจะหยุดทันทีถ้ายังไม่ได้ activate virtual environment ส่วน `requirements-gpu.txt` เก็บ target package set ของ GPU stack แต่ install จริงควรผ่าน script เพราะ stack นี้ต้องอาศัย install order และ flags แบบ notebook เช่น `--no-deps` และ `--no-build-isolation`
 
+training path นี้ยึด `unsloth` เป็น runtime หลัก ดังนั้น script ใต้ `ml/unsloth/` ต้อง import `unsloth` ก่อน `trl`, `transformers` และ `peft` ใน process เดียวกัน เพื่อให้ compatibility patch ของ Unsloth ทำงานเหมือนตัวอย่าง Colab
+
 ถ้าใช้ WSL และ `nvidia-smi` ขึ้น `command not found` ทั้งที่ driver พร้อมอยู่แล้ว ให้ลอง:
 
 ```bash

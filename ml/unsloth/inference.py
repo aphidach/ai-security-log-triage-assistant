@@ -109,8 +109,10 @@ def load_model_and_tokenizer(config: JsonObject, adapter_path: Path) -> tuple[An
         raise InferenceError(f"LoRA adapter path does not exist: {adapter_path}")
 
     try:
-        from peft import PeftModel
+        # Unsloth should load before PEFT/Transformers-backed helpers so the
+        # runtime matches the repo's Unsloth-first training stack.
         from unsloth import FastLanguageModel
+        from peft import PeftModel
     except ModuleNotFoundError as exc:
         raise InferenceError(
             "Unsloth inference dependencies are missing. Install the GPU training environment first."
@@ -243,6 +245,15 @@ def validate_output(output: JsonObject, schema: JsonObject) -> list[str]:
     return errors
 
 
+def print_raw_output(text: str) -> None:
+    print("--- raw model output ---", file=sys.stderr)
+    if text:
+        print(text, file=sys.stderr)
+    else:
+        print("(empty)", file=sys.stderr)
+    print("--- end raw model output ---", file=sys.stderr)
+
+
 def read_log_line(args: argparse.Namespace) -> str:
     sources = [bool(args.log_line), bool(args.log_file), bool(args.stdin)]
     if sum(sources) != 1:
@@ -308,6 +319,11 @@ def parse_args() -> argparse.Namespace:
     input_group.add_argument("--stdin", action="store_true", help="Read one security log line from stdin.")
     parser.add_argument("--max-new-tokens", type=int, default=512)
     parser.add_argument(
+        "--show-raw-output",
+        action="store_true",
+        help="Print the raw model completion to stderr for debugging before JSON parsing/validation.",
+    )
+    parser.add_argument(
         "--preflight-only",
         action="store_true",
         help="Validate config, schema, adapter path, and prompt wiring without loading the model.",
@@ -319,6 +335,8 @@ def main() -> int:
     args = parse_args()
     config_path = args.config.resolve()
     schema_path = args.schema.resolve()
+    raw_completion = ""
+    raw_output_printed = False
     try:
         config = load_config(config_path)
         adapter_path = resolve_adapter_path(config, args.adapter_path)
@@ -344,11 +362,16 @@ def main() -> int:
             messages=messages,
             max_new_tokens=args.max_new_tokens,
         )
+        if args.show_raw_output:
+            print_raw_output(raw_completion)
+            raw_output_printed = True
         output = extract_json_object(raw_completion)
         errors = validate_output(output, schema)
         if errors:
             raise InferenceError(f"model output failed schema validation: {'; '.join(errors)}")
     except (OSError, TrainingConfigError, InferenceError, ValueError) as exc:
+        if args.show_raw_output and raw_completion and not raw_output_printed:
+            print_raw_output(raw_completion)
         print(f"inference failed: {exc}", file=sys.stderr)
         return 1
 

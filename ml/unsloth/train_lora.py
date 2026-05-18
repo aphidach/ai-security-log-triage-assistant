@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ml.unsloth.training_format import format_split, load_jsonl  # noqa: E402
+from ml.unsloth.training_format import apply_tokenizer_chat_template, format_split, load_jsonl  # noqa: E402
 
 
 DEFAULT_CONFIG_PATH = ROOT / "ml" / "unsloth" / "config.example.yaml"
@@ -92,11 +92,12 @@ def load_simple_yaml(path: Path) -> JsonObject:
 
 
 def parse_scalar(value: str) -> Any:
-    if value == "true":
+    normalized = value.strip().lower()
+    if normalized == "true":
         return True
-    if value == "false":
+    if normalized == "false":
         return False
-    if value == "null":
+    if normalized in {"null", "none"}:
         return None
 
     try:
@@ -171,6 +172,79 @@ def count_labels(records: list[JsonObject]) -> dict[str, int]:
     return dict(sorted(labels.items()))
 
 
+def report_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
+def coerce_bool(value: Any, *, field_name: str) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        if value in (0, 1):
+            return bool(value)
+        raise TrainingConfigError(f"{field_name} must be a boolean-like value")
+
+    normalized = str(value).strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise TrainingConfigError(f"{field_name} must be a boolean-like value")
+
+
+def resolve_gradient_checkpointing(value: Any) -> bool | str:
+    if isinstance(value, str) and value.strip().lower() == "unsloth":
+        return "unsloth"
+    return coerce_bool(value, field_name="model.use_gradient_checkpointing")
+
+
+def resolve_torch_dtype(dtype_name: Any, *, torch_module: Any) -> Any:
+    if dtype_name in (None, "", "auto"):
+        return None
+
+    dtype_map = {
+        "bfloat16": torch_module.bfloat16,
+        "float16": torch_module.float16,
+        "float32": torch_module.float32,
+    }
+    key = str(dtype_name).strip().lower()
+    try:
+        return dtype_map[key]
+    except KeyError as exc:
+        raise TrainingConfigError(f"unsupported model.dtype in config: {dtype_name}") from exc
+
+
+def normalize_string_list(value: Any, *, field_name: str) -> list[str]:
+    raw_items = [value] if isinstance(value, str) else value
+    if not isinstance(raw_items, list) or not raw_items:
+        raise TrainingConfigError(f"{field_name} must be a non-empty string list")
+
+    normalized: list[str] = []
+    for index, item in enumerate(raw_items):
+        if not isinstance(item, str) or not item.strip():
+            raise TrainingConfigError(f"{field_name}[{index}] must be a non-empty string")
+        normalized.append(item.strip())
+    return normalized
+
+
+def module_leaf_names(model: Any) -> set[str]:
+    names: set[str] = set()
+    for module_name, _ in model.named_modules():
+        if not module_name:
+            continue
+        names.add(module_name.split(".")[-1])
+    return names
+
+
+def build_sft_dataset(records: list[JsonObject], tokenizer: Any) -> Any:
+    from datasets import Dataset
+
+    return Dataset.from_list([{"text": apply_tokenizer_chat_template(tokenizer, record)} for record in records])
+
+
 def build_preflight_report(config_path: Path, config: JsonObject) -> JsonObject:
     train_path, validation_path = validate_training_splits(config)
     train_records = load_jsonl(train_path)
@@ -184,29 +258,149 @@ def build_preflight_report(config_path: Path, config: JsonObject) -> JsonObject:
     output = require_section(config, "output")
     return {
         "status": "preflight_ok",
-        "config_path": str(config_path.relative_to(ROOT)),
+        "config_path": report_path(config_path),
         "model": {
             "base_model": model.get("base_model"),
             "max_seq_length": model.get("max_seq_length"),
             "load_in_4bit": model.get("load_in_4bit"),
         },
         "splits": {
-            "train_path": str(train_path.relative_to(ROOT)),
+            "train_path": report_path(train_path),
             "train_records": len(train_records),
             "train_labels": count_labels(train_records),
-            "validation_path": str(validation_path.relative_to(ROOT)),
+            "validation_path": report_path(validation_path),
             "validation_records": len(validation_records),
             "validation_labels": count_labels(validation_records),
-            "reserved_test_path": str(RESERVED_TEST_PATH.relative_to(ROOT)),
+            "reserved_test_path": report_path(RESERVED_TEST_PATH),
             "test_split_policy": "never read during training; use only after training via scripts/evaluate.py",
         },
         "output_dir": output.get("output_dir"),
     }
 
 
+def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
+    train_path, validation_path = validate_training_splits(config)
+
+    model_config = require_section(config, "model")
+    training_config = require_section(config, "training")
+    output_config = require_section(config, "output")
+    lora_config = require_section(config, "lora")
+
+    output_dir = resolve_repo_path(output_config.get("output_dir"), field_name="output.output_dir")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    try:
+        import torch
+        # Unsloth must load before TRL so its SFTTrainer compatibility patch
+        # accepts notebook-style tokenizer kwargs on this training path.
+        from unsloth import FastLanguageModel, is_bfloat16_supported
+        from trl import SFTConfig, SFTTrainer
+    except ModuleNotFoundError as exc:
+        raise TrainingConfigError(
+            "GPU training dependencies are missing: install unsloth, trl, torch, transformers, datasets, and peft"
+        ) from exc
+
+    if not torch.cuda.is_available():
+        raise TrainingConfigError("GPU training requires CUDA, but torch.cuda.is_available() is false")
+
+    base_model = model_config.get("base_model")
+    if not isinstance(base_model, str) or not base_model:
+        raise TrainingConfigError("model.base_model must be a non-empty string")
+
+    max_seq_length = int(model_config.get("max_seq_length", 2048))
+    dtype = resolve_torch_dtype(model_config.get("dtype"), torch_module=torch)
+    load_in_4bit = coerce_bool(model_config.get("load_in_4bit", True), field_name="model.load_in_4bit")
+
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=base_model,
+        max_seq_length=max_seq_length,
+        dtype=dtype,
+        load_in_4bit=load_in_4bit,
+    )
+
+    target_modules = normalize_string_list(
+        lora_config.get("target_modules", ["all-linear"]),
+        field_name="lora.target_modules",
+    )
+   
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r=int(lora_config.get("r", 16)),
+        # target_modules=target_modules,
+        lora_alpha=int(lora_config.get("lora_alpha", 16)),
+        lora_dropout=float(lora_config.get("lora_dropout", 0.0)),
+        use_gradient_checkpointing=resolve_gradient_checkpointing(
+            model_config.get("use_gradient_checkpointing", False)
+        ),
+        bias=str(lora_config.get("bias", "none")).lower(),
+        random_state=int(lora_config.get("random_state", training_config.get("seed", 3407))),
+        use_rslora=coerce_bool(lora_config.get("use_rslora", False), field_name="lora.use_rslora"),
+        loftq_config=lora_config.get("loftq_config"),
+    )
+
+    train_records = load_jsonl(train_path)
+    validation_records = load_jsonl(validation_path)
+
+    train_dataset = build_sft_dataset(train_records, tokenizer)
+    validation_dataset = build_sft_dataset(validation_records, tokenizer)
+    bf16_supported = bool(is_bfloat16_supported())
+
+    args = SFTConfig(
+        output_dir=str(output_dir),
+        per_device_train_batch_size=int(training_config.get("per_device_train_batch_size", 2)),
+        per_device_eval_batch_size=int(
+            training_config.get(
+                "per_device_eval_batch_size",
+                training_config.get("per_device_train_batch_size", 2),
+            )
+        ),
+        gradient_accumulation_steps=int(training_config.get("gradient_accumulation_steps", 8)),
+        warmup_steps=int(training_config.get("warmup_steps", 5)),
+        max_steps=int(training_config.get("max_steps", 30)),
+        learning_rate=float(training_config.get("learning_rate", 2e-4)),
+        num_train_epochs=float(training_config.get("num_train_epochs", 1)),
+        optim=str(training_config.get("optim", "adamw_8bit")),
+        weight_decay=float(training_config.get("weight_decay", 0.001)),
+        lr_scheduler_type=str(training_config.get("lr_scheduler_type", "linear")),
+        logging_steps=int(training_config.get("logging_steps", 1)),
+        eval_strategy=str(training_config.get("eval_strategy", "epoch")),
+        save_strategy=str(training_config.get("save_strategy", "epoch")),
+        seed=int(training_config.get("seed", 3407)),
+        report_to=str(training_config.get("report_to", "none")),
+        remove_unused_columns=False,
+        dataset_num_proc=1,
+        dataset_text_field="text",
+        max_length=max_seq_length,
+        packing=False,
+        bf16=bf16_supported,
+        fp16=not bf16_supported,
+    )
+
+    trainer = SFTTrainer(
+        model=model,
+        tokenizer=tokenizer,
+        train_dataset=train_dataset,
+        eval_dataset=validation_dataset,
+        args=args,
+        max_seq_length=max_seq_length,
+    )
+
+    train_result = trainer.train()
+    trainer.save_model(str(output_dir))
+    tokenizer.save_pretrained(str(output_dir))
+
+    return {
+        "status": "training_complete",
+        "config_path": report_path(config_path),
+        "output_dir": report_path(output_dir),
+        "train_records": len(train_records),
+        "validation_records": len(validation_records),
+        "metrics": dict(sorted(getattr(train_result, "metrics", {}).items())),
+    }
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Validate config and split policy for the Day 5 Unsloth LoRA path.",
+        description="Validate config and run the Day 6 Unsloth LoRA training path.",
     )
     parser.add_argument(
         "--config",
@@ -241,17 +435,16 @@ def main() -> int:
             validation_path=args.validation_path,
         )
         report = build_preflight_report(config_path, config)
-    except (OSError, TrainingConfigError, ValueError) as exc:
-        print(f"training preflight failed: {exc}", file=sys.stderr)
-        return 1
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        if args.preflight_only:
+            return 0
 
-    print(json.dumps(report, ensure_ascii=False, indent=2))
-    if not args.preflight_only:
-        print(
-            "training preflight only for now; GPU training implementation is the first Day 6 task",
-            file=sys.stderr,
-        )
-    return 0
+        training_result = run_gpu_training(config_path, config)
+        print(json.dumps(training_result, ensure_ascii=False, indent=2))
+        return 0
+    except (OSError, TrainingConfigError, ValueError) as exc:
+        print(f"training failed: {exc}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":
