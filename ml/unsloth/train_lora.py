@@ -326,7 +326,7 @@ def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
     model = FastLanguageModel.get_peft_model(
         model,
         r=int(lora_config.get("r", 16)),
-        # target_modules=target_modules,
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj",],
         lora_alpha=int(lora_config.get("lora_alpha", 16)),
         lora_dropout=float(lora_config.get("lora_dropout", 0.0)),
         use_gradient_checkpointing=resolve_gradient_checkpointing(
