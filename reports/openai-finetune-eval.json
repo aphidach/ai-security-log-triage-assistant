@@ -1,0 +1,631 @@
+{
+  "adapter": "openai-finetune",
+  "adapter_metadata": {
+    "adapter": "openai-finetune",
+    "base_url": "http://localhost:8080/v1",
+    "env": {
+      "api_key": "OPENAI_FINETUNE_API_KEY",
+      "base_url": "OPENAI_FINETUNE_BASE_URL",
+      "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+      "model": "OPENAI_FINETUNE_MODEL",
+      "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+    },
+    "max_retries": 1,
+    "model": "lfm2-security-triage",
+    "prompt_version": "triage-json-v1",
+    "timeout_seconds": 30.0
+  },
+  "counts": {
+    "evidence_partial_match": 0,
+    "failure": 5,
+    "invalid_output": 5,
+    "json_parse_success": 0,
+    "label_correct": 0,
+    "schema_success": 0,
+    "severity_correct": 0
+  },
+  "expected_label_distribution": {
+    "directory_traversal_attempt": 3,
+    "failed_login_bruteforce": 1,
+    "port_scan_or_recon": 1
+  },
+  "failures": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-b9396f5e6288afe9",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 186,
+            "completion_tokens_details": null,
+            "prompt_tokens": 577,
+            "prompt_tokens_details": null,
+            "total_tokens": 763
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 577,
+          "output_token_details": {},
+          "output_tokens": 186,
+          "total_tokens": 763
+        }
+      },
+      "expected": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "json_parse_failed: Expecting value: line 1 column 1 (char 0)",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000474",
+      "input": "2026-05-17T09:27:34+07:00 ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205; probed_ports=21,22,23,25,80,443; packets=106",
+      "latency_ms": 8373.466375,
+      "prediction": null,
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-87e524ddf891de1b",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 129,
+            "completion_tokens_details": null,
+            "prompt_tokens": 560,
+            "prompt_tokens_details": null,
+            "total_tokens": 689
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 560,
+          "output_token_details": {},
+          "output_tokens": 129,
+          "total_tokens": 689
+        }
+      },
+      "expected": {
+        "evidence": [
+          "/static/../config.yml",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The static file route includes traversal sequences targeting configuration files.",
+        "recommended_action": "Confirm the route rejected the request and search for other traversal attempts from the source.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "json_parse_failed: Expecting value: line 1 column 1 (char 0)",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000335",
+      "input": "2026-05-17T18:42:34+07:00 app=web route=/static/../config.yml src_ip=198.51.100.35 status=404 bytes=485",
+      "latency_ms": 5084.706917,
+      "prediction": null,
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-84afff0b71ec325c",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 123,
+            "completion_tokens_details": null,
+            "prompt_tokens": 578,
+            "prompt_tokens_details": null,
+            "total_tokens": 701
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 578,
+          "output_token_details": {},
+          "output_tokens": 123,
+          "total_tokens": 701
+        }
+      },
+      "expected": {
+        "evidence": [
+          "..\\..\\windows\\win.ini",
+          "GET /download?file=..\\..\\windows\\win.ini"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The requested file path contains parent-directory traversal sequences.",
+        "recommended_action": "Review web server logs and verify that sensitive files were not returned.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "json_parse_failed: Expecting value: line 1 column 1 (char 0)",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000331",
+      "input": "203.0.113.50 - - [17/May/2026:14:56:44 +0700] \"GET /download?file=..\\..\\windows\\win.ini HTTP/1.1\" 403 305 \"-\" \"curl/8.1\"",
+      "latency_ms": 4549.624125,
+      "prediction": null,
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-b759016f7bc27319",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 104,
+            "completion_tokens_details": null,
+            "prompt_tokens": 564,
+            "prompt_tokens_details": null,
+            "total_tokens": 668
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 564,
+          "output_token_details": {},
+          "output_tokens": 104,
+          "total_tokens": 668
+        }
+      },
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "json_parse_failed: Expecting value: line 1 column 1 (char 0)",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000137",
+      "input": "May 17 08:24:39 auth-01 sshd[3146]: Failed password for admin from 192.0.2.105 port 34263 ssh2; repeated 11 times in 5 minutes",
+      "latency_ms": 4205.836166,
+      "prediction": null,
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-b6e9a8279eed3a11",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 222,
+            "completion_tokens_details": null,
+            "prompt_tokens": 582,
+            "prompt_tokens_details": null,
+            "total_tokens": 804
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 582,
+          "output_token_details": {},
+          "output_tokens": 222,
+          "total_tokens": 804
+        }
+      },
+      "expected": {
+        "evidence": [
+          "..%2f..%2fetc%2fpasswd",
+          "GET /download?file=..%2f..%2fetc%2fpasswd"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The requested file path contains parent-directory traversal sequences.",
+        "recommended_action": "Review web server logs and verify that sensitive files were not returned.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "json_parse_failed: Expecting value: line 1 column 1 (char 0)",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000388",
+      "input": "198.51.100.233 - - [17/May/2026:11:51:26 +0700] \"GET /download?file=..%2f..%2fetc%2fpasswd HTTP/1.1\" 404 264 \"-\" \"curl/8.1\"",
+      "latency_ms": 10033.246709,
+      "prediction": null,
+      "schema_errors": []
+    }
+  ],
+  "metrics": {
+    "average_latency_ms": 6449.376058,
+    "evidence_partial_match": 0.0,
+    "invalid_output_count": 5,
+    "json_parse_success_rate": 0.0,
+    "label_accuracy": 0.0,
+    "schema_success_rate": 0.0,
+    "severity_accuracy": 0.0
+  },
+  "predicted_label_distribution": {
+    "<invalid>": 5
+  },
+  "sample_count": 5,
+  "samples": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-b9396f5e6288afe9",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 186,
+            "completion_tokens_details": null,
+            "prompt_tokens": 577,
+            "prompt_tokens_details": null,
+            "total_tokens": 763
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 577,
+          "output_token_details": {},
+          "output_tokens": 186,
+          "total_tokens": 763
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000474",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 8373.466375,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": "The log contains several suspicious activities:\n\n- probed_ports: The request attempts to probe ports 21, 22, 23, 25, and 80, which are known to be used in port scanning attacks.\n- nmap fingerprint: The probe ports are identified as common scanning ports, indicating an attempt to gather information about the target system.\n\nGiven these findings, the log is classified as suspicious.\n\nRecommendation: Proceed with caution and investigate the probed ports and scanning activity. Block the source IP address and consider additional scanning or brute force attempts.\n\nOutput schema:\n{\n  \"label\": \"port_scan_or_recon\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\"probed_ports\"],\n  \"reason\": \"The probe ports are indicative of a scanning activity.\"\n}",
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-87e524ddf891de1b",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 129,
+            "completion_tokens_details": null,
+            "prompt_tokens": 560,
+            "prompt_tokens_details": null,
+            "total_tokens": 689
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 560,
+          "output_token_details": {},
+          "output_tokens": 129,
+          "total_tokens": 689
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000335",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 5084.706917,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": "The log contains several suspicious patterns:\n\n- `app=web route=/static/../config.yml`: This is a common SQL injection pattern, where the query is constructed to bypass authentication.\n- `status=404 bytes=485`: This indicates a 404 Not Found status, which is often used to redirect users to a 403 Forbidden status.\n\nConsidering these patterns, the log is suspicious.\n\nRecommendation: Classify as suspicious.\n\nEvidence: SQL injection attempt.\n\nRecommended Action: Block the source IP address and consider rate-limiting or IP blocking for this source.",
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-84afff0b71ec325c",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 123,
+            "completion_tokens_details": null,
+            "prompt_tokens": 578,
+            "prompt_tokens_details": null,
+            "total_tokens": 701
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 578,
+          "output_token_details": {},
+          "output_tokens": 123,
+          "total_tokens": 701
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000331",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 4549.624125,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": "The log contains several suspicious activities:\n\n- 403 Forbidden: This indicates the client is attempting to access a resource they are not authorized to.\n- SQL Injection: The request contains SQL injection indicators, suggesting a potential SQL injection attempt.\n\nClassification: Suspicious\n\nEvidence: The request contains SQL injection indicators.\n\nReason: The request is attempting to access a file that is not intended for download, which is a clear violation of the principle of least privilege and could be a SQL injection attempt.\n\nRecommended Action: Block the IP address from making further requests to this domain.",
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-b759016f7bc27319",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 104,
+            "completion_tokens_details": null,
+            "prompt_tokens": 564,
+            "prompt_tokens_details": null,
+            "total_tokens": 668
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 564,
+          "output_token_details": {},
+          "output_tokens": 104,
+          "total_tokens": 668
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000137",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 4205.836166,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": "label: failed_login_bruteforce\n\nis_suspicious: true\n\nevidence: repeated 11 times in 5 minutes suggests brute force activity.\n\nReason: The repeated failed login attempts from a specific IP address (192.0.2.105) for a short duration is suspicious.\n\nRecommended_action: Block the IP address from further SSH attempts.\n\nThis log is classified as suspicious due to the repeated failed login attempts, which indicates a brute force attack attempt.",
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-finetune",
+        "base_url": "http://localhost:8080/v1",
+        "env": {
+          "api_key": "OPENAI_FINETUNE_API_KEY",
+          "base_url": "OPENAI_FINETUNE_BASE_URL",
+          "max_retries": "OPENAI_FINETUNE_MAX_RETRIES",
+          "model": "OPENAI_FINETUNE_MODEL",
+          "timeout_seconds": "OPENAI_FINETUNE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-b6e9a8279eed3a11",
+          "logprobs": null,
+          "model_name": "lfm2-security-triage",
+          "model_provider": "openai",
+          "system_fingerprint": "vllm-0.21.0-nohash",
+          "token_usage": {
+            "completion_tokens": 222,
+            "completion_tokens_details": null,
+            "prompt_tokens": 582,
+            "prompt_tokens_details": null,
+            "total_tokens": 804
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 582,
+          "output_token_details": {},
+          "output_tokens": 222,
+          "total_tokens": 804
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000388",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 10033.246709,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": "The log contains several suspicious patterns:\n\n- 198.51.100.233 is a known malicious IP address associated with the \"botnet\" command and control (C&C) service.\n- The request is a GET request to a file that is not expected to exist on the server.\n- The request includes a query parameter `file=..2fetc`, which is a common SQL injection technique.\n- The request attempts to access a file outside the expected directory.\n\nGiven these patterns, the log is classified as suspicious.\n\nRecommendation: High severity. This activity is likely a botnet command and control (C&C) request, indicating a potential threat to the server's security.\n\nOutput schema:\n{\n  \"label\": \"botnet_command_and_control\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\"malicious command and control request\"],\n  \"reason\": \"The request attempts to access a file outside the expected directory, which is a common SQL injection technique.\"\n}",
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    }
+  ],
+  "schema": "data/schemas/triage-output.schema.json",
+  "split": "data/raw/test.jsonl"
+}
