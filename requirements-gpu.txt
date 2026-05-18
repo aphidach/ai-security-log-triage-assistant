@@ -1,0 +1,20 @@
+# GPU training dependency set for the Day 6 Unsloth path.
+# Install via scripts/setup_gpu_env.sh so notebook-style ordering and flags
+# such as --no-deps and --no-build-isolation are preserved.
+
+torch==2.8.0
+triton>=3.3.0
+numpy
+pillow
+torchvision
+bitsandbytes
+xformers==0.0.32.post2
+unsloth_zoo[base] @ git+https://github.com/unslothai/unsloth-zoo
+unsloth[base] @ git+https://github.com/unslothai/unsloth
+torchcodec==0.7.0
+tokenizers>=0.22.0,<=0.23.0
+trl==0.22.2
+transformers==5.2.0
+flash-linear-attention
+causal_conv1d==1.6.0
+torchao>=0.16.0

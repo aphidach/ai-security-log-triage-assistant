@@ -1,1 +1,5 @@
+# Base repo dependencies. GPU training packages live in requirements-gpu.txt
+# and should be installed via scripts/setup_gpu_env.sh because the Unsloth
+# stack needs notebook-style ordering and flags that plain requirements files
+# cannot express by themselves.
 langchain-openai>=0.3.0
