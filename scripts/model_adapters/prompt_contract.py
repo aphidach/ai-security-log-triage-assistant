@@ -1,6 +1,9 @@
+#!/usr/bin/env python3
 """Prompt contract used by Python model adapters."""
 
 from __future__ import annotations
+
+import argparse
 
 TRIAGE_PROMPT_VERSION = "triage-json-v1"
 
@@ -100,3 +103,42 @@ def build_triage_user_prompt(log_line: str) -> str:
             log_line,
         ]
     )
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Print the triage prompt contract used by model adapters.",
+    )
+    parser.add_argument(
+        "--kind",
+        choices=("system", "version", "user"),
+        default="system",
+        help="Prompt contract value to print. Default: system.",
+    )
+    parser.add_argument(
+        "--log-line",
+        default="",
+        help="Security log line to use when --kind=user.",
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+
+    if args.kind == "version":
+        print(TRIAGE_PROMPT_VERSION)
+        return 0
+
+    if args.kind == "user":
+        if not args.log_line:
+            raise SystemExit("--log-line is required when --kind=user")
+        print(build_triage_user_prompt(args.log_line))
+        return 0
+
+    print(TRIAGE_SYSTEM_PROMPT)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
