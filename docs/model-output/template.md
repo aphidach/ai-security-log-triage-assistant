@@ -24,9 +24,10 @@ YYYY-MM-DD
 | Base model | `...` |
 | Adapter path | `...` |
 | Output path | `...` |
-| Prompt version | `triage-json-v1` |
+| Prompt version | `triage-json-v2` |
 | Dataset train split | `data/splits/train.jsonl` |
 | Dataset validation split | `data/splits/validation.jsonl` |
+| Output-contract smoke split | `data/splits/smoke-output-contract.jsonl` |
 | Evaluation split | `data/splits/test.jsonl` |
 | Created date | `YYYY-MM-DD` |
 | Status | `draft / trained / served / evaluated / rejected / promoted` |

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import argparse
 
-TRIAGE_PROMPT_VERSION = "triage-json-v1"
+TRIAGE_PROMPT_VERSION = "triage-json-v2"
 
 TRIAGE_LABELS = (
     "normal",
@@ -41,16 +41,6 @@ LABEL_DEFINITIONS = {
     "port_scan_or_recon": "Activity suggests scanning, probing, enumeration, or reconnaissance.",
 }
 
-OUTPUT_SCHEMA_EXAMPLE = """{
-  "label": "sql_injection_attempt",
-  "severity": "high",
-  "is_suspicious": true,
-  "evidence": ["' OR '1'='1"],
-  "reason": "The request contains a common SQL injection pattern.",
-  "recommended_action": "Review web application logs and block or rate-limit the source IP."
-}"""
-
-
 def _bullets(items: tuple[str, ...]) -> str:
     return "\n".join(f"- {item}" for item in items)
 
@@ -62,8 +52,11 @@ TRIAGE_SYSTEM_PROMPT = "\n".join(
         "Use triage language only. Do not claim that a system is compromised.",
         "",
         "Return only one valid JSON object.",
+        "The response must start with { and end with }.",
         "Do not include markdown, code fences, comments, or explanatory text outside JSON.",
+        "Do not repeat the prompt or mention the schema outside the JSON object.",
         "Do not add fields beyond the required schema.",
+        "Always include every required field, including recommended_action.",
         "",
         "Required output fields:",
         _bullets(TRIAGE_OUTPUT_KEYS),
@@ -87,9 +80,6 @@ TRIAGE_SYSTEM_PROMPT = "\n".join(
         "- sql_injection_attempt: high",
         "- directory_traversal_attempt: high",
         "- port_scan_or_recon: medium, or high when the scan is explicit or broad.",
-        "",
-        "Output schema example:",
-        OUTPUT_SCHEMA_EXAMPLE,
     ]
 )
 
@@ -98,6 +88,7 @@ def build_triage_user_prompt(log_line: str) -> str:
     return "\n".join(
         [
             "Analyze this security log and classify whether it is suspicious.",
+            "Respond with the JSON object only.",
             "",
             "Log:",
             log_line,

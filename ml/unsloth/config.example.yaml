@@ -17,7 +17,7 @@ data:
   output_field: output
 
 format:
-  prompt_version: triage-json-v1
+  prompt_version: triage-json-v2
   training_record_format: chat_messages
   use_tokenizer_chat_template: true
   strict_output_schema: true

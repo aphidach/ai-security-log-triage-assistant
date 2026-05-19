@@ -1,21 +1,12 @@
 import { TRIAGE_LABEL_METADATA, TRIAGE_LABELS } from "./labels"
 import { TRIAGE_OUTPUT_KEYS, TRIAGE_SEVERITIES } from "./triage-schema"
 
-export const TRIAGE_PROMPT_VERSION = "triage-json-v1"
+export const TRIAGE_PROMPT_VERSION = "triage-json-v2"
 
 export type TriagePromptMessage = {
   role: "system" | "user"
   content: string
 }
-
-const OUTPUT_SCHEMA_EXAMPLE = `{
-  "label": "sql_injection_attempt",
-  "severity": "high",
-  "is_suspicious": true,
-  "evidence": ["' OR '1'='1"],
-  "reason": "The request contains a common SQL injection pattern.",
-  "recommended_action": "Review web application logs and block or rate-limit the source IP."
-}`
 
 const LABEL_DEFINITIONS = TRIAGE_LABELS.map((label) => {
   const metadata = TRIAGE_LABEL_METADATA[label]
@@ -34,8 +25,11 @@ export const TRIAGE_SYSTEM_PROMPT = [
   "Use triage language only. Do not claim that a system is compromised.",
   "",
   "Return only one valid JSON object.",
+  "The response must start with { and end with }.",
   "Do not include markdown, code fences, comments, or explanatory text outside JSON.",
+  "Do not repeat the prompt or mention the schema outside the JSON object.",
   "Do not add fields beyond the required schema.",
+  "Always include every required field, including recommended_action.",
   "",
   "Required output fields:",
   OUTPUT_FIELDS,
@@ -59,14 +53,12 @@ export const TRIAGE_SYSTEM_PROMPT = [
   "- sql_injection_attempt: high",
   "- directory_traversal_attempt: high",
   "- port_scan_or_recon: medium, or high when the scan is explicit or broad.",
-  "",
-  "Output schema example:",
-  OUTPUT_SCHEMA_EXAMPLE,
 ].join("\n")
 
 export function buildTriageUserPrompt(logLine: string): string {
   return [
     "Analyze this security log and classify whether it is suspicious.",
+    "Respond with the JSON object only.",
     "",
     "Log:",
     logLine,
