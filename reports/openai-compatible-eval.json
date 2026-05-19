@@ -1,0 +1,545 @@
+{
+  "adapter": "openai-compatible",
+  "adapter_metadata": {
+    "adapter": "openai-compatible",
+    "base_url": "http://192.168.8.141:8888/v1/",
+    "env": {
+      "api_key": "OPENAI_COMPATIBLE_API_KEY",
+      "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+      "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+      "model": "OPENAI_COMPATIBLE_MODEL",
+      "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+    },
+    "max_retries": 1,
+    "model": "current",
+    "prompt_version": "triage-json-v1",
+    "timeout_seconds": 30.0
+  },
+  "counts": {
+    "evidence_partial_match": 0,
+    "failure": 5,
+    "invalid_output": 5,
+    "json_parse_success": 0,
+    "label_correct": 0,
+    "schema_success": 0,
+    "severity_correct": 0
+  },
+  "expected_label_distribution": {
+    "directory_traversal_attempt": 3,
+    "failed_login_bruteforce": 1,
+    "port_scan_or_recon": 1
+  },
+  "failures": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-186cd9ee0419",
+          "logprobs": null,
+          "model_name": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+          "model_provider": "openai",
+          "system_fingerprint": null,
+          "token_usage": {
+            "completion_tokens": 0,
+            "completion_tokens_details": null,
+            "prompt_tokens": 0,
+            "prompt_tokens_details": null,
+            "total_tokens": 0
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 0,
+          "output_token_details": {},
+          "output_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "expected": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "json_parse_failed: Expecting value: line 1 column 1 (char 0)",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000474",
+      "input": "2026-05-17T09:27:34+07:00 ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205; probed_ports=21,22,23,25,80,443; packets=106",
+      "latency_ms": 5878.415,
+      "prediction": null,
+      "schema_errors": []
+    },
+    {
+      "adapter_error": "APITimeoutError: Request timed out.",
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "timeout_seconds": 30.0
+      },
+      "expected": {
+        "evidence": [
+          "/static/../config.yml",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The static file route includes traversal sequences targeting configuration files.",
+        "recommended_action": "Confirm the route rejected the request and search for other traversal attempts from the source.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "adapter_error: APITimeoutError: Request timed out.",
+        "json_parse_failed: APITimeoutError: Request timed out.",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000335",
+      "input": "2026-05-17T18:42:34+07:00 app=web route=/static/../config.yml src_ip=198.51.100.35 status=404 bytes=485",
+      "latency_ms": 60449.397792,
+      "prediction": null,
+      "schema_errors": []
+    },
+    {
+      "adapter_error": "APITimeoutError: Request timed out.",
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "timeout_seconds": 30.0
+      },
+      "expected": {
+        "evidence": [
+          "..\\..\\windows\\win.ini",
+          "GET /download?file=..\\..\\windows\\win.ini"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The requested file path contains parent-directory traversal sequences.",
+        "recommended_action": "Review web server logs and verify that sensitive files were not returned.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "adapter_error: APITimeoutError: Request timed out.",
+        "json_parse_failed: APITimeoutError: Request timed out.",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000331",
+      "input": "203.0.113.50 - - [17/May/2026:14:56:44 +0700] \"GET /download?file=..\\..\\windows\\win.ini HTTP/1.1\" 403 305 \"-\" \"curl/8.1\"",
+      "latency_ms": 60567.2,
+      "prediction": null,
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-e23e4842ef10",
+          "logprobs": null,
+          "model_name": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+          "model_provider": "openai",
+          "system_fingerprint": null,
+          "token_usage": {
+            "completion_tokens": 0,
+            "completion_tokens_details": null,
+            "prompt_tokens": 0,
+            "prompt_tokens_details": null,
+            "total_tokens": 0
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 0,
+          "output_token_details": {},
+          "output_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "json_parse_failed: Expecting value: line 1 column 1 (char 0)",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000137",
+      "input": "May 17 08:24:39 auth-01 sshd[3146]: Failed password for admin from 192.0.2.105 port 34263 ssh2; repeated 11 times in 5 minutes",
+      "latency_ms": 28103.515708,
+      "prediction": null,
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-f1c12c206f8b",
+          "logprobs": null,
+          "model_name": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+          "model_provider": "openai",
+          "system_fingerprint": null,
+          "token_usage": {
+            "completion_tokens": 0,
+            "completion_tokens_details": null,
+            "prompt_tokens": 0,
+            "prompt_tokens_details": null,
+            "total_tokens": 0
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 0,
+          "output_token_details": {},
+          "output_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "expected": {
+        "evidence": [
+          "..%2f..%2fetc%2fpasswd",
+          "GET /download?file=..%2f..%2fetc%2fpasswd"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The requested file path contains parent-directory traversal sequences.",
+        "recommended_action": "Review web server logs and verify that sensitive files were not returned.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "json_parse_failed: Expecting value: line 1 column 1 (char 0)",
+        "label_mismatch",
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000388",
+      "input": "198.51.100.233 - - [17/May/2026:11:51:26 +0700] \"GET /download?file=..%2f..%2fetc%2fpasswd HTTP/1.1\" 404 264 \"-\" \"curl/8.1\"",
+      "latency_ms": 7915.982,
+      "prediction": null,
+      "schema_errors": []
+    }
+  ],
+  "metrics": {
+    "average_latency_ms": 32582.9021,
+    "evidence_partial_match": 0.0,
+    "invalid_output_count": 5,
+    "json_parse_success_rate": 0.0,
+    "label_accuracy": 0.0,
+    "schema_success_rate": 0.0,
+    "severity_accuracy": 0.0
+  },
+  "predicted_label_distribution": {
+    "<invalid>": 5
+  },
+  "sample_count": 5,
+  "samples": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-186cd9ee0419",
+          "logprobs": null,
+          "model_name": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+          "model_provider": "openai",
+          "system_fingerprint": null,
+          "token_usage": {
+            "completion_tokens": 0,
+            "completion_tokens_details": null,
+            "prompt_tokens": 0,
+            "prompt_tokens_details": null,
+            "total_tokens": 0
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 0,
+          "output_token_details": {},
+          "output_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000474",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 5878.415,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": "is_suspicious: true\n\nEvidence:\n- The log contains a list of IP addresses (nmap fingerprint) that are probing ports 21, 22, 23, 25, and 80, which are commonly used for port scanning.\n\nReason:\n- The IP addresses are listed in a sequence that suggests an attempt to probe ports, which is a common tactic in port scanning.\n\nRecommended action:\n- Investigate the source IP addresses to determine if they are legitimate or if they are part of a botnet or reconnaissance activity. Block or rate-limit the IP addresses involved in the probe.\n\nThis log is suspicious due to the nature of the traffic and the IP addresses involved.",
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": "APITimeoutError: Request timed out.",
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "timeout_seconds": 30.0
+      },
+      "evidence_partial_match": false,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000335",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 60449.397792,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": null,
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": "APITimeoutError: Request timed out.",
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "timeout_seconds": 30.0
+      },
+      "evidence_partial_match": false,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000331",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 60567.2,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": null,
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-e23e4842ef10",
+          "logprobs": null,
+          "model_name": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+          "model_provider": "openai",
+          "system_fingerprint": null,
+          "token_usage": {
+            "completion_tokens": 0,
+            "completion_tokens_details": null,
+            "prompt_tokens": 0,
+            "prompt_tokens_details": null,
+            "total_tokens": 0
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 0,
+          "output_token_details": {},
+          "output_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000137",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 28103.515708,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": "is_suspicious: true\n\nEvidence:\n- The log shows repeated failed login attempts from IP address 192.0.2.105 targeting the SSH service (port 34263).\n\nReason:\n- This log indicates a brute force attack attempt, which is a known security threat.\n\nRecommended_action:\n- Block the IP address from further SSH login attempts.\n\nThis log is classified as suspicious due to the repeated failed login attempts and the nature of the attack.",
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8888/v1/",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "max_retries": 1,
+        "model": "current",
+        "prompt_version": "triage-json-v1",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "chatcmpl-f1c12c206f8b",
+          "logprobs": null,
+          "model_name": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+          "model_provider": "openai",
+          "system_fingerprint": null,
+          "token_usage": {
+            "completion_tokens": 0,
+            "completion_tokens_details": null,
+            "prompt_tokens": 0,
+            "prompt_tokens_details": null,
+            "total_tokens": 0
+          }
+        },
+        "timeout_seconds": 30.0,
+        "usage_metadata": {
+          "input_token_details": {},
+          "input_tokens": 0,
+          "output_token_details": {},
+          "output_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000388",
+      "json_parse_success": false,
+      "label_correct": false,
+      "latency_ms": 7915.982,
+      "predicted_label": null,
+      "predicted_severity": null,
+      "prediction": null,
+      "raw_prediction": "label: failed_login_bruteforce\n\nis_suspicious: true\n\nevidence: ['GET /download?file=..%2f..%2fetc%2fpasswd', '-' 'curl/8.1']\n\nReason: The request attempts to access a file with a 404 status code, which is a common indicator of a brute-force attack.\n\nRecommended_action: Block the IP address and block further requests from this IP.\n\nNote: The presence of a 404 error is suspicious, but the request itself is not malicious. Further investigation is needed to determine if this is part of a larger attack.\n\n```json\n{\n  \"label\": \"failed_login_bruteforce\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\"GET /download?file=..%2f..%2fetc%2fpasswd\", '-' 'curl/8.1'],\n  \"recommended_action\": \"Block the IP address and block further requests.\"\n}\n```",
+      "schema_errors": [],
+      "schema_success": false,
+      "severity_correct": false
+    }
+  ],
+  "schema": "data/schemas/triage-output.schema.json",
+  "split": "data/raw/test.jsonl"
+}

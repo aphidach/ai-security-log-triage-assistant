@@ -1,6 +1,6 @@
 # Triage Adapter Evaluation Report
 
-- Adapter: `openai-finetune`
+- Adapter: `openai-compatible`
 - Split: `data/raw/test.jsonl`
 - Schema: `data/schemas/triage-output.schema.json`
 - Samples: `5`
@@ -14,7 +14,7 @@
 | `schema_success_rate` | `0.0` |
 | `severity_accuracy` | `0.0` |
 | `evidence_partial_match` | `0.0` |
-| `average_latency_ms` | `6449.376058` |
+| `average_latency_ms` | `32582.9021` |
 | `invalid_output_count` | `5` |
 
 ## Failure Summary
