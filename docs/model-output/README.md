@@ -10,10 +10,11 @@
 - `docs/Day6.md` สำหรับสถานะ GPU training, smoke evaluation และ comparison gap ล่าสุด (source: docs/Day6.md)
 - `ml/unsloth/config.example.yaml` สำหรับ config path แรกของ LFM2-350M + LoRA (source: ml/unsloth/config.example.yaml)
 - `reports/openai-finetune-eval.json` สำหรับ smoke evaluation ของ OpenAI-compatible endpoint (source: reports/openai-finetune-eval.json)
+- `reports/openai-compatible-eval.json` สำหรับ prompt v2 structured-output smoke evaluation ล่าสุด (source: reports/openai-compatible-eval.json)
 
 **Last updated**
 
-2026-05-18
+2026-05-19
 
 ## Pages
 
@@ -44,6 +45,7 @@ docs/model-output/vN-short-model-name.md
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-18 | Codex | Created model-output documentation area for versioned model behavior notes | `docs/model-output/README.md` | Done |
+| 2026-05-19 | Codex | Linked the latest prompt v2 structured-output smoke result from the v1 model-output notes | `docs/model-output/v1-lfm2-350m-security-triage.md`, `reports/openai-compatible-eval.json` | Done |
 
 ## Decision Log
 

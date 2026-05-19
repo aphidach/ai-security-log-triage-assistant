@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "triage-output-schema.md",
+                "file": "fine-tuning-notes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "triage-output-schema"
+              "title": "fine-tuning-notes"
             }
           }
         ]
@@ -185,6 +185,9 @@
   },
   "active": "349890ec50d8e5bc",
   "lastOpenFiles": [
+    "output-contract-hardening.md",
+    "index.md",
+    "triage-output-schema.md",
     "dataset-source-strategy.md",
     "dataset-input-output-format.md",
     "fine-tuning-notes.md",
@@ -195,7 +198,6 @@
     "model-output/README.md",
     "model-output",
     "data-card.md",
-    "triage-output-schema.md",
     "References.md",
     "project-structure-rationale.md",
     "raw/Gemma4_(E2B)_Text.ipynb",
@@ -208,7 +210,6 @@
     "assets",
     "slm-fine-tuning-model-choice.md",
     "log-type-examples.md",
-    "index.md",
     "label-taxonomy.md",
     "log.md",
     "raw/Fine-tuning small language models for industrial retrieval-augmented generation Efficiency, factuality, and hallucination analysis.md",
