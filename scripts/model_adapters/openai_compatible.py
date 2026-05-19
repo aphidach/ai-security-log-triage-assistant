@@ -504,7 +504,7 @@ def _load_langchain() -> tuple[Any, Any, Any]:
     return ChatOpenAI, HumanMessage, SystemMessage
 
 
-def _extract_metadata(response: Any) -> dict[str, Any]:
+def _extrat_metadata(response: Any) -> dict[str, Any]:
     metadata: dict[str, Any] = {}
     response_metadata = getattr(response, "response_metadata", None)
     usage_metadata = getattr(response, "usage_metadata", None)
