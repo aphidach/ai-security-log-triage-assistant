@@ -3,3 +3,5 @@
 # stack needs notebook-style ordering and flags that plain requirements files
 # cannot express by themselves.
 langchain-openai>=0.3.0
+openai>=2.0.0
+pydantic>=2.0.0

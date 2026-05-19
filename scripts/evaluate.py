@@ -287,6 +287,11 @@ def evaluate_record(item: JsonObject, adapter: TriageModelAdapter, schema: JsonO
 
     label_correct = schema_success and prediction_for_compare.get("label") == expected.get("label")
     severity_correct = schema_success and prediction_for_compare.get("severity") == expected.get("severity")
+    is_suspicious_correct = (
+        schema_success
+        and isinstance(expected.get("is_suspicious"), bool)
+        and prediction_for_compare.get("is_suspicious") == expected.get("is_suspicious")
+    )
     evidence_match = schema_success and evidence_partial_match(prediction_for_compare, expected)
 
     failure_reasons: list[str] = []
@@ -300,6 +305,8 @@ def evaluate_record(item: JsonObject, adapter: TriageModelAdapter, schema: JsonO
         failure_reasons.append("label_mismatch")
     if not severity_correct:
         failure_reasons.append("severity_mismatch")
+    if not is_suspicious_correct:
+        failure_reasons.append("is_suspicious_mismatch")
     if not evidence_match:
         failure_reasons.append("evidence_partial_mismatch")
 
@@ -317,6 +324,7 @@ def evaluate_record(item: JsonObject, adapter: TriageModelAdapter, schema: JsonO
         "schema_errors": schema_errors,
         "label_correct": label_correct,
         "severity_correct": severity_correct,
+        "is_suspicious_correct": is_suspicious_correct,
         "evidence_partial_match": evidence_match,
         "failure_reasons": failure_reasons,
     }
@@ -354,6 +362,7 @@ def build_report(
     schema_success_count = sum(bool(item["schema_success"]) for item in results)
     label_correct_count = sum(bool(item["label_correct"]) for item in results)
     severity_correct_count = sum(bool(item["severity_correct"]) for item in results)
+    is_suspicious_correct_count = sum(bool(item["is_suspicious_correct"]) for item in results)
     evidence_match_count = sum(bool(item["evidence_partial_match"]) for item in results)
     invalid_output_count = sample_count - schema_success_count
     average_latency_ms = round_latency(sum(float(item["latency_ms"]) for item in results) / sample_count) if sample_count else 0.0
@@ -390,6 +399,9 @@ def build_report(
             "schema_success": item["schema_success"],
             "label_correct": item["label_correct"],
             "severity_correct": item["severity_correct"],
+            "expected_is_suspicious": item["expected"].get("is_suspicious"),
+            "predicted_is_suspicious": item["prediction"].get("is_suspicious") if isinstance(item["prediction"], dict) else None,
+            "is_suspicious_correct": item["is_suspicious_correct"],
             "evidence_partial_match": item["evidence_partial_match"],
             "latency_ms": item["latency_ms"],
             "adapter_error": item["adapter_error"],
@@ -412,6 +424,7 @@ def build_report(
             "json_parse_success_rate": rate(parse_success_count, sample_count),
             "schema_success_rate": rate(schema_success_count, sample_count),
             "severity_accuracy": rate(severity_correct_count, sample_count),
+            "is_suspicious_accuracy": rate(is_suspicious_correct_count, sample_count),
             "evidence_partial_match": rate(evidence_match_count, sample_count),
             "average_latency_ms": average_latency_ms,
             "invalid_output_count": invalid_output_count,
@@ -421,6 +434,7 @@ def build_report(
             "json_parse_success": parse_success_count,
             "schema_success": schema_success_count,
             "severity_correct": severity_correct_count,
+            "is_suspicious_correct": is_suspicious_correct_count,
             "evidence_partial_match": evidence_match_count,
             "invalid_output": invalid_output_count,
             "failure": len(failures),
@@ -458,6 +472,7 @@ def write_markdown_report(report: JsonObject, path: Path) -> None:
         "json_parse_success_rate",
         "schema_success_rate",
         "severity_accuracy",
+        "is_suspicious_accuracy",
         "evidence_partial_match",
         "average_latency_ms",
         "invalid_output_count",

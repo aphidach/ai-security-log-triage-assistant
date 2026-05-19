@@ -2,7 +2,7 @@
 
 **Summary**
 
-หน้าเดิมนี้เริ่มจาก v1 ของ fine-tuned path แต่ตอนนี้ใช้เก็บผลรันล่าสุดของ artifact ใหม่ด้วย: `unsloth_LFM2-350M_1779162226` หรือเรียกสั้น ๆ ว่า `v2` ได้ โดยยังอยู่บน base model `unsloth/LFM2-350M` เดิม ไม่ใช่การเปลี่ยน base model รอบ prompt v2 smoke ล่าสุด load LoRA แบบ 16-bit ผ่าน OpenAI-compatible endpoint แล้ว แต่ยังไม่ผ่านเกณฑ์ model output สำหรับ POC เพราะ output ยังมี markdown-fenced JSON, JSON ที่ไม่ตรง schema, label นอก taxonomy และ field ขาด
+หน้าเดิมนี้เริ่มจาก v1 ของ fine-tuned path และเคยใช้เก็บผล prompt v2 smoke ชั่วคราวของ artifact `unsloth_LFM2-350M_1779162226` ด้วย ตอนนี้ v2 มีหน้าแยกแล้วที่ [[model-output/v2-lfm2-350m-security-triage-responses-parse]] ดังนั้นหน้านี้ควรถูกอ่านเป็น historical/debug baseline ของ v1 และ early v2 smoke context ไม่ใช่ source หลักของผล `responses_parse` ล่าสุด
 
 **Sources**
 
@@ -216,6 +216,12 @@ Important context: this smoke run used `data/raw/test.jsonl` with 5 samples, not
 
 ผลนี้ยืนยันว่า artifact ใหม่ train และ serve ได้แล้ว แต่ยังไม่ผ่าน output contract เพราะ 4/5 samples parse ไม่ผ่านจากมุมมอง evaluator strict และทุก sample ยังมี failure อย่างน้อยหนึ่งข้อ จึงยังไม่ควรใช้ run นี้เป็น final comparison กับ baseline หรือรัน fixed split 75 samples ต่อทันที
 
+### Raw Output From Langchain
+
+```
+Raw Output:  content='```json\n{\n  "label": "ssh_bruteforce_attempt",\n  "severity": "high",\n  "is_suspicious": true,\n  "evidence": [\n    "ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205",\n    "probed_ports=21,22,23,25,80,443",\n    "packets=106"\n  ],\n  "reason": "Multiple failed login attempts detected from IP address 198.51.100.117 targeting ports 21, 22, 23, 80, 443, indicating a brute force attack attempt."\n}\n```' additional_kwargs={'parsed': None, 'refusal': None} response_metadata={'token_usage': {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_provider': 'openai', 'model_name': 'C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226', 'system_fingerprint': None, 'id': 'chatcmpl-fdb76eca14cc', 'finish_reason': 'stop', 'logprobs': None} id='lc_run--019e3f58-5985-7a62-ba69-5588c87b5b06-0' tool_calls=[] invalid_tool_calls=[] usage_metadata={'input_tokens': 0, 'output_tokens': 0, 'total_tokens': 0, 'input_token_details': {}, 'output_token_details': {}}
+
+```
 ### Prompt V2 Failure Notes
 
 | Sample | Expected | Observed | Main issue |
@@ -277,6 +283,7 @@ Important context: this smoke run used `data/raw/test.jsonl` with 5 samples, not
 | 2026-05-18 | Codex | Documented v1 model behavior, config, smoke-eval failure modes, and next experiment plan | `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
 | 2026-05-19 | Codex | Added prompt v2 structured-output smoke result and failure analysis | `reports/openai-compatible-eval.json`, `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
 | 2026-05-19 | Codex | Corrected latest prompt v2 smoke identity to the new Unsloth Studio artifact `unsloth_LFM2-350M_1779162226` and documented its LoRA 16-bit load/training profile | `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
+| 2026-05-19 | Codex | Clarified that the latest v2 `responses_parse` result now has its own model-output page | `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md`, `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
 
 ## Decision Log
 
@@ -286,6 +293,7 @@ Important context: this smoke run used `data/raw/test.jsonl` with 5 samples, not
 | 2026-05-18 | Keep adapter-first serve path as current runtime baseline | vLLM base+LoRA serving works while merged checkpoint path is not the stable evaluation path | Evaluation should target the `lfm2-security-triage` LoRA model name first |
 | 2026-05-19 | Keep v1 rejected after prompt v2 structured-output smoke | The latest smoke run still has only 0.2 JSON/schema success, 0.0 severity/evidence match, and 4 invalid outputs out of 5 | Do not proceed to fixed split comparison until structured output enforcement is verified and smoke validity recovers |
 | 2026-05-19 | Reclassify the latest prompt v2 smoke as the v2 Unsloth Studio artifact run | Operator clarified that the run came from `unsloth_LFM2-350M_1779162226`, loaded as 16-bit LoRA on the existing LFM2-350M base | v1 remains the historical debug baseline; v2 is the latest artifact but is still rejected for output contract until smoke validity recovers |
+| 2026-05-19 | Move current v2 tracking to a separate page | The `responses_parse` run is a new runtime-path investigation, not just a continuation of v1 | v1 remains historical context; v2 page becomes the current output-contract record |
 
 ## Related pages
 
