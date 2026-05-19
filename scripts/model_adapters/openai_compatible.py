@@ -153,7 +153,8 @@ class _LangChainOpenAIAdapter:
                 metadata=metadata,
             )
 
-        response_metadata = _extract_metadata(response)
+        response_metadata = _extrat_metadata(response)
+        print("====================\nRaw Output: ", response_metadata)
         return AdapterResult(
             raw_output=getattr(response, "content", response),
             latency_ms=_elapsed_ms(start),
