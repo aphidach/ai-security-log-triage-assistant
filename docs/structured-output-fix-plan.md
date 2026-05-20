@@ -59,7 +59,7 @@
 | Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Complete |
 | Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path |
 | Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed |
-| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Ready |
+| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Run complete; follow-up needed |
 | Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Draft |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft |
 
@@ -261,12 +261,12 @@ Smoke result:
 
 Checklist:
 
-- [ ] สร้าง mini eval split 20-25 samples จาก validation/dev data หรือ smoke-extension ที่ไม่ใช่ `data/splits/test.jsonl`
-- [ ] รัน evaluator ด้วย runtime/mode ที่ผ่าน contract gate
-- [ ] ตรวจ per-label confusion โดยเฉพาะ SQLi vs brute force, traversal vs failed login, port scan vs normal
-- [ ] ตรวจ severity drift เช่น over-escalate เป็น `high`
-- [ ] ตรวจ evidence ว่าเป็น substring จาก log ไม่ใช่ชื่อไฟล์หรือคำทั่วไป
-- [ ] บันทึก latency และ retry count ถ้ามี retry loop
+- [x] สร้าง mini eval split 20-25 samples จาก validation/dev data หรือ smoke-extension ที่ไม่ใช่ `data/splits/test.jsonl`
+- [x] รัน evaluator ด้วย runtime/mode ที่ผ่าน contract gate
+- [x] ตรวจ per-label confusion โดยเฉพาะ SQLi vs brute force, traversal vs failed login, port scan vs normal
+- [x] ตรวจ severity drift เช่น over-escalate เป็น `high`
+- [x] ตรวจ evidence ว่าเป็น substring จาก log ไม่ใช่ชื่อไฟล์หรือคำทั่วไป
+- [x] บันทึก latency และ timeout signal
 
 Pass condition:
 
@@ -278,6 +278,14 @@ Deliverables:
 - `reports/openai-compatible-{runtime}-{mode}-mini-semantic-eval.json`
 - `reports/openai-compatible-{runtime}-{mode}-mini-semantic-eval.md`
 - error taxonomy note ใน model-output page ใหม่หรือ report
+
+Result:
+
+- `reports/openai-compatible-vllm-structured-outputs-mini-semantic-eval.json`
+- `reports/openai-compatible-vllm-structured-outputs-mini-semantic-eval.md`
+- Mini eval JSON/schema success stayed at `0.88`, not `1.0`, because 3 `port_scan_or_recon` samples timed out.
+- Label accuracy was `0.24`; predictions over-concentrated on `failed_login_bruteforce`.
+- Do not move to Phase 7 fixed split yet.
 
 ## Phase 6: Decide V3 Training Or Runtime Change
 
