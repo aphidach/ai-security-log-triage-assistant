@@ -76,6 +76,7 @@ class OpenAIAdapterEnv:
     model: str
     timeout_seconds: str
     max_retries: str
+    max_tokens: str
     response_format: str
     schema_path: str
 
@@ -87,6 +88,7 @@ class OpenAIAdapterConfig:
     model: str
     timeout_seconds: float
     max_retries: int
+    max_tokens: int
     response_format: str
     schema_path: Path | None
     provider_schema: dict[str, Any] | None
@@ -98,6 +100,7 @@ OPENAI_COMPATIBLE_ENV = OpenAIAdapterEnv(
     model="OPENAI_COMPATIBLE_MODEL",
     timeout_seconds="OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
     max_retries="OPENAI_COMPATIBLE_MAX_RETRIES",
+    max_tokens="OPENAI_COMPATIBLE_MAX_TOKENS",
     response_format="OPENAI_COMPATIBLE_RESPONSE_FORMAT",
     schema_path="OPENAI_COMPATIBLE_SCHEMA_PATH",
 )
@@ -108,6 +111,7 @@ OPENAI_FINETUNE_ENV = OpenAIAdapterEnv(
     model="OPENAI_FINETUNE_MODEL",
     timeout_seconds="OPENAI_FINETUNE_TIMEOUT_SECONDS",
     max_retries="OPENAI_FINETUNE_MAX_RETRIES",
+    max_tokens="OPENAI_FINETUNE_MAX_TOKENS",
     response_format="OPENAI_FINETUNE_RESPONSE_FORMAT",
     schema_path="OPENAI_FINETUNE_SCHEMA_PATH",
 )
@@ -125,6 +129,7 @@ class _OpenAIAdapter:
         model: str | None = None,
         timeout_seconds: float | None = None,
         max_retries: int | None = None,
+        max_tokens: int | None = None,
         response_format: str | None = None,
         schema_path: str | Path | None = None,
     ) -> None:
@@ -135,6 +140,7 @@ class _OpenAIAdapter:
             model=model,
             timeout_seconds=timeout_seconds,
             max_retries=max_retries,
+            max_tokens=max_tokens,
             response_format=response_format,
             schema_path=schema_path,
         )
@@ -181,6 +187,7 @@ class _OpenAIAdapter:
                 model=self._config.model,
                 input=_message_payload(log_line),
                 temperature=0,
+                max_output_tokens=self._config.max_tokens,
                 text_format=_triage_output_model(),
             )
             parsed = _extract_responses_parsed(response)
@@ -201,6 +208,7 @@ class _OpenAIAdapter:
                 request_mode=request_mode,
                 model=self._config.model,
                 log_line=log_line,
+                max_tokens=self._config.max_tokens,
                 provider_schema=self._config.provider_schema,
             )
             try:
@@ -230,6 +238,7 @@ class _OpenAIAdapter:
                 "model": self.env.model,
                 "timeout_seconds": self.env.timeout_seconds,
                 "max_retries": self.env.max_retries,
+                "max_tokens": self.env.max_tokens,
                 "response_format": self.env.response_format,
                 "schema_path": self.env.schema_path,
             },
@@ -242,6 +251,7 @@ class _OpenAIAdapter:
                     "requested_model": self._config.model,
                     "timeout_seconds": self._config.timeout_seconds,
                     "max_retries": self._config.max_retries,
+                    "max_tokens": self._config.max_tokens,
                     "response_format_requested": self._config.response_format,
                     "schema_path": (
                         str(self._config.schema_path.relative_to(ROOT))
@@ -275,6 +285,7 @@ def _build_config(
     model: str | None,
     timeout_seconds: float | None,
     max_retries: int | None,
+    max_tokens: int | None,
     response_format: str | None,
     schema_path: str | Path | None,
 ) -> tuple[OpenAIAdapterConfig | None, str | None]:
@@ -296,6 +307,12 @@ def _build_config(
             max_retries,
             default=1,
             minimum=0,
+        )
+        max_tokens_value = _int_config(
+            env.max_tokens,
+            max_tokens,
+            default=512,
+            minimum=1,
         )
     except ValueError as exc:
         return None, str(exc)
@@ -342,6 +359,7 @@ def _build_config(
             model=str(model_value),
             timeout_seconds=timeout_value,
             max_retries=max_retries_value,
+            max_tokens=max_tokens_value,
             response_format=response_format_value,
             schema_path=schema_path_value,
             provider_schema=provider_schema,
@@ -511,12 +529,14 @@ def _chat_completion_kwargs(
     request_mode: str,
     model: str,
     log_line: str,
+    max_tokens: int,
     provider_schema: dict[str, Any] | None,
 ) -> dict[str, Any]:
     kwargs: dict[str, Any] = {
         "model": model,
         "messages": _message_payload(log_line),
         "temperature": 0,
+        "max_tokens": max_tokens,
     }
     if request_mode == REQUEST_MODE_PLAIN:
         return kwargs

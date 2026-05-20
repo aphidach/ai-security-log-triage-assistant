@@ -26,7 +26,8 @@
 | Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path | ทดสอบ runtime/mode candidate ด้วย smoke split เดียวกัน |
 | Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed | ตั้ง gate ที่ต้องผ่านก่อนดู semantic quality |
 | Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Ready | วัด semantic error profile หลัง contract ผ่าน |
-| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Draft | ตัดสินใจว่าจะ retrain v3, เปลี่ยน runtime หรือเปลี่ยน model candidate |
+| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | In progress | ตัดสินใจว่าจะ retrain v3, เปลี่ยน runtime หรือเปลี่ยน model candidate |
+| Phase 6.1 | [[output-structure-fix/phase-6-1-evidence-constraints]] | Planned | แก้ evidence loop ด้วย schema constraints และ sanitizer update |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
 
 ## Operating Rules
@@ -43,6 +44,7 @@
 | --- | --- | --- | --- | --- |
 | 2026-05-20 | Codex | Created phase-detail directory for structured-output fix work | `docs/output-structure-fix/` | Drafted |
 | 2026-05-20 | Codex | Updated phase map after vLLM `structured_outputs` passed the output-contract smoke gate | `reports/openai-compatible-vllm-structured-outputs-smoke.json` | Updated |
+| 2026-05-20 | Codex | Added Phase 6.1 evidence constraints page to the phase map | `docs/output-structure-fix/phase-6-1-evidence-constraints.md` | Planned |
 
 ## Decision Log
 
@@ -51,6 +53,7 @@
 | 2026-05-20 | แยก phase notes ออกจาก master plan | master plan ควรสั้นพอใช้ตัดสินใจ ส่วนรายละเอียดคำสั่งและหลักฐานของแต่ละ phase จะยาวขึ้นเรื่อย ๆ | งาน Phase 1 เป็นต้นไปมีหน้าเฉพาะสำหรับ update แบบ append-only |
 | 2026-05-20 | ใช้ path `docs/output-structure-fix/` | normalize จากคำขอที่พิมพ์ว่า `sdocs/output-stuctur-fix/` ให้เข้ากับ repo docs และสะกด `structure` ให้ถูก | เอกสารใหม่อยู่ใต้ mini-wiki หลักและค้นหาได้จาก `docs/index.md` |
 | 2026-05-20 | เลื่อนงาน active ไป Phase 5 mini semantic eval | vLLM `structured_outputs` ผ่าน JSON/schema gate แล้ว แต่ smoke label accuracy ยังอยู่ที่ `0.2` | ต่อไปควรวัด semantic error profile บน mini split ที่ไม่ใช่ fixed test split |
+| 2026-05-20 | เพิ่ม Phase 6.1 สำหรับ evidence constraints | Phase 6 case 1 พบว่า JSON-constrained modes วนซ้ำใน `evidence` จนชน token cap | ก่อน retrain v3 ให้ลอง schema tightening และ sanitizer update |
 
 ## Related pages
 

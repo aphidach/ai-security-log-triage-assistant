@@ -103,6 +103,7 @@ OPENAI_COMPATIBLE_API_KEY
 OPENAI_COMPATIBLE_MODEL
 OPENAI_COMPATIBLE_TIMEOUT_SECONDS
 OPENAI_COMPATIBLE_MAX_RETRIES
+OPENAI_COMPATIBLE_MAX_TOKENS
 OPENAI_COMPATIBLE_RESPONSE_FORMAT
 OPENAI_COMPATIBLE_SCHEMA_PATH
 ```
@@ -115,13 +116,14 @@ OPENAI_FINETUNE_API_KEY
 OPENAI_FINETUNE_MODEL
 OPENAI_FINETUNE_TIMEOUT_SECONDS
 OPENAI_FINETUNE_MAX_RETRIES
+OPENAI_FINETUNE_MAX_TOKENS
 OPENAI_FINETUNE_RESPONSE_FORMAT
 OPENAI_FINETUNE_SCHEMA_PATH
 ```
 
-ทั้งสอง adapter ใช้ `langchain-openai` และ prompt contract เดียวกัน ต่างกันที่ env prefix และชื่อ adapter เพื่อให้ report แยก base model กับ fine-tuned model ได้ชัด
+ทั้งสอง adapter ใช้ OpenAI SDK และ prompt contract เดียวกัน ต่างกันที่ env prefix และชื่อ adapter เพื่อให้ report แยก base model กับ fine-tuned model ได้ชัด
 
-`*_RESPONSE_FORMAT` รองรับ `json_schema`, `json_object`, หรือ `off` โดย default path ใหม่คือ `json_schema` เพื่อบังคับ output shape ให้ใกล้ schema หลักที่สุด ส่วน `*_SCHEMA_PATH` ชี้ไป schema canonical ของ repo ที่ `data/schemas/triage-output.schema.json` แล้ว adapter จะ sanitize ให้เป็น provider-compatible subset ก่อนส่งเข้า runtime (source: scripts/model_adapters/openai_compatible.py, data/schemas/triage-output.schema.json)
+`*_MAX_TOKENS` จำกัด output length ของ adapter โดย default เป็น `512` เพื่อกัน generation ยาวเกินระหว่าง eval ส่วน `*_RESPONSE_FORMAT` รองรับ `off`, `json_object`, `json_schema`, `structured_outputs`, `guided_json` และ `responses_parse`; `*_SCHEMA_PATH` ชี้ไป schema canonical ของ repo ที่ `data/schemas/triage-output.schema.json` แล้ว adapter จะ sanitize ให้เป็น provider-compatible subset ก่อนส่งเข้า runtime (source: scripts/model_adapters/openai_compatible.py, data/schemas/triage-output.schema.json)
 
 ### Evaluation Progress
 
