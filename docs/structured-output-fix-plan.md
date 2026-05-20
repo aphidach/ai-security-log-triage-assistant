@@ -15,6 +15,9 @@
 - `reports/openai-compatible-unsloth-studio-json-schema-smoke.json` สำหรับ persisted smoke artifact ที่ถูก preserve ตาม report path convention: JSON/schema success `0.2`, invalid output `4` จาก 5 samples (source: reports/openai-compatible-unsloth-studio-json-schema-smoke.json)
 - `reports/structured-output-run-artifacts.md` สำหรับ Phase 0 evidence register, artifact checksums, split checksums และ sample evidence summary (source: reports/structured-output-run-artifacts.md)
 - `reports/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ vLLM `structured_outputs` smoke result ที่ผ่าน output contract: JSON/schema success `1.0`, invalid output `0` (source: reports/openai-compatible-vllm-structured-outputs-smoke.json)
+- `reports/structured-output-probe-unsloth-studio-json-schema-smoke.json` สำหรับ Unsloth Studio baseline probe: JSON/schema success `0.2`, markdown fence `4/5` (source: reports/structured-output-probe-unsloth-studio-json-schema-smoke.json)
+- `reports/structured-output-probe-vllm-structured-outputs-smoke.json` สำหรับ vLLM baseline probe: JSON/schema success `1.0`, markdown fence `0/5` (source: reports/structured-output-probe-vllm-structured-outputs-smoke.json)
+- `reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json` และ `reports/structured-output-probe-vllm-structured-outputs-adversarial.json` สำหรับ Phase 2 adversarial format comparison (source: reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json; source: reports/structured-output-probe-vllm-structured-outputs-adversarial.json)
 - `reports/frozen-splits.sha256` สำหรับ checksum ของ fixed test split และ smoke output-contract split (source: reports/frozen-splits.sha256)
 - `scripts/probe_openai_structured_output.py` สำหรับ direct structured-output probe path ที่ต้องต่อยอด (source: scripts/probe_openai_structured_output.py)
 - `scripts/model_adapters/openai_compatible.py` สำหรับ adapter modes ปัจจุบัน เช่น `responses_parse`, `json_schema`, `structured_outputs`, `guided_json`, `json_object` (source: scripts/model_adapters/openai_compatible.py)
@@ -53,7 +56,7 @@
 | Phase | Page | Status |
 | --- | --- | --- |
 | Phase 1 | [[output-structure-fix/phase-1-backend-inventory]] | Passed for vLLM path |
-| Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Draft |
+| Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Complete |
 | Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path |
 | Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed |
 | Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Ready |
@@ -137,24 +140,43 @@ Pass condition:
 
 ## Phase 2: Probe Hardening
 
-สถานะ: ต้องเพิ่ม probe ให้แยกว่า constrained decoding จริงหรือแค่ validation หลัง generate
+สถานะ: Complete 2026-05-20
+
+Phase 2 ตอบคำถามว่าทำไม Unsloth Studio และ vLLM smoke result ไม่เหมือนกัน: runtime enforce structured output ต่างกันจริง ไม่ใช่แค่ model semantic แกว่ง
 
 Checklist:
 
-- [ ] เพิ่ม option ใน `scripts/probe_openai_structured_output.py` เพื่อใส่ adversarial format instruction เช่นขอให้ตอบใน markdown fence
-- [ ] เพิ่ม option ให้ probe หลาย sample จาก `data/splits/smoke-output-contract.jsonl` ในคำสั่งเดียว แต่ยังบันทึก per-sample raw output
-- [ ] ให้ probe print `requested_model`, `response_model`, `mode`, `provider schema mode`, latency และ validation result
-- [ ] เพิ่ม run mode ที่บังคับ output path แยก ไม่เขียนทับ `reports/openai-compatible-eval.json`
-- [ ] เพิ่ม debug-only JSON extraction report ถ้าจำเป็น แต่ห้ามเอา extraction result ไปนับเป็น main metric
+- [x] เพิ่ม option ใน `scripts/probe_openai_structured_output.py` เพื่อใส่ adversarial format instruction เช่นขอให้ตอบใน markdown fence
+- [x] เพิ่ม option ให้ probe หลาย sample จาก `data/splits/smoke-output-contract.jsonl` ในคำสั่งเดียว แต่ยังบันทึก per-sample raw output
+- [x] ให้ probe print `requested_model`, `response_model`, `mode`, `provider schema mode`, latency และ validation result
+- [x] เพิ่ม run mode ที่บังคับ output path แยก ไม่เขียนทับ `reports/openai-compatible-eval.json`
+- [x] เพิ่ม debug-only JSON extraction report ถ้าจำเป็น แต่ห้ามเอา extraction result ไปนับเป็น main metric
+
+Phase 2 result:
+
+| Runtime | Mode | Adversarial | JSON/schema | Errors | Fences | Plain objects | Interpretation |
+| --- | --- | --- | ---: | ---: | ---: | ---: | --- |
+| Unsloth Studio `:8888` | `json_schema` | no | `0.2` | `0` | `4/5` | `1/5` | Accepts request shape but does not enforce plain JSON reliably |
+| vLLM `:8080` | `structured_outputs` | no | `1.0` | `0` | `0/5` | `5/5` | Passes output contract cleanly |
+| Unsloth Studio `:8888` | `json_schema` | markdown fence | `0.0` | `1` | `4/5` | `0/5` | Prompt can still force fenced output; one timeout |
+| vLLM `:8080` | `structured_outputs` | markdown fence | `0.6` | `2` | `0/5` | `3/5` | Completed samples still obey schema; failures are timeouts, not format leaks |
 
 Deliverables:
 
 - patch ใน `scripts/probe_openai_structured_output.py`
-- smoke probe output เช่น `reports/structured-output-probe-current.md`
+- `reports/structured-output-probe-unsloth-studio-json-schema-smoke.json`
+- `reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json`
+- `reports/structured-output-probe-vllm-structured-outputs-smoke.json`
+- `reports/structured-output-probe-vllm-structured-outputs-adversarial.json`
 
 Pass condition:
 
 - ถ้า adversarial prompt ขอ markdown fence แต่ backend เป็น constrained decoder จริง output ต้องยังเริ่มด้วย `{` และจบด้วย `}`
+
+Phase 2 interpretation:
+
+- Unsloth Studio fails this condition in completed adversarial samples because outputs include markdown fences.
+- vLLM completed adversarial samples satisfy the format condition, but 2/5 timed out. Treat these as latency/runtime robustness issues, not schema-ignore behavior.
 
 ## Phase 3: Runtime Capability Matrix
 
@@ -333,6 +355,7 @@ Pass condition:
 | 2026-05-20 | Codex | Completed Phase 0 evidence preservation with canonical smoke artifacts, split checksums, and a run artifact register | `reports/openai-compatible-unsloth-studio-json-schema-smoke.json`, `reports/openai-compatible-unsloth-studio-json-schema-smoke.md`, `reports/frozen-splits.sha256`, `reports/structured-output-run-artifacts.md` | Done |
 | 2026-05-20 | Codex | Started Phase 1 by creating phase-detail notes and backend inventory report template | `docs/output-structure-fix/`, `reports/structured-output-backend-inventory.md` | In progress |
 | 2026-05-20 | User/Codex | Recorded vLLM `structured_outputs` smoke contract pass and moved active work to Phase 5 | `reports/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output-capability-matrix.md`, `docs/output-structure-fix/` | Passed contract gate |
+| 2026-05-20 | User/Codex | Completed Phase 2 runtime probe comparison for Unsloth Studio and vLLM | `reports/structured-output-probe-*.json`, `docs/output-structure-fix/phase-2-probe-hardening.md` | Complete |
 
 ## Decision Log
 
@@ -344,6 +367,8 @@ Pass condition:
 | 2026-05-20 | ใช้ mode-specific report paths สำหรับ smoke รอบใหม่ | path กลางอย่าง `openai-compatible-eval.json` ถูก overwrite ง่ายและทำให้เทียบ mode ย้อนหลังยาก | smoke/mini eval รอบใหม่ต้องมี runtime และ mode อยู่ในชื่อไฟล์ |
 | 2026-05-20 | แยก phase-detail docs ใต้ `docs/output-structure-fix/` | Phase 1 เป็นต้นไปต้องมีรายละเอียดคำสั่ง หลักฐาน และผลลัพธ์ต่อ phase มากกว่า master plan | master plan ใช้เป็น overview ส่วน execution detail ไปอยู่ในหน้า phase เฉพาะ |
 | 2026-05-20 | ใช้ vLLM `structured_outputs` เป็น runtime สำหรับ Phase 5 | smoke contract ผ่านครบ: JSON parse `1.0`, schema `1.0`, invalid output `0`; แต่ label accuracy ยัง `0.2` | งานถัดไปแยก semantic quality ออกจาก output formatting และยังไม่ใช้ fixed test split |
+| 2026-05-20 | Treat Unsloth Studio as non-gating for output contract | Phase 2 probes show markdown fences in 4/5 baseline samples and 4 completed adversarial samples | Unsloth Studio can remain a debugging runtime, but contract gate and Phase 5 should use vLLM |
+| 2026-05-20 | Treat vLLM adversarial timeouts as robustness follow-up | vLLM adversarial completed samples stayed valid JSON with no fences, but 2/5 timed out | Latency/timeout tuning should be tracked separately from schema enforcement |
 
 ## Related pages
 

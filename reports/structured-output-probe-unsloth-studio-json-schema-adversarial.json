@@ -1,0 +1,244 @@
+{
+  "metadata": {
+    "base_url": "http://192.168.8.141:8888/v1",
+    "endpoint": "http://192.168.8.141:8888/v1/chat/completions",
+    "requested_model": "current",
+    "mode": "json_schema",
+    "provider_schema_mode": "response_format.json_schema.strict",
+    "adversarial_format": "markdown_fence",
+    "split": "data/splits/smoke-output-contract.jsonl",
+    "schema": "/Volumes/Hiksemi/Code/ai-security-log-triage-assistant/data/schemas/triage-output.schema.json",
+    "sample_id": null,
+    "sample_index": 0,
+    "all_smoke": true,
+    "limit": null
+  },
+  "summary": {
+    "samples": 5,
+    "json_parse_success_rate": 0.0,
+    "schema_success_rate": 0.0,
+    "error_count": 1,
+    "markdown_fence_count": 4,
+    "plain_json_object_count": 0,
+    "average_latency_ms": 42400.176783
+  },
+  "results": [
+    {
+      "id": "sample-000035",
+      "input": "2026-05-17T18:34:50+07:00 firewall: allowed tcp connection from 192.0.2.35 to 192.0.2.21:443; session_count=1",
+      "expected": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "mode": "json_schema",
+      "provider_schema_mode": "response_format.json_schema.strict",
+      "requested_model": "current",
+      "response_model": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+      "response_id": "chatcmpl-7653a82e07c5",
+      "endpoint": "http://192.168.8.141:8888/v1/chat/completions",
+      "adversarial_format": "markdown_fence",
+      "latency_ms": 4999.40325,
+      "error": null,
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 0,
+        "prompt_tokens": 0,
+        "total_tokens": 0,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "raw_content": "```json\n{\n  \"label\": \"failed_login_bruteforce\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\"tcp connection from 192.0.2.35 to 192.0.2.21:443\", \"session_count=1\"],\n  \"reason\": \"Multiple failed login attempts from IP 192.0.2.35 to 192.0.2.21 exceeding 5 attempts in 5 minutes\",\n  \"recommended_action\": \"Block IP 192.0.2.35 from all incoming connections and investigate further\"\n}\n```",
+      "openai_parsed": null,
+      "json_parse_success": false,
+      "json_parse_error": "Expecting value: line 1 column 1 (char 0)",
+      "schema_success": false,
+      "schema_errors": [],
+      "starts_with_object": false,
+      "ends_with_object": false,
+      "has_markdown_fence": true,
+      "debug_extracted_json_parse_success": true,
+      "debug_extracted_schema_success": true,
+      "debug_extracted_schema_errors": []
+    },
+    {
+      "id": "sample-000137",
+      "input": "May 17 08:24:39 auth-01 sshd[3146]: Failed password for admin from 192.0.2.105 port 34263 ssh2; repeated 11 times in 5 minutes",
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "mode": "json_schema",
+      "provider_schema_mode": "response_format.json_schema.strict",
+      "requested_model": "current",
+      "response_model": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+      "response_id": "chatcmpl-19efc80669d8",
+      "endpoint": "http://192.168.8.141:8888/v1/chat/completions",
+      "adversarial_format": "markdown_fence",
+      "latency_ms": 4158.707083,
+      "error": null,
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 0,
+        "prompt_tokens": 0,
+        "total_tokens": 0,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "raw_content": "```json\n{\n  \"label\": \"failed_login_bruteforce\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\"ssh2; repeated 11 times in 5 minutes\", \"sshd[3146] failed password\", \"ssh2 failed login attempts\"],\n  \"reason\": \"ssh2 failed login attempts from 192.0.2.105 multiple times in a short period, indicating brute force attempt.\"\n}\n```",
+      "openai_parsed": null,
+      "json_parse_success": false,
+      "json_parse_error": "Expecting value: line 1 column 1 (char 0)",
+      "schema_success": false,
+      "schema_errors": [],
+      "starts_with_object": false,
+      "ends_with_object": false,
+      "has_markdown_fence": true,
+      "debug_extracted_json_parse_success": true,
+      "debug_extracted_schema_success": false,
+      "debug_extracted_schema_errors": [
+        "missing required fields: recommended_action",
+        "recommended_action must be a non-empty string"
+      ]
+    },
+    {
+      "id": "sample-000248",
+      "input": "2026-05-17T19:00:50+07:00 api-gateway: GET /api/users?id=9 AND SLEEP(5) src=198.51.100.169 status=500 upstream_ms=3904",
+      "expected": {
+        "evidence": [
+          "id=9 AND SLEEP(5)",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The API request includes SQL operators or functions inside a query parameter.",
+        "recommended_action": "Inspect API logs and database query logs for related requests from the same source.",
+        "severity": "high"
+      },
+      "mode": "json_schema",
+      "provider_schema_mode": "response_format.json_schema.strict",
+      "requested_model": "current",
+      "response_model": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+      "response_id": "chatcmpl-31a05a1e12ed",
+      "endpoint": "http://192.168.8.141:8888/v1/chat/completions",
+      "adversarial_format": "markdown_fence",
+      "latency_ms": 4596.776667,
+      "error": null,
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 0,
+        "prompt_tokens": 0,
+        "total_tokens": 0,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "raw_content": "```json\n{\n  \"label\": \"failed_login_bruteforce\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\"GET /api/users?id=9\", \"status=500\", \"src=198.51.100.169\", \"upstream_ms=3904\"],\n  \"reason\": \"Multiple failed login attempts from IP 198.51.100.169 within 5 seconds\",\n  \"recommended_action\": \"Block IP 198.51.100.169 and investigate further for potential brute force attack.\"\n}\n```",
+      "openai_parsed": null,
+      "json_parse_success": false,
+      "json_parse_error": "Expecting value: line 1 column 1 (char 0)",
+      "schema_success": false,
+      "schema_errors": [],
+      "starts_with_object": false,
+      "ends_with_object": false,
+      "has_markdown_fence": true,
+      "debug_extracted_json_parse_success": true,
+      "debug_extracted_schema_success": true,
+      "debug_extracted_schema_errors": []
+    },
+    {
+      "id": "sample-000331",
+      "input": "203.0.113.50 - - [17/May/2026:14:56:44 +0700] \"GET /download?file=..\\\\..\\\\windows\\\\win.ini HTTP/1.1\" 403 305 \"-\" \"curl/8.1\"",
+      "expected": {
+        "evidence": [
+          "..\\\\..\\\\windows\\\\win.ini",
+          "GET /download?file=..\\\\..\\\\windows\\\\win.ini"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The requested file path contains parent-directory traversal sequences.",
+        "recommended_action": "Review web server logs and verify that sensitive files were not returned.",
+        "severity": "high"
+      },
+      "mode": "json_schema",
+      "provider_schema_mode": "response_format.json_schema.strict",
+      "requested_model": "current",
+      "response_model": null,
+      "response_id": null,
+      "endpoint": "http://192.168.8.141:8888/v1/chat/completions",
+      "adversarial_format": "markdown_fence",
+      "latency_ms": 181484.885375,
+      "error": "APITimeoutError: Request timed out.",
+      "finish_reason": null,
+      "usage": null,
+      "raw_content": "",
+      "openai_parsed": null,
+      "json_parse_success": false,
+      "json_parse_error": null,
+      "schema_success": false,
+      "schema_errors": [],
+      "starts_with_object": false,
+      "ends_with_object": false,
+      "has_markdown_fence": false
+    },
+    {
+      "id": "sample-000474",
+      "input": "2026-05-17T09:27:34+07:00 ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205; probed_ports=21,22,23,25,80,443; packets=106",
+      "expected": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "mode": "json_schema",
+      "provider_schema_mode": "response_format.json_schema.strict",
+      "requested_model": "current",
+      "response_model": "C:\\Users\\dargy\\.unsloth\\studio\\outputs\\unsloth_LFM2-350M_1779162226",
+      "response_id": "chatcmpl-2078eb12066c",
+      "endpoint": "http://192.168.8.141:8888/v1/chat/completions",
+      "adversarial_format": "markdown_fence",
+      "latency_ms": 16761.111542,
+      "error": null,
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 0,
+        "prompt_tokens": 0,
+        "total_tokens": 0,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "raw_content": "```json\n{\n  \"label\": \"failed_login_bruteforce\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\n    \"ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205\",\n    \"probed_ports=21,22,23,25,80,443\",\n    \"packets=106\"\n  ],\n  \"reason\": \"Multiple probes targeting high-risk ports (22, 80, 443) with repeated failed attempts to brute-force credentials.\"\n}\n```",
+      "openai_parsed": null,
+      "json_parse_success": false,
+      "json_parse_error": "Expecting value: line 1 column 1 (char 0)",
+      "schema_success": false,
+      "schema_errors": [],
+      "starts_with_object": false,
+      "ends_with_object": false,
+      "has_markdown_fence": true,
+      "debug_extracted_json_parse_success": true,
+      "debug_extracted_schema_success": false,
+      "debug_extracted_schema_errors": [
+        "missing required fields: recommended_action",
+        "recommended_action must be a non-empty string"
+      ]
+    }
+  ]
+}
