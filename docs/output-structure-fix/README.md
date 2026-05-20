@@ -1,0 +1,59 @@
+# Output Structure Fix Phase Notes
+
+**Summary**
+
+โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` ยังผ่าน JSON/schema เพียง 1/5 samples
+
+หน้า `docs/structured-output-fix-plan.md` ยังเป็น master plan ส่วนโฟลเดอร์นี้ใช้เก็บรายละเอียดการทำงาน คำสั่งที่ต้องรัน หลักฐานที่ต้องเก็บ และ pass/fail condition ของแต่ละ phase ตั้งแต่ Phase 1 เป็นต้นไป
+
+**Sources**
+
+- `docs/structured-output-fix-plan.md` สำหรับ phase, gate และ deliverables หลัก (source: docs/structured-output-fix-plan.md)
+- `reports/structured-output-run-artifacts.md` สำหรับ Phase 0 evidence register และ current smoke baseline (source: reports/structured-output-run-artifacts.md)
+- `reports/README.md` สำหรับ report path convention ของ smoke และ mini semantic eval (source: reports/README.md)
+
+**Last updated**
+
+2026-05-20
+
+## File Map
+
+| Phase | Page | Status | Purpose |
+| --- | --- | --- | --- |
+| Phase 0 | `docs/structured-output-fix-plan.md` และ `reports/structured-output-run-artifacts.md` | Done | เก็บ evidence, checksums และ preserved smoke artifact แล้ว |
+| Phase 1 | [[output-structure-fix/phase-1-backend-inventory]] | In progress | ระบุ backend, version, launch command, model alias, response model และ LoRA serving path |
+| Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Draft | เพิ่ม probe ให้แยก constrained decoding จริงจาก validation-after-generation |
+| Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Draft | ทดสอบ runtime/mode candidate ด้วย smoke split เดียวกัน |
+| Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Draft | ตั้ง gate ที่ต้องผ่านก่อนดู semantic quality |
+| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Draft | วัด semantic error profile หลัง contract ผ่าน |
+| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Draft | ตัดสินใจว่าจะ retrain v3, เปลี่ยน runtime หรือเปลี่ยน model candidate |
+| Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
+
+## Operating Rules
+
+- ห้ามใช้ `data/splits/test.jsonl` ระหว่าง prompt/runtime tuning
+- ทุก smoke run ต้องเขียนไปที่ `reports/{adapter}-{runtime}-{mode}-smoke.json` และ `.md`
+- ทุก run ต้องเก็บ raw output ต่อ sample เพื่อดู failure mode ได้
+- ห้ามเอา JSON extraction จาก markdown fence มานับเป็น metric หลัก
+- ต้องระบุ backend และ mode ให้ชัดก่อนสรุปว่า model quality ดีหรือแย่
+
+## Work Log
+
+| Date | Actor | Work | Evidence | Status |
+| --- | --- | --- | --- | --- |
+| 2026-05-20 | Codex | Created phase-detail directory for structured-output fix work | `docs/output-structure-fix/` | Drafted |
+
+## Decision Log
+
+| Date | Decision | Rationale | Impact |
+| --- | --- | --- | --- |
+| 2026-05-20 | แยก phase notes ออกจาก master plan | master plan ควรสั้นพอใช้ตัดสินใจ ส่วนรายละเอียดคำสั่งและหลักฐานของแต่ละ phase จะยาวขึ้นเรื่อย ๆ | งาน Phase 1 เป็นต้นไปมีหน้าเฉพาะสำหรับ update แบบ append-only |
+| 2026-05-20 | ใช้ path `docs/output-structure-fix/` | normalize จากคำขอที่พิมพ์ว่า `sdocs/output-stuctur-fix/` ให้เข้ากับ repo docs และสะกด `structure` ให้ถูก | เอกสารใหม่อยู่ใต้ mini-wiki หลักและค้นหาได้จาก `docs/index.md` |
+
+## Related pages
+
+- [[structured-output-fix-plan]]
+- [[structured-output-reliability-research-2026]]
+- [[output-contract-hardening]]
+- [[model-output/v2-lfm2-350m-security-triage-responses-parse]]
+- [[Day6]]

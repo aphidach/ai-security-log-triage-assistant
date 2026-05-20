@@ -19,6 +19,7 @@
 - `scripts/model_adapters/openai_compatible.py` สำหรับ adapter modes ปัจจุบัน เช่น `responses_parse`, `json_schema`, `structured_outputs`, `guided_json`, `json_object` (source: scripts/model_adapters/openai_compatible.py)
 - `scripts/evaluate.py` สำหรับ evaluator และ report output path ที่ต้องแยกตาม mode/runtime (source: scripts/evaluate.py)
 - `reports/README.md` สำหรับ report path convention ของ smoke, mini semantic eval และ fixed split reports (source: reports/README.md)
+- `docs/output-structure-fix/README.md` สำหรับ phase-detail notes ตั้งแต่ Phase 1 เป็นต้นไป (source: docs/output-structure-fix/README.md)
 - `data/splits/smoke-output-contract.jsonl` สำหรับ 5-sample smoke gate (source: data/splits/smoke-output-contract.jsonl)
 - `data/splits/test.jsonl` สำหรับ fixed test split ที่ต้อง freeze ไว้จนกว่า smoke contract ผ่าน (source: data/splits/test.jsonl)
 
@@ -43,6 +44,20 @@
 - ไม่ broaden label taxonomy เกิน 5 labels เดิม
 - ไม่ retrain v3 เพื่อกลบ runtime ที่ยังไม่ได้พิสูจน์ว่า constrained decoding ได้จริง
 - ไม่ claim ว่า model ตรวจพบ compromise ได้จาก log เส้นเดียว
+
+## Detailed Phase Pages
+
+รายละเอียดการทำงานตั้งแต่ Phase 1 เป็นต้นไปอยู่ใน `docs/output-structure-fix/`:
+
+| Phase | Page | Status |
+| --- | --- | --- |
+| Phase 1 | [[output-structure-fix/phase-1-backend-inventory]] | In progress |
+| Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Draft |
+| Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Draft |
+| Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Draft |
+| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Draft |
+| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Draft |
+| Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft |
 
 ## Phase 0: Freeze And Preserve Evidence
 
@@ -94,7 +109,11 @@ Pass condition:
 
 ## Phase 1: Backend Inventory
 
-สถานะ: ต้องรู้ก่อนว่าเรากำลังทดสอบอะไรอยู่
+สถานะ: In progress 2026-05-20
+
+รายละเอียด: [[output-structure-fix/phase-1-backend-inventory]]
+
+หมายเหตุ: สร้าง inventory report template แล้วที่ `reports/structured-output-backend-inventory.md` แต่ยังต้องเติม backend version, exact launch command และ `/v1/models` output จากเครื่องที่ serve Unsloth Studio adapter
 
 Checklist:
 
@@ -108,6 +127,7 @@ Checklist:
 Deliverables:
 
 - `reports/structured-output-backend-inventory.md`
+- `docs/output-structure-fix/phase-1-backend-inventory.md`
 - ส่วน `Runtime Metadata` ใน smoke report ทุกไฟล์
 
 Pass condition:
@@ -299,6 +319,7 @@ Pass condition:
 | 2026-05-20 | Codex | Created structured output fix plan from the recommended next plan | `docs/structured-output-fix-plan.md` | Done |
 | 2026-05-20 | Codex | Set the report path convention for structured-output smoke and mini semantic eval runs | `reports/README.md`, `docs/structured-output-fix-plan.md` | Done |
 | 2026-05-20 | Codex | Completed Phase 0 evidence preservation with canonical smoke artifacts, split checksums, and a run artifact register | `reports/openai-compatible-unsloth-studio-json-schema-smoke.json`, `reports/openai-compatible-unsloth-studio-json-schema-smoke.md`, `reports/frozen-splits.sha256`, `reports/structured-output-run-artifacts.md` | Done |
+| 2026-05-20 | Codex | Started Phase 1 by creating phase-detail notes and backend inventory report template | `docs/output-structure-fix/`, `reports/structured-output-backend-inventory.md` | In progress |
 
 ## Decision Log
 
@@ -308,10 +329,12 @@ Pass condition:
 | 2026-05-20 | แยก runtime capability matrix ออกจาก retrain v3 | ถ้า backend ยังไม่ได้ constrained decoding จริง retrain อาจยังหลุด markdown/prose อยู่ดี | งานถัดไปเริ่มจาก backend inventory และ constrained-decoding probe |
 | 2026-05-20 | Validation/retry เป็น fallback ไม่ใช่ metric workaround | retry ช่วย production ได้ แต่ถ้าใช้กลบ invalid output จะทำให้ evaluator มองไม่เห็นปัญหาจริง | ต้องรายงาน retry count และ invalid count แยก |
 | 2026-05-20 | ใช้ mode-specific report paths สำหรับ smoke รอบใหม่ | path กลางอย่าง `openai-compatible-eval.json` ถูก overwrite ง่ายและทำให้เทียบ mode ย้อนหลังยาก | smoke/mini eval รอบใหม่ต้องมี runtime และ mode อยู่ในชื่อไฟล์ |
+| 2026-05-20 | แยก phase-detail docs ใต้ `docs/output-structure-fix/` | Phase 1 เป็นต้นไปต้องมีรายละเอียดคำสั่ง หลักฐาน และผลลัพธ์ต่อ phase มากกว่า master plan | master plan ใช้เป็น overview ส่วน execution detail ไปอยู่ในหน้า phase เฉพาะ |
 
 ## Related pages
 
 - [[structured-output-reliability-research-2026]]
+- [[output-structure-fix/README]]
 - [[output-contract-hardening]]
 - [[model-output/v2-lfm2-350m-security-triage-responses-parse]]
 - [[Day6]]
