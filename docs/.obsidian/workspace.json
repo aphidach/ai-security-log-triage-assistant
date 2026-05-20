@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "model-output/v1-lfm2-350m-security-triage.md",
+                "file": "structured-output-fix-plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "v1-lfm2-350m-security-triage"
+              "title": "structured-output-fix-plan"
             }
           }
         ]
@@ -185,22 +185,24 @@
   },
   "active": "349890ec50d8e5bc",
   "lastOpenFiles": [
+    "structured-output-reliability-research-2026.md",
+    "structured-output-fix-plan.md",
+    "project-structure-rationale.md",
+    "output-contract-hardening.md",
+    "triage-output-schema.md",
+    "model-output/v1-lfm2-350m-security-triage.md",
     "model-output/v2-lfm2-350m-security-triage-responses-parse.md",
     "fine-tuning-notes.md",
-    "output-contract-hardening.md",
     "index.md",
-    "triage-output-schema.md",
     "dataset-source-strategy.md",
     "dataset-input-output-format.md",
     "evaluation-metrics-rationale.md",
-    "model-output/v1-lfm2-350m-security-triage.md",
     "data-formats-for-llm-training.md",
     "model-output/template.md",
     "model-output/README.md",
     "model-output",
     "data-card.md",
     "References.md",
-    "project-structure-rationale.md",
     "raw/Gemma4_(E2B)_Text.ipynb",
     "tinylora-reasoning-13-parameters.md",
     "slm-rag-fine-tuning-hallucination.md",
@@ -213,14 +215,12 @@
     "log-type-examples.md",
     "label-taxonomy.md",
     "log.md",
-    "raw/Fine-tuning small language models for industrial retrieval-augmented generation Efficiency, factuality, and hallucination analysis.md",
     "raw/assets/1-s2.0-S0920548926000371-gr6a.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr5a.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr4.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr3.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr2.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr1.jpg",
-    "raw/What Small Language Model Is Best for Fine-Tuning.md",
     "raw/assets/what-slm-ft-03-base-performance.BnRInOys_1lAp5k.webp",
     "raw/assets/what-slm-ft-02-model-ranking.m0y1x9M4_owkrL.webp",
     "raw/assets/what-small-language-model-is-best-for-fine-tuning-thumbnail.C1Ako3oL_Z1yC5ip.webp",

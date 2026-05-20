@@ -11,7 +11,7 @@ append-only log สำหรับบันทึกการเปลี่ย�
 
 **Last updated**
 
-2026-05-19
+2026-05-20
 
 ## Log
 
@@ -83,6 +83,11 @@ append-only log สำหรับบันทึกการเปลี่ย�
 | 2026-05-19 | Codex | Recorded latest Responses parse probe learning | `docs/output-contract-hardening.md`, `docs/log.md` | `sample-000137` passes JSON/schema through `responses_parse`; `sample-000474` shows remaining field completeness and semantic drift issues, so Responses parse becomes the next runtime candidate |
 | 2026-05-19 | Codex | Moved the OpenAI-compatible adapter runtime from LangChain to OpenAI SDK plus Pydantic Responses parse | `scripts/model_adapters/openai_compatible.py`, `.env.example`, `requirements.txt`, `docs/output-contract-hardening.md`, `docs/log.md` | `responses_parse` is now an adapter mode that returns parsed Pydantic dict output on success, while chat-completion structured-output modes remain available through OpenAI SDK fallback paths |
 | 2026-05-19 | Codex | Added a separate v2 model-output page for the OpenAI SDK + Pydantic `responses_parse` smoke run | `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md`, `docs/model-output/README.md`, `docs/index.md`, `docs/output-contract-hardening.md`, `docs/log.md` | The v2 artifact `unsloth_LFM2-350M_1779162226` remains rejected for output contract because `responses_parse` smoke still has only 0.2 JSON/schema success and 4 invalid outputs out of 5 |
+| 2026-05-20 | Codex | Added 2026 structured-output reliability research note after smoke remained 1/5 | `docs/structured-output-reliability-research-2026.md`, `docs/index.md`, `docs/log.md` | Summarizes official docs and 2026 research, recommends proving server-side constrained decoding with vLLM `structured_outputs` or SGLang XGrammar before retrain or fixed-split comparison |
+| 2026-05-20 | Codex | Updated Day 6 handoff after post-SDK smoke showed no improvement | `docs/Day6.md`, `docs/structured-output-reliability-research-2026.md`, `docs/log.md` | Day 6 now points next work to backend constrained-decoding capability tests and mode-specific reports instead of more prompt hardening |
+| 2026-05-20 | Codex | Created structured output fix plan from the recommended next plan | `docs/structured-output-fix-plan.md`, `docs/index.md`, `docs/log.md` | Adds phases for evidence preservation, backend inventory, probe hardening, runtime capability matrix, contract gate, mini semantic eval, v3 decision, and fixed-split comparison |
+| 2026-05-20 | Codex | Set the report path convention for structured-output experiments | `reports/README.md`, `docs/structured-output-fix-plan.md`, `docs/log.md` | Smoke and mini semantic eval reports now use mode-specific paths such as `reports/openai-compatible-vllm-structured-outputs-smoke.json` to avoid overwriting run artifacts |
+| 2026-05-20 | Codex | Completed Phase 0 evidence preservation for structured-output work | `reports/openai-compatible-unsloth-studio-json-schema-smoke.json`, `reports/openai-compatible-unsloth-studio-json-schema-smoke.md`, `reports/frozen-splits.sha256`, `reports/structured-output-run-artifacts.md`, `docs/structured-output-fix-plan.md`, `docs/log.md` | Current smoke artifact is preserved under the naming convention, split checksums are recorded, and raw outputs plus per-sample metadata are tracked in the canonical JSON |
 
 ## Related pages
 
