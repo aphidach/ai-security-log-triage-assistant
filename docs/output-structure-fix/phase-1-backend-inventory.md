@@ -148,6 +148,38 @@ jq '{
 }' adapter_config.json
 ```
 
+```bash
+drwxrwxrwx 1 masano masano    4096 May 19 10:44 .
+drwxrwxrwx 1 masano masano    4096 May 19 10:56 ..
+-rwxrwxrwx 1 masano masano    1538 May 19 10:44 README.md
+-rwxrwxrwx 1 masano masano    1268 May 19 10:44 adapter_config.json
+-rwxrwxrwx 1 masano masano 1970832 May 19 10:44 adapter_model.safetensors
+-rwxrwxrwx 1 masano masano     212 May 19 10:44 chat_template.jinja
+drwxrwxrwx 1 masano masano    4096 May 19 10:44 checkpoint-30
+drwxrwxrwx 1 masano masano    4096 May 19 10:44 checkpoint-55
+-rwxrwxrwx 1 masano masano     457 May 19 10:44 special_tokens_map.json
+-rwxrwxrwx 1 masano masano 4732525 May 19 10:44 tokenizer.json
+-rwxrwxrwx 1 masano masano   95606 May 19 10:44 tokenizer_config.json
+-rwxrwxrwx 1 masano masano    6417 May 19 10:44 training_args.bin
+{
+  "base_model_name_or_path": "unsloth/LFM2-350M",
+  "peft_type": "LORA",
+  "task_type": "CAUSAL_LM",
+  "r": 16,
+  "lora_alpha": 16,
+  "target_modules": [
+    "v_proj",
+    "gate_proj",
+    "k_proj",
+    "up_proj",
+    "down_proj",
+    "o_proj",
+    "q_proj"
+  ],
+  "modules_to_save": null
+}
+
+```
 Collect runtime version:
 
 ```bash
@@ -156,6 +188,12 @@ python -c "import vllm; print(vllm.__version__)"
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv
 ```
 
+```bash
+0.21.0+cu129
+0.21.0
+name, memory.total [MiB], driver_version
+NVIDIA GeForce RTX 3060 Laptop GPU, 6144 MiB, 596.36
+```
 Choose base model from adapter config:
 
 ```bash
@@ -166,6 +204,11 @@ echo "$BASE_MODEL"
 echo "$LORA_RANK"
 ```
 
+```bash
+unsloth/LFM2-350M
+16
+
+```
 Start vLLM:
 
 ```bash
@@ -196,6 +239,66 @@ After vLLM starts:
 curl -s http://127.0.0.1:8000/v1/models | jq .
 ```
 
+```bash
+curl -s http://127.0.0.1:8000/v1/models | jq .
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "unsloth/LFM2-350M",
+      "object": "model",
+      "created": 1779255999,
+      "owned_by": "vllm",
+      "root": "unsloth/LFM2-350M",
+      "parent": null,
+      "max_model_len": 32768,
+      "permission": [
+        {
+          "id": "modelperm-aa66bbc9eed23030",
+          "object": "model_permission",
+          "created": 1779255999,
+          "allow_create_engine": false,
+          "allow_sampling": true,
+          "allow_logprobs": true,
+          "allow_search_indices": false,
+          "allow_view": true,
+          "allow_fine_tuning": false,
+          "organization": "*",
+          "group": null,
+          "is_blocking": false
+        }
+      ]
+    },
+    {
+      "id": "lfm2-security-triage",
+      "object": "model",
+      "created": 1779255999,
+      "owned_by": "vllm",
+      "root": "/mnt/c/Users/dargy/.unsloth/studio/outputs/unsloth_LFM2-350M_1779162226",
+      "parent": "unsloth/LFM2-350M",
+      "max_model_len": null,
+      "permission": [
+        {
+          "id": "modelperm-b142f6787c4d6f1f",
+          "object": "model_permission",
+          "created": 1779255999,
+          "allow_create_engine": false,
+          "allow_sampling": true,
+          "allow_logprobs": true,
+          "allow_search_indices": false,
+          "allow_view": true,
+          "allow_fine_tuning": false,
+          "organization": "*",
+          "group": null,
+          "is_blocking": false
+        }
+      ]
+    }
+  ]
+}
+
+
+```
 Expected:
 
 - one base model id
@@ -215,6 +318,49 @@ curl -s http://127.0.0.1:8000/v1/chat/completions \
     "temperature": 0,
     "max_tokens": 16
   }' | jq .
+```
+
+```bash
+{
+  "id": "chatcmpl-a0a361b39a2e4b0a",
+  "object": "chat.completion",
+  "created": 1779256047,
+  "prompt_routed_experts": null,
+  "model": "lfm2-security-triage",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "ok",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      },
+      "logprobs": null,
+      "finish_reason": "stop",
+      "stop_reason": null,
+      "token_ids": null,
+      "routed_experts": null
+    }
+  ],
+  "service_tier": null,
+  "system_fingerprint": "vllm-0.21.0-d743c957",
+  "usage": {
+    "prompt_tokens": 15,
+    "total_tokens": 17,
+    "completion_tokens": 2,
+    "prompt_tokens_details": null
+  },
+  "prompt_logprobs": null,
+  "prompt_token_ids": null,
+  "prompt_text": null,
+  "kv_transfer_params": null
+}
+
 ```
 
 This health check only proves the endpoint responds. It does not prove the output contract.

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "structured-output-fix-plan.md",
+                "file": "output-structure-fix/phase-1-backend-inventory.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "structured-output-fix-plan"
+              "title": "phase-1-backend-inventory"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "4c83fde0f47f7d36",
@@ -185,8 +186,17 @@
   },
   "active": "349890ec50d8e5bc",
   "lastOpenFiles": [
-    "structured-output-reliability-research-2026.md",
     "structured-output-fix-plan.md",
+    "output-structure-fix/phase-7-fixed-split-comparison.md",
+    "output-structure-fix/phase-6-v3-or-runtime-decision.md",
+    "output-structure-fix/phase-5-mini-semantic-eval.md",
+    "output-structure-fix/phase-4-contract-gate.md",
+    "output-structure-fix/phase-3-runtime-capability-matrix.md",
+    "output-structure-fix/phase-2-probe-hardening.md",
+    "output-structure-fix/phase-1-backend-inventory.md",
+    "output-structure-fix/README.md",
+    "output-structure-fix",
+    "structured-output-reliability-research-2026.md",
     "project-structure-rationale.md",
     "output-contract-hardening.md",
     "triage-output-schema.md",
@@ -205,16 +215,8 @@
     "References.md",
     "raw/Gemma4_(E2B)_Text.ipynb",
     "tinylora-reasoning-13-parameters.md",
-    "slm-rag-fine-tuning-hallucination.md",
-    "poc-plan.md",
-    "Gemma-3–4B-IT.md",
-    "Day6.md",
     "assets/readme-hero.png",
     "assets",
-    "slm-fine-tuning-model-choice.md",
-    "log-type-examples.md",
-    "label-taxonomy.md",
-    "log.md",
     "raw/assets/1-s2.0-S0920548926000371-gr6a.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr5a.jpg",
     "raw/assets/1-s2.0-S0920548926000371-gr4.jpg",
