@@ -54,11 +54,11 @@
 
 ## Structured Output Fix Phase Notes
 
-- [[output-structure-fix/phase-1-backend-inventory]]: Phase 1 backend inventory, current endpoint metadata, vLLM + Unsloth LoRA candidate command plan และ report template
+- [[output-structure-fix/phase-1-backend-inventory]]: Phase 1 backend inventory, current endpoint metadata, vLLM + Unsloth LoRA serving evidence และ report template
 - [[output-structure-fix/phase-2-probe-hardening]]: Phase 2 probe hardening stub สำหรับ adversarial format instruction และ per-sample raw output
-- [[output-structure-fix/phase-3-runtime-capability-matrix]]: Phase 3 runtime/mode matrix stub สำหรับ current, vLLM และ fallback candidate
-- [[output-structure-fix/phase-4-contract-gate]]: Phase 4 contract gate stub สำหรับ JSON/schema pass condition
-- [[output-structure-fix/phase-5-mini-semantic-eval]]: Phase 5 mini semantic eval stub หลัง contract ผ่าน
+- [[output-structure-fix/phase-3-runtime-capability-matrix]]: Phase 3 runtime/mode matrix พร้อมผล vLLM `structured_outputs` ที่ผ่าน output contract
+- [[output-structure-fix/phase-4-contract-gate]]: Phase 4 contract gate ที่ผ่านแล้วสำหรับ vLLM `structured_outputs`
+- [[output-structure-fix/phase-5-mini-semantic-eval]]: Phase 5 mini semantic eval ที่พร้อมเริ่มหลัง contract ผ่าน
 - [[output-structure-fix/phase-6-v3-or-runtime-decision]]: Phase 6 decision stub สำหรับ runtime vs retrain v3
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison stub หลัง prerequisites ครบ
 
@@ -92,6 +92,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-20 | Codex | Added 2026 structured-output reliability research note to the core docs index | `docs/structured-output-reliability-research-2026.md`, `docs/index.md` | Updated |
 | 2026-05-20 | Codex | Added structured output fix plan to the core docs index | `docs/structured-output-fix-plan.md`, `docs/index.md` | Updated |
 | 2026-05-20 | Codex | Added structured-output fix phase-detail pages to the docs index | `docs/output-structure-fix/`, `docs/index.md` | Updated |
+| 2026-05-20 | Codex | Refreshed structured-output phase descriptions after vLLM passed the contract gate | `docs/output-structure-fix/`, `reports/openai-compatible-vllm-structured-outputs-smoke.json` | Updated |
 
 ## Decision Log
 

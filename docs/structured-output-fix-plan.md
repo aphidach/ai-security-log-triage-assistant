@@ -2,7 +2,7 @@
 
 **Summary**
 
-แผนนี้แปลง `Recommended Next Plan` จาก research note ให้เป็นงานลงมือทำสำหรับแก้ปัญหา output contract หลัง smoke test ล่าสุดยังผ่าน JSON/schema ได้เพียง 1/5 samples
+แผนนี้แปลง `Recommended Next Plan` จาก research note ให้เป็นงานลงมือทำสำหรับแก้ปัญหา output contract หลัง smoke test เดิมผ่าน JSON/schema ได้เพียง 1/5 samples และบันทึกสถานะล่าสุดที่ vLLM `structured_outputs` ผ่าน output contract แล้ว
 
 เป้าหมายของแผนนี้คือพิสูจน์ก่อนว่า serving backend บังคับ structured output แบบ constrained decoding ได้จริงหรือไม่ ถ้ายังทำไม่ได้ ห้ามใช้ fixed test split เป็น comparison หลัก และห้ามสรุปว่า fine-tuned model พร้อมใช้จากตัวอย่างที่ผ่านเพียง 1 sample
 
@@ -14,6 +14,7 @@
 - `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md` สำหรับ v2 smoke failure mode ที่ `responses_parse` ยังผ่านเพียง 1/5 (source: docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md)
 - `reports/openai-compatible-unsloth-studio-json-schema-smoke.json` สำหรับ persisted smoke artifact ที่ถูก preserve ตาม report path convention: JSON/schema success `0.2`, invalid output `4` จาก 5 samples (source: reports/openai-compatible-unsloth-studio-json-schema-smoke.json)
 - `reports/structured-output-run-artifacts.md` สำหรับ Phase 0 evidence register, artifact checksums, split checksums และ sample evidence summary (source: reports/structured-output-run-artifacts.md)
+- `reports/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ vLLM `structured_outputs` smoke result ที่ผ่าน output contract: JSON/schema success `1.0`, invalid output `0` (source: reports/openai-compatible-vllm-structured-outputs-smoke.json)
 - `reports/frozen-splits.sha256` สำหรับ checksum ของ fixed test split และ smoke output-contract split (source: reports/frozen-splits.sha256)
 - `scripts/probe_openai_structured_output.py` สำหรับ direct structured-output probe path ที่ต้องต่อยอด (source: scripts/probe_openai_structured_output.py)
 - `scripts/model_adapters/openai_compatible.py` สำหรับ adapter modes ปัจจุบัน เช่น `responses_parse`, `json_schema`, `structured_outputs`, `guided_json`, `json_object` (source: scripts/model_adapters/openai_compatible.py)
@@ -51,11 +52,11 @@
 
 | Phase | Page | Status |
 | --- | --- | --- |
-| Phase 1 | [[output-structure-fix/phase-1-backend-inventory]] | In progress |
+| Phase 1 | [[output-structure-fix/phase-1-backend-inventory]] | Passed for vLLM path |
 | Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Draft |
-| Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Draft |
-| Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Draft |
-| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Draft |
+| Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path |
+| Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed |
+| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Ready |
 | Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Draft |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft |
 
@@ -109,20 +110,20 @@ Pass condition:
 
 ## Phase 1: Backend Inventory
 
-สถานะ: In progress 2026-05-20
+สถานะ: Passed for vLLM path 2026-05-20
 
 รายละเอียด: [[output-structure-fix/phase-1-backend-inventory]]
 
-หมายเหตุ: สร้าง inventory report template แล้วที่ `reports/structured-output-backend-inventory.md` แต่ยังต้องเติม backend version, exact launch command และ `/v1/models` output จากเครื่องที่ serve Unsloth Studio adapter
+หมายเหตุ: `reports/structured-output-backend-inventory.md` มี vLLM backend version, base model, LoRA adapter path, served alias, request mode และ smoke result แล้ว ส่วน current endpoint เดิมยังไม่รู้ exact backend แต่เก็บไว้เป็น failing baseline
 
 Checklist:
 
-- [ ] ระบุ serving backend จริง เช่น vLLM, SGLang, LM Studio, Ollama, TGI หรือ Unsloth Studio endpoint
-- [ ] ระบุ backend version และ structured-output syntax ที่ backend นั้นรองรับ
-- [ ] เก็บ launch command หรือ UI settings ที่ใช้ load `unsloth_LFM2-350M_1779162226`
-- [ ] ระบุว่า LoRA serving path รองรับ server-side constrained decoding หรือเป็นแค่ client-side validation
-- [ ] ระบุ model alias ที่ request เช่น `current` หรือ `lfm2-security-triage`
-- [ ] ระบุ response model ที่ endpoint รายงานกลับมา เพื่อจับ alias drift
+- [x] ระบุ serving backend จริงสำหรับ path ที่ผ่าน: vLLM
+- [x] ระบุ backend version และ structured-output syntax ที่ backend นั้นรองรับ
+- [x] เก็บ launch command/effective serving settings ที่ใช้ load `unsloth_LFM2-350M_1779162226`
+- [x] ระบุว่า LoRA serving path รองรับ server-side constrained decoding ผ่าน `structured_outputs`
+- [x] ระบุ model alias ที่ request คือ `lfm2-security-triage`
+- [x] ระบุ response model ที่ endpoint รายงานกลับมา คือ `lfm2-security-triage`
 
 Deliverables:
 
@@ -157,7 +158,7 @@ Pass condition:
 
 ## Phase 3: Runtime Capability Matrix
 
-สถานะ: เป็นแกนของรอบแก้ปัญหานี้
+สถานะ: vLLM `structured_outputs` passed output contract 2026-05-20
 
 ให้ทดสอบด้วย smoke split เดียวกันและ schema เดียวกันทุก runtime/mode
 
@@ -165,7 +166,7 @@ Pass condition:
 | --- | --- | --- | --- |
 | Current endpoint + `responses_parse` | ยืนยัน baseline 1/5 ด้วย output path แยก | validation-after-generation ยังไม่พอ | Pending |
 | Current endpoint + `json_schema` | ดูว่า backend honor schema หรือ ignore/fallback | ถ้ายังมี markdown fence แปลว่าไม่ enforce จริง | Pending |
-| vLLM `structured_outputs` | ใช้ syntax ปัจจุบันของ vLLM แทนพึ่ง `guided_json` | ควรบล็อก markdown/prose ได้ถ้า server รองรับจริง | Pending |
+| vLLM `structured_outputs` | ใช้ syntax ปัจจุบันของ vLLM แทนพึ่ง `guided_json` | บล็อก markdown/prose และ schema fail ได้ใน smoke gate | Passed |
 | SGLang XGrammar | ใช้ JSON schema ผ่าน structured output backend | candidate สำรองที่น่าทดสอบถ้า vLLM path ไม่ชัด | Pending |
 | LM Studio/Ollama schema mode | local diagnostic เร็วถ้ามี model/runtime พร้อม | แยก model behavior จาก current endpoint behavior | Optional |
 | Larger model diagnostic | model 7B/8B ที่ structured-output-friendly | แยก model capacity issue ออกจาก runtime issue | Optional |
@@ -185,13 +186,16 @@ Fail condition:
 
 ## Phase 4: Contract Gate
 
-สถานะ: gate นี้ต้องผ่านก่อนดู semantic quality
+สถานะ: Passed for vLLM `structured_outputs` 2026-05-20
 
 Smoke command pattern:
 
 ```bash
+OPENAI_COMPATIBLE_BASE_URL=http://192.168.8.141:8080/v1 \
+OPENAI_COMPATIBLE_API_KEY=local \
 OPENAI_COMPATIBLE_RESPONSE_FORMAT=structured_outputs \
-OPENAI_COMPATIBLE_MODEL=current \
+OPENAI_COMPATIBLE_MODEL=lfm2-security-triage \
+OPENAI_COMPATIBLE_SCHEMA_PATH=data/schemas/triage-output.schema.json \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/smoke-output-contract.jsonl \
@@ -204,12 +208,20 @@ python3 scripts/evaluate.py \
 
 Gate:
 
-- [ ] `json_parse_success_rate = 1.0`
-- [ ] `schema_success_rate = 1.0`
-- [ ] `invalid_output_count = 0`
-- [ ] label อยู่ใน enum ทั้งหมด
-- [ ] required fields ครบทุก sample
-- [ ] raw output ไม่มี markdown fence หรือ prose wrapper
+- [x] `json_parse_success_rate = 1.0`
+- [x] `schema_success_rate = 1.0`
+- [x] `invalid_output_count = 0`
+- [x] label อยู่ใน enum ทั้งหมด
+- [x] required fields ครบทุก sample
+- [x] raw output ไม่มี markdown fence หรือ prose wrapper
+
+Smoke result:
+
+- `label_accuracy = 0.2`
+- `severity_accuracy = 0.6`
+- `is_suspicious_accuracy = 0.8`
+- `evidence_partial_match = 0.6`
+- `average_latency_ms = 1204.060858`
 
 ถ้าไม่ผ่าน:
 
@@ -223,7 +235,7 @@ Gate:
 
 ## Phase 5: Mini Semantic Eval
 
-สถานะ: ทำหลัง contract gate ผ่านเท่านั้น
+สถานะ: Ready after vLLM contract gate passed
 
 Checklist:
 
@@ -306,11 +318,11 @@ Pass condition:
 
 งานที่ควรเริ่มก่อนที่สุด:
 
-1. ตั้งชื่อ report path แยกสำหรับ current `responses_parse` smoke และ rerun เพื่อ preserve metadata
-2. เก็บ backend inventory: runtime, version, launch settings, model alias และ response model
-3. เพิ่ม adversarial format option ใน `scripts/probe_openai_structured_output.py`
-4. รัน current endpoint ด้วย adversarial probe เพื่อยืนยันว่า path ปัจจุบันเป็น validate-after-generation
-5. เลือก constrained-decoding candidate แรก: vLLM `structured_outputs` ถ้า backend เป็น vLLM หรือ SGLang XGrammar ถ้าพร้อมกว่า
+1. สร้าง mini semantic eval split 20-25 samples จาก validation/dev data ที่ไม่ใช่ `data/splits/test.jsonl`
+2. รัน mini semantic eval ด้วย vLLM `structured_outputs` และ report path แบบ `reports/openai-compatible-vllm-structured-outputs-mini-semantic-eval.json`
+3. จัดกลุ่ม semantic failures: label confusion, severity drift, suspicious boolean drift และ evidence ที่ไม่เป็น substring จาก log
+4. ตัดสินใจ Phase 6 ว่าควรแก้ dataset/training format, retrain v3 หรือเพิ่ม runtime fallback
+5. คง `data/splits/test.jsonl` เป็น fixed comparison split จนกว่า mini semantic eval จะให้ error profile ชัดเจน
 
 ## Work Log
 
@@ -320,6 +332,7 @@ Pass condition:
 | 2026-05-20 | Codex | Set the report path convention for structured-output smoke and mini semantic eval runs | `reports/README.md`, `docs/structured-output-fix-plan.md` | Done |
 | 2026-05-20 | Codex | Completed Phase 0 evidence preservation with canonical smoke artifacts, split checksums, and a run artifact register | `reports/openai-compatible-unsloth-studio-json-schema-smoke.json`, `reports/openai-compatible-unsloth-studio-json-schema-smoke.md`, `reports/frozen-splits.sha256`, `reports/structured-output-run-artifacts.md` | Done |
 | 2026-05-20 | Codex | Started Phase 1 by creating phase-detail notes and backend inventory report template | `docs/output-structure-fix/`, `reports/structured-output-backend-inventory.md` | In progress |
+| 2026-05-20 | User/Codex | Recorded vLLM `structured_outputs` smoke contract pass and moved active work to Phase 5 | `reports/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output-capability-matrix.md`, `docs/output-structure-fix/` | Passed contract gate |
 
 ## Decision Log
 
@@ -330,6 +343,7 @@ Pass condition:
 | 2026-05-20 | Validation/retry เป็น fallback ไม่ใช่ metric workaround | retry ช่วย production ได้ แต่ถ้าใช้กลบ invalid output จะทำให้ evaluator มองไม่เห็นปัญหาจริง | ต้องรายงาน retry count และ invalid count แยก |
 | 2026-05-20 | ใช้ mode-specific report paths สำหรับ smoke รอบใหม่ | path กลางอย่าง `openai-compatible-eval.json` ถูก overwrite ง่ายและทำให้เทียบ mode ย้อนหลังยาก | smoke/mini eval รอบใหม่ต้องมี runtime และ mode อยู่ในชื่อไฟล์ |
 | 2026-05-20 | แยก phase-detail docs ใต้ `docs/output-structure-fix/` | Phase 1 เป็นต้นไปต้องมีรายละเอียดคำสั่ง หลักฐาน และผลลัพธ์ต่อ phase มากกว่า master plan | master plan ใช้เป็น overview ส่วน execution detail ไปอยู่ในหน้า phase เฉพาะ |
+| 2026-05-20 | ใช้ vLLM `structured_outputs` เป็น runtime สำหรับ Phase 5 | smoke contract ผ่านครบ: JSON parse `1.0`, schema `1.0`, invalid output `0`; แต่ label accuracy ยัง `0.2` | งานถัดไปแยก semantic quality ออกจาก output formatting และยังไม่ใช้ fixed test split |
 
 ## Related pages
 

@@ -2,7 +2,7 @@
 
 **Summary**
 
-โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` ยังผ่าน JSON/schema เพียง 1/5 samples
+โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ vLLM `structured_outputs` ผ่าน output contract แล้ว และงานถัดไปคือ semantic error analysis
 
 หน้า `docs/structured-output-fix-plan.md` ยังเป็น master plan ส่วนโฟลเดอร์นี้ใช้เก็บรายละเอียดการทำงาน คำสั่งที่ต้องรัน หลักฐานที่ต้องเก็บ และ pass/fail condition ของแต่ละ phase ตั้งแต่ Phase 1 เป็นต้นไป
 
@@ -21,11 +21,11 @@
 | Phase | Page | Status | Purpose |
 | --- | --- | --- | --- |
 | Phase 0 | `docs/structured-output-fix-plan.md` และ `reports/structured-output-run-artifacts.md` | Done | เก็บ evidence, checksums และ preserved smoke artifact แล้ว |
-| Phase 1 | [[output-structure-fix/phase-1-backend-inventory]] | In progress | ระบุ backend, version, launch command, model alias, response model และ LoRA serving path |
-| Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Draft | เพิ่ม probe ให้แยก constrained decoding จริงจาก validation-after-generation |
-| Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Draft | ทดสอบ runtime/mode candidate ด้วย smoke split เดียวกัน |
-| Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Draft | ตั้ง gate ที่ต้องผ่านก่อนดู semantic quality |
-| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Draft | วัด semantic error profile หลัง contract ผ่าน |
+| Phase 1 | [[output-structure-fix/phase-1-backend-inventory]] | Passed for vLLM path | ระบุ backend, version, launch command, model alias, response model และ LoRA serving path |
+| Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Optional follow-up | เพิ่ม probe ให้แยก constrained decoding จริงจาก validation-after-generation |
+| Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path | ทดสอบ runtime/mode candidate ด้วย smoke split เดียวกัน |
+| Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed | ตั้ง gate ที่ต้องผ่านก่อนดู semantic quality |
+| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Ready | วัด semantic error profile หลัง contract ผ่าน |
 | Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Draft | ตัดสินใจว่าจะ retrain v3, เปลี่ยน runtime หรือเปลี่ยน model candidate |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
 
@@ -42,6 +42,7 @@
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-20 | Codex | Created phase-detail directory for structured-output fix work | `docs/output-structure-fix/` | Drafted |
+| 2026-05-20 | Codex | Updated phase map after vLLM `structured_outputs` passed the output-contract smoke gate | `reports/openai-compatible-vllm-structured-outputs-smoke.json` | Updated |
 
 ## Decision Log
 
@@ -49,6 +50,7 @@
 | --- | --- | --- | --- |
 | 2026-05-20 | แยก phase notes ออกจาก master plan | master plan ควรสั้นพอใช้ตัดสินใจ ส่วนรายละเอียดคำสั่งและหลักฐานของแต่ละ phase จะยาวขึ้นเรื่อย ๆ | งาน Phase 1 เป็นต้นไปมีหน้าเฉพาะสำหรับ update แบบ append-only |
 | 2026-05-20 | ใช้ path `docs/output-structure-fix/` | normalize จากคำขอที่พิมพ์ว่า `sdocs/output-stuctur-fix/` ให้เข้ากับ repo docs และสะกด `structure` ให้ถูก | เอกสารใหม่อยู่ใต้ mini-wiki หลักและค้นหาได้จาก `docs/index.md` |
+| 2026-05-20 | เลื่อนงาน active ไป Phase 5 mini semantic eval | vLLM `structured_outputs` ผ่าน JSON/schema gate แล้ว แต่ smoke label accuracy ยังอยู่ที่ `0.2` | ต่อไปควรวัด semantic error profile บน mini split ที่ไม่ใช่ fixed test split |
 
 ## Related pages
 

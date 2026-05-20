@@ -34,6 +34,12 @@ reports/frozen-splits.sha256
 reports/structured-output-run-artifacts.md
 ```
 
+Runtime capability matrix:
+
+```text
+reports/structured-output-capability-matrix.md
+```
+
 ## Tokens
 
 | Token | Meaning | Examples |
