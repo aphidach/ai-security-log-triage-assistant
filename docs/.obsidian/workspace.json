@@ -200,6 +200,7 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "output-structure-fix/phase-6-v3-1-mini-semantic-eval.md",
     "scripts.md",
     "data-formats-for-llm-training.md",
     "output-structure-fix/phase-6-1-evidence-constraints.md",
@@ -226,7 +227,6 @@
     "index.md",
     "dataset-source-strategy.md",
     "dataset-input-output-format.md",
-    "evaluation-metrics-rationale.md",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",
     "assets/readme-hero.png",
