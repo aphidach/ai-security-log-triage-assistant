@@ -29,7 +29,7 @@
 
 **Last updated**
 
-2026-05-20
+2026-05-21
 
 ## Goal
 
@@ -59,8 +59,9 @@
 | Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Complete |
 | Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path |
 | Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed |
-| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Run complete; follow-up needed |
-| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Draft |
+| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Superseded by Phase 6.1 mini rerun |
+| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | In progress; semantic decision needed |
+| Phase 6.1 | [[output-structure-fix/phase-6-1-evidence-constraints]] | Contract restored; semantics still blocked |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft |
 
 ## Phase 0: Freeze And Preserve Evidence

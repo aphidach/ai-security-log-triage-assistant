@@ -1,0 +1,3355 @@
+{
+  "adapter": "openai-compatible",
+  "adapter_metadata": {
+    "adapter": "openai-compatible",
+    "base_url": "http://192.168.8.141:8080/v1",
+    "env": {
+      "api_key": "OPENAI_COMPATIBLE_API_KEY",
+      "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+      "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+      "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+      "model": "OPENAI_COMPATIBLE_MODEL",
+      "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+      "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+      "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+    },
+    "finish_reason": "stop",
+    "max_retries": 0,
+    "max_tokens": 512,
+    "model": "lfm2-security-triage",
+    "prompt_version": "triage-json-v2.1",
+    "requested_model": "lfm2-security-triage",
+    "response_format_attempted_modes": [
+      "structured_outputs_json"
+    ],
+    "response_format_mode": "structured_outputs_json",
+    "response_format_requested": "structured_outputs",
+    "response_id": "chatcmpl-83feebceb4c6482f",
+    "response_model": "lfm2-security-triage",
+    "schema_path": "data/schemas/triage-output.schema.json",
+    "timeout_seconds": 120.0,
+    "usage": {
+      "completion_tokens": 113,
+      "completion_tokens_details": null,
+      "prompt_tokens": 533,
+      "prompt_tokens_details": null,
+      "total_tokens": 646
+    }
+  },
+  "counts": {
+    "evidence_partial_match": 15,
+    "failure": 23,
+    "invalid_output": 0,
+    "is_suspicious_correct": 20,
+    "json_parse_success": 25,
+    "label_correct": 9,
+    "schema_success": 25,
+    "severity_correct": 17
+  },
+  "expected_label_distribution": {
+    "directory_traversal_attempt": 5,
+    "failed_login_bruteforce": 5,
+    "normal": 5,
+    "port_scan_or_recon": 5,
+    "sql_injection_attempt": 5
+  },
+  "failures": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-83feebceb4c6482f",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 113,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 646
+        }
+      },
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "severity_mismatch",
+        "is_suspicious_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000063",
+      "input": "May 17 10:03:01 api-02 sshd[4736]: Failed password for webapp from 192.0.2.46 port 53334 ssh2; failed_attempts=1",
+      "latency_ms": 1093.819875,
+      "prediction": {
+        "evidence": [
+          "/var/log/auth.log/access.log",
+          "/var/log/auth.log/ssh/access.log",
+          "/var/log/auth.log/ssh/err.log"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 192.0.2.46",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b3acac697c4e22ce",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 107,
+          "completion_tokens_details": null,
+          "prompt_tokens": 538,
+          "prompt_tokens_details": null,
+          "total_tokens": 645
+        }
+      },
+      "expected": {
+        "evidence": [
+          "/static/..%2f..%2fapp%2fsettings.py",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The static file route includes traversal sequences targeting configuration files.",
+        "recommended_action": "Confirm the route rejected the request and search for other traversal attempts from the source.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000329",
+      "input": "2026-05-17T12:14:09+07:00 app=web route=/static/..%2f..%2fapp%2fsettings.py src_ip=203.0.113.85 status=404 bytes=109",
+      "latency_ms": 541.828625,
+      "prediction": {
+        "evidence": [
+          "status=404",
+          "bytes=109",
+          "description=Failed login attempt from IP 203.0.113.85 targeting /static/..%2f..%2fapp%2fsettings.py "
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Failed login attempt detected",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a252e8ff88223b17",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 94,
+          "completion_tokens_details": null,
+          "prompt_tokens": 532,
+          "prompt_tokens_details": null,
+          "total_tokens": 626
+        }
+      },
+      "expected": {
+        "evidence": [
+          "event=login_failed",
+          "failures=20",
+          "outcome=blocked"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The source generated many failed login attempts and was blocked.",
+        "recommended_action": "Review the account and source IP for password spraying or brute force activity.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000158",
+      "input": "2026-05-17T17:10:09+07:00 app=auth event=login_failed user=admin src_ip=203.0.113.193 failures=20 window=5m outcome=blocked",
+      "latency_ms": 450.502625,
+      "prediction": {
+        "evidence": [
+          "failures: 20",
+          "window: 5m",
+          "outcome: blocked"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from a suspicious IP address targeting admin user.",
+        "recommended_action": "Block the IP address and investigate further.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-be5d23fb44ea8503",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 103,
+          "completion_tokens_details": null,
+          "prompt_tokens": 536,
+          "prompt_tokens_details": null,
+          "total_tokens": 639
+        }
+      },
+      "expected": {
+        "evidence": [
+          "GET /ready",
+          "200",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a routine service health check with a successful response.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "severity_mismatch",
+        "is_suspicious_mismatch"
+      ],
+      "id": "sample-000056",
+      "input": "192.0.2.58 - - [17/May/2026:15:20:28 +0700] \"GET /ready HTTP/1.1\" 200 480 \"-\" \"kube-probe/1.29\"",
+      "latency_ms": 526.531833,
+      "prediction": {
+        "evidence": [
+          "/ready HTTP/1.1",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts detected from 192.0.2.58 within 5 minutes, indicating brute force attack attempt.",
+        "recommended_action": "Block IP address and restrict access to the service.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-852e13732faf290a",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 124,
+          "completion_tokens_details": null,
+          "prompt_tokens": 535,
+          "prompt_tokens_details": null,
+          "total_tokens": 659
+        }
+      },
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "severity_mismatch",
+        "is_suspicious_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000023",
+      "input": "May 17 18:28:24 api-02 sshd[4974]: Failed password for svc_backup from 203.0.113.185 port 61953 ssh2; failed_attempts=1",
+      "latency_ms": 575.28975,
+      "prediction": {
+        "evidence": [
+          "/var/log/auth.log/access.log",
+          "/var/log/auth.log/ssh/access.log",
+          "/var/log/auth.log/ssh/ssh.log"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 203.0.113.185 on port 61953",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a2869245625f2273",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 158,
+          "completion_tokens_details": null,
+          "prompt_tokens": 544,
+          "prompt_tokens_details": null,
+          "total_tokens": 702
+        }
+      },
+      "expected": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000423",
+      "input": "2026-05-17T18:23:00+07:00 ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224; probed_ports=80,443,8080,8443; packets=102",
+      "latency_ms": 847.866583,
+      "prediction": {
+        "evidence": [
+          "ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224",
+          "probed_ports=80,443,8080,8443",
+          "packets=102"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts detected from IP address 198.51.100.61 to 203.0.113.224 targeting ports 80,443,8080,8443, indicating brute force attack attempt.",
+        "recommended_action": "Block IP address and investigate further for potential brute force attack.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a2df90dc9cf4657e",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 87,
+          "completion_tokens_details": null,
+          "prompt_tokens": 543,
+          "prompt_tokens_details": null,
+          "total_tokens": 630
+        }
+      },
+      "expected": {
+        "evidence": [
+          "../../../etc/shadow",
+          "GET /download?file=../../../etc/shadow"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The requested file path contains parent-directory traversal sequences.",
+        "recommended_action": "Review web server logs and verify that sensitive files were not returned.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000382",
+      "input": "203.0.113.62 - - [17/May/2026:17:48:22 +0700] \"GET /download?file=../../../etc/shadow HTTP/1.1\" 404 1874 \"-\" \"curl/8.1\"",
+      "latency_ms": 522.490875,
+      "prediction": {
+        "evidence": [
+          "/download?file=../../../etc/shadow",
+          "404",
+          "1874"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from 203.0.113.62",
+        "recommended_action": "Block IP and investigate further",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b9ede324a390c2db",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 92,
+          "completion_tokens_details": null,
+          "prompt_tokens": 544,
+          "prompt_tokens_details": null,
+          "total_tokens": 636
+        }
+      },
+      "expected": {
+        "evidence": [
+          "/search?q=sleep+tracking",
+          "200"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request contains ordinary search text and completed successfully.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "severity_mismatch",
+        "is_suspicious_mismatch"
+      ],
+      "id": "sample-000014",
+      "input": "198.51.100.20 - - [17/May/2026:09:54:48 +0700] \"GET /search?q=sleep+tracking HTTP/1.1\" 200 1595 \"-\" \"Mozilla/5.0\"",
+      "latency_ms": 523.486917,
+      "prediction": {
+        "evidence": [
+          "/search?q=sleep+tracking",
+          "timestamp",
+          "2026-05-06T09:54:48+0700"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "SQL injection attempt detected",
+        "recommended_action": "Block the request and investigate further",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-95e69f761ef9d3c2",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 143,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 682
+        }
+      },
+      "expected": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000437",
+      "input": "2026-05-17T08:46:11+07:00 firewall: SYN scan detected src=198.51.100.105 dst=192.0.2.203 ports=80,443,8080,8443 action=blocked",
+      "latency_ms": 655.642791,
+      "prediction": {
+        "evidence": [
+          "port_scan_or_recon: port scan detected",
+          "action=blocked: blocked port 80 and 443",
+          "source_ip=198.51.100.105"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "Port scan detected indicates a potential port scan attempt, which is suspicious. Blocking port 80 and 443 is a common security measure to prevent unauthorized access.",
+        "recommended_action": "Block the port scan attempt and investigate the source IP address.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-9d2660f86bde8203",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 150,
+          "completion_tokens_details": null,
+          "prompt_tokens": 543,
+          "prompt_tokens_details": null,
+          "total_tokens": 693
+        }
+      },
+      "expected": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=135,139,445,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000495",
+      "input": "2026-05-17T18:13:01+07:00 ids: nmap fingerprint from 198.51.100.124 to 203.0.113.80; probed_ports=135,139,445,3389; packets=65",
+      "latency_ms": 709.775708,
+      "prediction": {
+        "evidence": [
+          "ids: nmap fingerprint from 198.51.100.124 to 203.0.113.80",
+          "probed_ports=135,139,445,3389",
+          "packets=65"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts detected from IP address 198.51.100.124 targeting ports 135, 139, 445, 3389, indicating brute force attack attempt.",
+        "recommended_action": "Block IP address and investigate further for potential brute force attack.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b223f08f41aaf269",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 126,
+          "completion_tokens_details": null,
+          "prompt_tokens": 562,
+          "prompt_tokens_details": null,
+          "total_tokens": 688
+        }
+      },
+      "expected": {
+        "evidence": [
+          "%2e%2e%2f%2e%2e%2fwindows%2fwin.ini",
+          "GET /download?file=%2e%2e%2f%2e%2e%2fwindows%2fwin.ini"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The requested file path contains parent-directory traversal sequences.",
+        "recommended_action": "Review web server logs and verify that sensitive files were not returned.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000385",
+      "input": "198.51.100.38 - - [17/May/2026:08:05:10 +0700] \"GET /download?file=%2e%2e%2f%2e%2e%2fwindows%2fwin.ini HTTP/1.1\" 403 994 \"-\" \"curl/8.1\"",
+      "latency_ms": 585.155709,
+      "prediction": {
+        "evidence": [
+          "GET /download?file=%2e%2e%2f%2e%2e%2e%2fwindows%2fwin.ini HTTP/1.1",
+          "403",
+          "curl/8.1"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from 198.51.100.38",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8b9fecd2f0138875",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 117,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 656
+        }
+      },
+      "expected": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "severity_mismatch"
+      ],
+      "id": "sample-000458",
+      "input": "2026-05-17T17:07:21+07:00 firewall: SYN scan detected src=192.0.2.144 dst=198.51.100.220 ports=80,443,8080,8443 action=blocked",
+      "latency_ms": 668.119916,
+      "prediction": {
+        "evidence": [
+          "ports=80,443,8080,8443",
+          "action=blocked",
+          "source=192.0.2.144"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "Port scan detected from source IP 192.0.2.144, blocking port 8443.",
+        "recommended_action": "Block the port scan attempt.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-bbeff1f136918495",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 138,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 677
+        }
+      },
+      "expected": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=25,110,143,587,993"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000485",
+      "input": "2026-05-17T08:48:27+07:00 firewall: SYN scan detected src=192.0.2.109 dst=192.0.2.125 ports=25,110,143,587,993 action=blocked",
+      "latency_ms": 651.46225,
+      "prediction": {
+        "evidence": [
+          "port_scan_or_recon: port scan detected",
+          "port_scan_or_recon: port scan detected",
+          "port_scan_or_recon: port scan detected"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The port scan detected indicates a potential port scan attempt, which is suspicious. The blocked action suggests the port scan is likely targeting a critical service.",
+        "recommended_action": "Isolate the affected port and investigate the source of the scan.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8c352263ac2c0fed",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 101,
+          "completion_tokens_details": null,
+          "prompt_tokens": 527,
+          "prompt_tokens_details": null,
+          "total_tokens": 628
+        }
+      },
+      "expected": {
+        "evidence": [
+          "/static/../../.env",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The static file route includes traversal sequences targeting configuration files.",
+        "recommended_action": "Confirm the route rejected the request and search for other traversal attempts from the source.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000338",
+      "input": "2026-05-17T09:05:06+07:00 app=web route=/static/../../.env src_ip=203.0.113.72 status=403 bytes=892",
+      "latency_ms": 485.083625,
+      "prediction": {
+        "evidence": [
+          "403",
+          "bytes=892",
+          "203.0.113.72"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 203.0.113.72 in the last 5 minutes",
+        "recommended_action": "Block IP address and investigate further for potential brute force attack",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-90de505f410e419f",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 108,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 641
+        }
+      },
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "severity_mismatch",
+        "is_suspicious_mismatch"
+      ],
+      "id": "sample-000003",
+      "input": "May 17 10:59:06 auth-01 sshd[2992]: Failed password for webapp from 192.0.2.207 port 31228 ssh2; failed_attempts=1",
+      "latency_ms": 531.6755,
+      "prediction": {
+        "evidence": [
+          "auth-01 sshd[2992]",
+          "ssh2",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 192.0.2.207 on port 31228",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a1a4d2ba69193c73",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 98,
+          "completion_tokens_details": null,
+          "prompt_tokens": 548,
+          "prompt_tokens_details": null,
+          "total_tokens": 646
+        }
+      },
+      "expected": {
+        "evidence": [
+          "UNION SELECT username,password FROM users--",
+          "403"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The request contains SQL syntax in a user-controlled search parameter.",
+        "recommended_action": "Review web application logs for the source IP and check whether the request reached the database layer.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000204",
+      "input": "203.0.113.209 - - [17/May/2026:11:20:39 +0700] \"GET /search?q=UNION SELECT username,password FROM users-- HTTP/1.1\" 403 161 \"-\" \"Mozilla/5.0\"",
+      "latency_ms": 464.833083,
+      "prediction": {
+        "evidence": [
+          "/search?q=UNION SELECT username,password FROM users--"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from 203.0.113.209, indicating brute force attack attempt.",
+        "recommended_action": "Block IP address and block IP range from further login attempts.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-ad4a84bbbf73eb7c",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 123,
+          "completion_tokens_details": null,
+          "prompt_tokens": 538,
+          "prompt_tokens_details": null,
+          "total_tokens": 661
+        }
+      },
+      "expected": {
+        "evidence": [
+          "event_id=4625",
+          "count=13",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000163",
+      "input": "2026-05-17T10:13:32+07:00 winlog event_id=4625 host=vpn-01 target_user=administrator src_ip=203.0.113.75 count=13 status=failed_logon",
+      "latency_ms": 593.032333,
+      "prediction": {
+        "evidence": [
+          "2026-05-17T10:13:32+07:00",
+          "target_user=administrator",
+          "src_ip=203.0.113.75"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 203.0.113.75 targeting user 'administrator'",
+        "recommended_action": "Block IP address and restrict access to the target user",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-ab93e4a2f928df79",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 87,
+          "completion_tokens_details": null,
+          "prompt_tokens": 536,
+          "prompt_tokens_details": null,
+          "total_tokens": 623
+        }
+      },
+      "expected": {
+        "evidence": [
+          "username=%27%20OR%201%3D1--",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The login parameter contains a common SQL injection authentication bypass pattern.",
+        "recommended_action": "Review application logs for similar payloads and verify whether authentication logic was affected.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000202",
+      "input": "2026-05-17T09:18:15+07:00 app=web route=/login method=POST src_ip=198.51.100.189 username=%27%20OR%201%3D1-- status=500",
+      "latency_ms": 446.530417,
+      "prediction": {
+        "evidence": [
+          "/login",
+          "POST",
+          "198.51.100.189"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 198.51.100.189",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8b76964fc198ba0f",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 113,
+          "completion_tokens_details": null,
+          "prompt_tokens": 531,
+          "prompt_tokens_details": null,
+          "total_tokens": 644
+        }
+      },
+      "expected": {
+        "evidence": [
+          "username=' OR '1'='1",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The login parameter contains a common SQL injection authentication bypass pattern.",
+        "recommended_action": "Review application logs for similar payloads and verify whether authentication logic was affected.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000298",
+      "input": "2026-05-17T09:11:35+07:00 app=web route=/login method=POST src_ip=192.0.2.240 username=' OR '1'='1 status=403",
+      "latency_ms": 548.42625,
+      "prediction": {
+        "evidence": [
+          "/login",
+          "192.0.2.240",
+          "username= OR '1'='1 status=403"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 192.0.2.240 for user 'OR' and '1'='1",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a4210a9a8400ff93",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 116,
+          "completion_tokens_details": null,
+          "prompt_tokens": 538,
+          "prompt_tokens_details": null,
+          "total_tokens": 654
+        }
+      },
+      "expected": {
+        "evidence": [
+          "event_id=4625",
+          "count=19",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000155",
+      "input": "2026-05-17T14:52:35+07:00 winlog event_id=4625 host=auth-01 target_user=backup_svc src_ip=192.0.2.111 count=19 status=failed_logon",
+      "latency_ms": 574.263,
+      "prediction": {
+        "evidence": [
+          "2026-05-17T14:52:35+07:00",
+          "target_user=backup_svc",
+          "source_ip=192.0.2.111"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from a specific IP address targeting a user.",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a32f3310a7c3a8e3",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 122,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 655
+        }
+      },
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "repeated 13 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000185",
+      "input": "May 17 08:41:30 vpn-01 sshd[6609]: Failed password for admin from 198.51.100.203 port 53148 ssh2; repeated 13 times in 4 minutes",
+      "latency_ms": 581.992959,
+      "prediction": {
+        "evidence": [
+          "/var/log/auth.log/access.log",
+          "/var/log/auth.log/ssh/access.log",
+          "/var/log/auth.log/ssh/err.log"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 198.51.100.203 for 13 seconds",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-85d95fa7fff8b1f1",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 112,
+          "completion_tokens_details": null,
+          "prompt_tokens": 528,
+          "prompt_tokens_details": null,
+          "total_tokens": 640
+        }
+      },
+      "expected": {
+        "evidence": [
+          "username=admin'--",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The login parameter contains a common SQL injection authentication bypass pattern.",
+        "recommended_action": "Review application logs for similar payloads and verify whether authentication logic was affected.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000220",
+      "input": "2026-05-17T15:19:06+07:00 app=web route=/login method=POST src_ip=203.0.113.98 username=admin'-- status=500",
+      "latency_ms": 526.720625,
+      "prediction": {
+        "evidence": [
+          "/login/login_method=POST",
+          "src_ip=203.0.113.98",
+          "username=admin"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 203.0.113.98 targeting user 'admin' with POST method",
+        "recommended_action": "Block IP address and investigate further for brute force attack",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8b7c21f2699c59ab",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 99,
+          "completion_tokens_details": null,
+          "prompt_tokens": 537,
+          "prompt_tokens_details": null,
+          "total_tokens": 636
+        }
+      },
+      "expected": {
+        "evidence": [
+          "id=1 OR 1=1",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The API request includes SQL operators or functions inside a query parameter.",
+        "recommended_action": "Inspect API logs and database query logs for related requests from the same source.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000293",
+      "input": "2026-05-17T16:21:51+07:00 api-gateway: GET /api/users?id=1 OR 1=1 src=198.51.100.193 status=400 upstream_ms=1398",
+      "latency_ms": 489.599416,
+      "prediction": {
+        "evidence": [
+          "GET /api/users?id=1",
+          "1=1",
+          "src=198.51.100.193"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 198.51.100.193",
+        "recommended_action": "block IP address and investigate further",
+        "severity": "high"
+      },
+      "schema_errors": []
+    }
+  ],
+  "metrics": {
+    "average_latency_ms": 586.249022,
+    "evidence_partial_match": 0.6,
+    "invalid_output_count": 0,
+    "is_suspicious_accuracy": 0.8,
+    "json_parse_success_rate": 1.0,
+    "label_accuracy": 0.36,
+    "schema_success_rate": 1.0,
+    "severity_accuracy": 0.68
+  },
+  "predicted_label_distribution": {
+    "directory_traversal_attempt": 1,
+    "failed_login_bruteforce": 20,
+    "port_scan_or_recon": 3,
+    "sql_injection_attempt": 1
+  },
+  "sample_count": 25,
+  "samples": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-83feebceb4c6482f",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 113,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 646
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000063",
+      "is_suspicious_correct": false,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 1093.819875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/var/log/auth.log/access.log",
+          "/var/log/auth.log/ssh/access.log",
+          "/var/log/auth.log/ssh/err.log"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 192.0.2.46",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/var/log/auth.log/access.log\", \"/var/log/auth.log/ssh/access.log\", \"/var/log/auth.log/ssh/err.log\"], \"reason\": \"Multiple failed SSH login attempts from IP address 192.0.2.46\", \"recommended_action\": \"Block IP address and investigate further\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b3acac697c4e22ce",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 107,
+          "completion_tokens_details": null,
+          "prompt_tokens": 538,
+          "prompt_tokens_details": null,
+          "total_tokens": 645
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000329",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 541.828625,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "status=404",
+          "bytes=109",
+          "description=Failed login attempt from IP 203.0.113.85 targeting /static/..%2f..%2fapp%2fsettings.py "
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Failed login attempt detected",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"status=404\", \"bytes=109\", \"description=Failed login attempt from IP 203.0.113.85 targeting /static/..%2f..%2fapp%2fsettings.py \"], \"reason\": \"Failed login attempt detected\", \"recommended_action\": \"Block IP address and investigate further\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a252e8ff88223b17",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 94,
+          "completion_tokens_details": null,
+          "prompt_tokens": 532,
+          "prompt_tokens_details": null,
+          "total_tokens": 626
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000158",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 450.502625,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "failures: 20",
+          "window: 5m",
+          "outcome: blocked"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from a suspicious IP address targeting admin user.",
+        "recommended_action": "Block the IP address and investigate further.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"failures: 20\", \"window: 5m\", \"outcome: blocked\" ], \"reason\": \"Multiple failed login attempts from a suspicious IP address targeting admin user.\" , \"recommended_action\": \"Block the IP address and investigate further.\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-9c55066e59559487",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 116,
+          "completion_tokens_details": null,
+          "prompt_tokens": 544,
+          "prompt_tokens_details": null,
+          "total_tokens": 660
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000315",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 566.657167,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "src=192.0.2.225",
+          "uri=/files/..%5c..%5cwindows%5cwin.ini",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "Blocked request due to directory traversal attempt",
+        "recommended_action": "Investigate the blocked request and investigate the source IP address and request path for potential malicious intent.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"directory_traversal_attempt\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"src=192.0.2.225\", \"uri=/files/..%5c..%5cwindows%5cwin.ini\", \"status=400\"], \"reason\": \"Blocked request due to directory traversal attempt\", \"recommended_action\": \"Investigate the blocked request and investigate the source IP address and request path for potential malicious intent.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-be5d23fb44ea8503",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 103,
+          "completion_tokens_details": null,
+          "prompt_tokens": 536,
+          "prompt_tokens_details": null,
+          "total_tokens": 639
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000056",
+      "is_suspicious_correct": false,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 526.531833,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/ready HTTP/1.1",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts detected from 192.0.2.58 within 5 minutes, indicating brute force attack attempt.",
+        "recommended_action": "Block IP address and restrict access to the service.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/ready HTTP/1.1\", \"kube-probe/1.29\"], \"reason\": \"Multiple failed login attempts detected from 192.0.2.58 within 5 minutes, indicating brute force attack attempt.\", \"recommended_action\": \"Block IP address and restrict access to the service.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-852e13732faf290a",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 124,
+          "completion_tokens_details": null,
+          "prompt_tokens": 535,
+          "prompt_tokens_details": null,
+          "total_tokens": 659
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000023",
+      "is_suspicious_correct": false,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 575.28975,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/var/log/auth.log/access.log",
+          "/var/log/auth.log/ssh/access.log",
+          "/var/log/auth.log/ssh/ssh.log"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 203.0.113.185 on port 61953",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/var/log/auth.log/access.log\", \"/var/log/auth.log/ssh/access.log\", \"/var/log/auth.log/ssh/ssh.log\"], \"reason\": \"Multiple failed SSH login attempts from IP address 203.0.113.185 on port 61953\", \"recommended_action\": \"Block IP address and investigate further for brute force attack.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a2869245625f2273",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 158,
+          "completion_tokens_details": null,
+          "prompt_tokens": 544,
+          "prompt_tokens_details": null,
+          "total_tokens": 702
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000423",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 847.866583,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224",
+          "probed_ports=80,443,8080,8443",
+          "packets=102"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts detected from IP address 198.51.100.61 to 203.0.113.224 targeting ports 80,443,8080,8443, indicating brute force attack attempt.",
+        "recommended_action": "Block IP address and investigate further for potential brute force attack.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224\", \"probed_ports=80,443,8080,8443\", \"packets=102\" ], \"reason\": \"Multiple failed login attempts detected from IP address 198.51.100.61 to 203.0.113.224 targeting ports 80,443,8080,8443, indicating brute force attack attempt.\" , \"recommended_action\": \"Block IP address and investigate further for potential brute force attack.\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a2df90dc9cf4657e",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 87,
+          "completion_tokens_details": null,
+          "prompt_tokens": 543,
+          "prompt_tokens_details": null,
+          "total_tokens": 630
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000382",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 522.490875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/download?file=../../../etc/shadow",
+          "404",
+          "1874"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from 203.0.113.62",
+        "recommended_action": "Block IP and investigate further",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/download?file=../../../etc/shadow\", \"404\", \"1874\"], \"reason\": \"Multiple failed login attempts from 203.0.113.62\", \"recommended_action\": \"Block IP and investigate further\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b9ede324a390c2db",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 92,
+          "completion_tokens_details": null,
+          "prompt_tokens": 544,
+          "prompt_tokens_details": null,
+          "total_tokens": 636
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000014",
+      "is_suspicious_correct": false,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 523.486917,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/search?q=sleep+tracking",
+          "timestamp",
+          "2026-05-06T09:54:48+0700"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "SQL injection attempt detected",
+        "recommended_action": "Block the request and investigate further",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"sql_injection_attempt\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/search?q=sleep+tracking\", \"timestamp\", \"2026-05-06T09:54:48+0700\"], \"reason\": \"SQL injection attempt detected\", \"recommended_action\": \"Block the request and investigate further\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-95e69f761ef9d3c2",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 143,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 682
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000437",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 655.642791,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "port_scan_or_recon: port scan detected",
+          "action=blocked: blocked port 80 and 443",
+          "source_ip=198.51.100.105"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "Port scan detected indicates a potential port scan attempt, which is suspicious. Blocking port 80 and 443 is a common security measure to prevent unauthorized access.",
+        "recommended_action": "Block the port scan attempt and investigate the source IP address.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\n\n  \"label\": \"port_scan_or_recon\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\n    \"port_scan_or_recon: port scan detected\",\n    \"action=blocked: blocked port 80 and 443\",\n    \"source_ip=198.51.100.105\"\n  ],\n  \"reason\": \"Port scan detected indicates a potential port scan attempt, which is suspicious. Blocking port 80 and 443 is a common security measure to prevent unauthorized access.\",\n  \"recommended_action\": \"Block the port scan attempt and investigate the source IP address.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-9d2660f86bde8203",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 150,
+          "completion_tokens_details": null,
+          "prompt_tokens": 543,
+          "prompt_tokens_details": null,
+          "total_tokens": 693
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000495",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 709.775708,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "ids: nmap fingerprint from 198.51.100.124 to 203.0.113.80",
+          "probed_ports=135,139,445,3389",
+          "packets=65"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts detected from IP address 198.51.100.124 targeting ports 135, 139, 445, 3389, indicating brute force attack attempt.",
+        "recommended_action": "Block IP address and investigate further for potential brute force attack.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"ids: nmap fingerprint from 198.51.100.124 to 203.0.113.80\", \"probed_ports=135,139,445,3389\", \"packets=65\" ], \"reason\": \"Multiple failed login attempts detected from IP address 198.51.100.124 targeting ports 135, 139, 445, 3389, indicating brute force attack attempt.\" , \"recommended_action\": \"Block IP address and investigate further for potential brute force attack.\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b223f08f41aaf269",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 126,
+          "completion_tokens_details": null,
+          "prompt_tokens": 562,
+          "prompt_tokens_details": null,
+          "total_tokens": 688
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000385",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 585.155709,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET /download?file=%2e%2e%2f%2e%2e%2e%2fwindows%2fwin.ini HTTP/1.1",
+          "403",
+          "curl/8.1"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from 198.51.100.38",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"GET /download?file=%2e%2e%2f%2e%2e%2e%2fwindows%2fwin.ini HTTP/1.1\", \"403\", \"curl/8.1\"], \"reason\": \"Multiple failed login attempts from 198.51.100.38\", \"recommended_action\": \"Block IP address and investigate further for brute force attack.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8b9fecd2f0138875",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 117,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 656
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000458",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 668.119916,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "ports=80,443,8080,8443",
+          "action=blocked",
+          "source=192.0.2.144"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "Port scan detected from source IP 192.0.2.144, blocking port 8443.",
+        "recommended_action": "Block the port scan attempt.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\n\n  \"label\": \"port_scan_or_recon\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\n    \"ports=80,443,8080,8443\",\n    \"action=blocked\",\n    \"source=192.0.2.144\"\n  ],\n  \"reason\": \"Port scan detected from source IP 192.0.2.144, blocking port 8443.\",\n  \"recommended_action\": \"Block the port scan attempt.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-bbeff1f136918495",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 138,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 677
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000485",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 651.46225,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "port_scan_or_recon: port scan detected",
+          "port_scan_or_recon: port scan detected",
+          "port_scan_or_recon: port scan detected"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The port scan detected indicates a potential port scan attempt, which is suspicious. The blocked action suggests the port scan is likely targeting a critical service.",
+        "recommended_action": "Isolate the affected port and investigate the source of the scan.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\n\n  \"label\": \"port_scan_or_recon\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\n    \"port_scan_or_recon: port scan detected\",\n    \"port_scan_or_recon: port scan detected\",\n    \"port_scan_or_recon: port scan detected\"\n  ],\n  \"reason\": \"The port scan detected indicates a potential port scan attempt, which is suspicious. The blocked action suggests the port scan is likely targeting a critical service.\",\n  \"recommended_action\": \"Isolate the affected port and investigate the source of the scan.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8c352263ac2c0fed",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 101,
+          "completion_tokens_details": null,
+          "prompt_tokens": 527,
+          "prompt_tokens_details": null,
+          "total_tokens": 628
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000338",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 485.083625,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "403",
+          "bytes=892",
+          "203.0.113.72"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 203.0.113.72 in the last 5 minutes",
+        "recommended_action": "Block IP address and investigate further for potential brute force attack",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"403\", \"bytes=892\", \"203.0.113.72\"], \"reason\": \"Multiple failed login attempts from IP address 203.0.113.72 in the last 5 minutes\", \"recommended_action\": \"Block IP address and investigate further for potential brute force attack\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-90de505f410e419f",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 108,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 641
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000003",
+      "is_suspicious_correct": false,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 531.6755,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "auth-01 sshd[2992]",
+          "ssh2",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 192.0.2.207 on port 31228",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"auth-01 sshd[2992]\", \"ssh2\", \"failed_attempts=1\" ], \"reason\": \"Multiple failed SSH login attempts from IP address 192.0.2.207 on port 31228\", \"recommended_action\": \"Block IP address and investigate further\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a1a4d2ba69193c73",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 98,
+          "completion_tokens_details": null,
+          "prompt_tokens": 548,
+          "prompt_tokens_details": null,
+          "total_tokens": 646
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000204",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 464.833083,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/search?q=UNION SELECT username,password FROM users--"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from 203.0.113.209, indicating brute force attack attempt.",
+        "recommended_action": "Block IP address and block IP range from further login attempts.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/search?q=UNION SELECT username,password FROM users--\"], \"reason\": \"Multiple failed login attempts from 203.0.113.209, indicating brute force attack attempt.\", \"recommended_action\": \"Block IP address and block IP range from further login attempts.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-ad4a84bbbf73eb7c",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 123,
+          "completion_tokens_details": null,
+          "prompt_tokens": 538,
+          "prompt_tokens_details": null,
+          "total_tokens": 661
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000163",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 593.032333,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "2026-05-17T10:13:32+07:00",
+          "target_user=administrator",
+          "src_ip=203.0.113.75"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 203.0.113.75 targeting user 'administrator'",
+        "recommended_action": "Block IP address and restrict access to the target user",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"2026-05-17T10:13:32+07:00\", \"target_user=administrator\", \"src_ip=203.0.113.75\" ], \"reason\": \"Multiple failed login attempts from IP address 203.0.113.75 targeting user 'administrator'\", \"recommended_action\": \"Block IP address and restrict access to the target user\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-aa22b20e0ebda98d",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 100,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 633
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000169",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 495.437709,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/var/log/auth.log",
+          "22",
+          "/var/log/auth.log/access.log"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 192.0.2.27 in 5 minutes",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/var/log/auth.log\", \"22\", \"/var/log/auth.log/access.log\"], \"reason\": \"Multiple failed SSH login attempts from IP address 192.0.2.27 in 5 minutes\", \"recommended_action\": \"Block IP address and investigate further\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-ab93e4a2f928df79",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 87,
+          "completion_tokens_details": null,
+          "prompt_tokens": 536,
+          "prompt_tokens_details": null,
+          "total_tokens": 623
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000202",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 446.530417,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/login",
+          "POST",
+          "198.51.100.189"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 198.51.100.189",
+        "recommended_action": "Block IP address and investigate further",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/login\", \"POST\", \"198.51.100.189\"], \"reason\": \"Multiple failed login attempts from IP address 198.51.100.189\", \"recommended_action\": \"Block IP address and investigate further\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8b76964fc198ba0f",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 113,
+          "completion_tokens_details": null,
+          "prompt_tokens": 531,
+          "prompt_tokens_details": null,
+          "total_tokens": 644
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000298",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 548.42625,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/login",
+          "192.0.2.240",
+          "username= OR '1'='1 status=403"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 192.0.2.240 for user 'OR' and '1'='1",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/login\", \"192.0.2.240\", \"username= OR '1'='1 status=403\"], \"reason\": \"Multiple failed login attempts from IP address 192.0.2.240 for user 'OR' and '1'='1\", \"recommended_action\": \"Block IP address and investigate further for brute force attack.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a4210a9a8400ff93",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 116,
+          "completion_tokens_details": null,
+          "prompt_tokens": 538,
+          "prompt_tokens_details": null,
+          "total_tokens": 654
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000155",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 574.263,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "2026-05-17T14:52:35+07:00",
+          "target_user=backup_svc",
+          "source_ip=192.0.2.111"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from a specific IP address targeting a user.",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"2026-05-17T14:52:35+07:00\", \"target_user=backup_svc\", \"source_ip=192.0.2.111\" ], \"reason\": \"Multiple failed login attempts from a specific IP address targeting a user.\" , \"recommended_action\": \"Block IP address and investigate further for brute force attack.\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-a32f3310a7c3a8e3",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 122,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 655
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000185",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 581.992959,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/var/log/auth.log/access.log",
+          "/var/log/auth.log/ssh/access.log",
+          "/var/log/auth.log/ssh/err.log"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed SSH login attempts from IP address 198.51.100.203 for 13 seconds",
+        "recommended_action": "Block IP address and investigate further for brute force attack.",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/var/log/auth.log/access.log\", \"/var/log/auth.log/ssh/access.log\", \"/var/log/auth.log/ssh/err.log\"], \"reason\": \"Multiple failed SSH login attempts from IP address 198.51.100.203 for 13 seconds\", \"recommended_action\": \"Block IP address and investigate further for brute force attack.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-85d95fa7fff8b1f1",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 112,
+          "completion_tokens_details": null,
+          "prompt_tokens": 528,
+          "prompt_tokens_details": null,
+          "total_tokens": 640
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000220",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 526.720625,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/login/login_method=POST",
+          "src_ip=203.0.113.98",
+          "username=admin"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 203.0.113.98 targeting user 'admin' with POST method",
+        "recommended_action": "Block IP address and investigate further for brute force attack",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [\"/login/login_method=POST\", \"src_ip=203.0.113.98\", \"username=admin\"] , \"reason\": \"Multiple failed login attempts from IP address 203.0.113.98 targeting user 'admin' with POST method\", \"recommended_action\": \"Block IP address and investigate further for brute force attack\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8b7c21f2699c59ab",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 99,
+          "completion_tokens_details": null,
+          "prompt_tokens": 537,
+          "prompt_tokens_details": null,
+          "total_tokens": 636
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000293",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 489.599416,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET /api/users?id=1",
+          "1=1",
+          "src=198.51.100.193"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed login attempts from IP address 198.51.100.193",
+        "recommended_action": "block IP address and investigate further",
+        "severity": "high"
+      },
+      "raw_prediction": "{ \"label\": \"failed_login_bruteforce\", \"severity\": \"high\", \"is_suspicious\": true, \"evidence\": [ \"GET /api/users?id=1\", \"1=1\", \"src=198.51.100.193\"], \"reason\": \"Multiple failed login attempts from IP address 198.51.100.193\", \"recommended_action\": \"block IP address and investigate further\" }",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    }
+  ],
+  "schema": "data/schemas/triage-output.schema.json",
+  "split": "data/splits/mini-semantic-eval.jsonl"
+}

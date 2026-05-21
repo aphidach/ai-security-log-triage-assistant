@@ -14,7 +14,7 @@
 
 **Last updated**
 
-2026-05-20
+2026-05-21
 
 ## File Map
 
@@ -25,9 +25,9 @@
 | Phase 2 | [[output-structure-fix/phase-2-probe-hardening]] | Optional follow-up | เพิ่ม probe ให้แยก constrained decoding จริงจาก validation-after-generation |
 | Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path | ทดสอบ runtime/mode candidate ด้วย smoke split เดียวกัน |
 | Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed | ตั้ง gate ที่ต้องผ่านก่อนดู semantic quality |
-| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Ready | วัด semantic error profile หลัง contract ผ่าน |
+| Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Superseded by Phase 6.1 mini rerun | วัด semantic error profile หลัง contract ผ่าน |
 | Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | In progress | ตัดสินใจว่าจะ retrain v3, เปลี่ยน runtime หรือเปลี่ยน model candidate |
-| Phase 6.1 | [[output-structure-fix/phase-6-1-evidence-constraints]] | Planned | แก้ evidence loop ด้วย schema constraints และ sanitizer update |
+| Phase 6.1 | [[output-structure-fix/phase-6-1-evidence-constraints]] | Contract restored; semantics still blocked | แก้ evidence loop ด้วย schema constraints และ sanitizer update |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
 
 ## Operating Rules
@@ -45,6 +45,8 @@
 | 2026-05-20 | Codex | Created phase-detail directory for structured-output fix work | `docs/output-structure-fix/` | Drafted |
 | 2026-05-20 | Codex | Updated phase map after vLLM `structured_outputs` passed the output-contract smoke gate | `reports/openai-compatible-vllm-structured-outputs-smoke.json` | Updated |
 | 2026-05-20 | Codex | Added Phase 6.1 evidence constraints page to the phase map | `docs/output-structure-fix/phase-6-1-evidence-constraints.md` | Planned |
+| 2026-05-21 | Codex | Marked Phase 6.1 local implementation complete in the phase map | `docs/output-structure-fix/phase-6-1-evidence-constraints.md`, `data/schemas/triage-output.schema.json` | Endpoint rerun pending |
+| 2026-05-21 | Codex | Updated phase map after Phase 6.1 reruns restored the output contract | `reports/openai-compatible-vllm-structured-outputs-phase6-1-*.json` | Semantic quality remains blocked |
 
 ## Decision Log
 

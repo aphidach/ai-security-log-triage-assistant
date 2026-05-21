@@ -7,7 +7,7 @@ import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from scripts.model_adapters.base import AdapterResult
 from scripts.model_adapters.prompt_contract import (
@@ -48,6 +48,10 @@ PROVIDER_SCHEMA_ALLOWED_KEYS = frozenset(
         "description",
         "enum",
         "items",
+        "maxItems",
+        "maxLength",
+        "minItems",
+        "minLength",
         "properties",
         "required",
         "type",
@@ -486,6 +490,11 @@ def _sanitize_provider_schema_node(node: Any) -> Any:
                 continue
             if key in {"type", "description"} and isinstance(value, str):
                 sanitized[key] = value
+                continue
+            if key in {"minItems", "maxItems", "minLength", "maxLength"}:
+                if isinstance(value, int) and not isinstance(value, bool):
+                    sanitized[key] = value
+                continue
         return sanitized
     if isinstance(node, list):
         return [_sanitize_provider_schema_node(item) for item in node]
@@ -589,7 +598,7 @@ def _create_openai_client(config: OpenAIAdapterConfig) -> Any:
 
 def _triage_output_model() -> type[Any]:
     try:
-        from pydantic import BaseModel, ConfigDict, field_validator
+        from pydantic import BaseModel, ConfigDict, Field, field_validator
     except ImportError as exc:
         raise RuntimeError(
             "Missing Pydantic dependency. Install Python dependencies with "
@@ -608,15 +617,20 @@ def _triage_output_model() -> type[Any]:
         ]
         severity: Literal["low", "medium", "high", "critical"]
         is_suspicious: bool
-        evidence: list[str]
+        evidence: Annotated[
+            list[Annotated[str, Field(min_length=1, max_length=160)]],
+            Field(min_length=1, max_length=3),
+        ]
         reason: str
         recommended_action: str
 
         @field_validator("evidence")
         @classmethod
         def evidence_items_must_be_non_empty(cls, value: list[str]) -> list[str]:
-            if any(not isinstance(item, str) or not item for item in value):
-                raise ValueError("evidence items must be non-empty strings")
+            if not 1 <= len(value) <= 3:
+                raise ValueError("evidence must contain one to three items")
+            if any(not isinstance(item, str) or not item or len(item) > 160 for item in value):
+                raise ValueError("evidence items must be non-empty strings up to 160 characters")
             return value
 
         @field_validator("reason", "recommended_action")

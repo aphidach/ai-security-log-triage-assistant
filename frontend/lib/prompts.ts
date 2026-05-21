@@ -1,7 +1,7 @@
 import { TRIAGE_LABEL_METADATA, TRIAGE_LABELS } from "./labels"
 import { TRIAGE_OUTPUT_KEYS, TRIAGE_SEVERITIES } from "./triage-schema"
 
-export const TRIAGE_PROMPT_VERSION = "triage-json-v2"
+export const TRIAGE_PROMPT_VERSION = "triage-json-v2.1"
 
 export type TriagePromptMessage = {
   role: "system" | "user"
@@ -43,8 +43,9 @@ export const TRIAGE_SYSTEM_PROMPT = [
   "Set is_suspicious to false only for normal. Set it to true for every other label.",
   "",
   "Evidence rules:",
-  "- evidence must be an array of short substrings or concrete facts from the input log.",
-  "- Do not invent evidence that is not present in the input.",
+  "- evidence must contain one to three short exact substrings copied from the input log.",
+  "- Each evidence item must be 1 to 160 characters.",
+  "- Do not use label names or invent evidence that is not present in the input.",
   "- For normal activity, cite the log detail that makes it routine or expected.",
   "",
   "Default severity guidance:",

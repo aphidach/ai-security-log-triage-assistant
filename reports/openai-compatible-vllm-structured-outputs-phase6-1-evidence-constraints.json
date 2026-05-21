@@ -1,0 +1,482 @@
+{
+  "adapter": "openai-compatible",
+  "adapter_metadata": {
+    "adapter": "openai-compatible",
+    "base_url": "http://192.168.8.141:8080/v1",
+    "env": {
+      "api_key": "OPENAI_COMPATIBLE_API_KEY",
+      "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+      "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+      "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+      "model": "OPENAI_COMPATIBLE_MODEL",
+      "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+      "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+      "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+    },
+    "finish_reason": "stop",
+    "max_retries": 0,
+    "max_tokens": 512,
+    "model": "lfm2-security-triage",
+    "prompt_version": "triage-json-v2.1",
+    "requested_model": "lfm2-security-triage",
+    "response_format_attempted_modes": [
+      "structured_outputs_json"
+    ],
+    "response_format_mode": "structured_outputs_json",
+    "response_format_requested": "structured_outputs",
+    "response_id": "chatcmpl-bf75e2d9b92750df",
+    "response_model": "lfm2-security-triage",
+    "schema_path": "data/schemas/triage-output.schema.json",
+    "timeout_seconds": 120.0,
+    "usage": {
+      "completion_tokens": 143,
+      "completion_tokens_details": null,
+      "prompt_tokens": 539,
+      "prompt_tokens_details": null,
+      "total_tokens": 682
+    }
+  },
+  "counts": {
+    "evidence_partial_match": 1,
+    "failure": 3,
+    "invalid_output": 0,
+    "is_suspicious_correct": 3,
+    "json_parse_success": 3,
+    "label_correct": 3,
+    "schema_success": 3,
+    "severity_correct": 0
+  },
+  "expected_label_distribution": {
+    "port_scan_or_recon": 3
+  },
+  "failures": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-bf75e2d9b92750df",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 143,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 682
+        }
+      },
+      "expected": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000437",
+      "input": "2026-05-17T08:46:11+07:00 firewall: SYN scan detected src=198.51.100.105 dst=192.0.2.203 ports=80,443,8080,8443 action=blocked",
+      "latency_ms": 2134.427042,
+      "prediction": {
+        "evidence": [
+          "port_scan_or_recon: port scan detected",
+          "action=blocked: blocked port 80 and 443",
+          "source_ip=198.51.100.105"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "Port scan detected indicates a potential port scan attempt, which is suspicious. Blocking port 80 and 443 is a common security measure to prevent unauthorized access.",
+        "recommended_action": "Block the port scan attempt and investigate the source IP address.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b10f7aa0e417dc44",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 117,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 656
+        }
+      },
+      "expected": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "severity_mismatch"
+      ],
+      "id": "sample-000458",
+      "input": "2026-05-17T17:07:21+07:00 firewall: SYN scan detected src=192.0.2.144 dst=198.51.100.220 ports=80,443,8080,8443 action=blocked",
+      "latency_ms": 556.682542,
+      "prediction": {
+        "evidence": [
+          "ports=80,443,8080,8443",
+          "action=blocked",
+          "source=192.0.2.144"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "Port scan detected from source IP 192.0.2.144, blocking port 8443.",
+        "recommended_action": "Block the port scan attempt.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-bba9753fe566bdd6",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 138,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 677
+        }
+      },
+      "expected": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=25,110,143,587,993"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "severity_mismatch",
+        "evidence_partial_mismatch"
+      ],
+      "id": "sample-000485",
+      "input": "2026-05-17T08:48:27+07:00 firewall: SYN scan detected src=192.0.2.109 dst=192.0.2.125 ports=25,110,143,587,993 action=blocked",
+      "latency_ms": 689.020417,
+      "prediction": {
+        "evidence": [
+          "port_scan_or_recon: port scan detected",
+          "port_scan_or_recon: port scan detected",
+          "port_scan_or_recon: port scan detected"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The port scan detected indicates a potential port scan attempt, which is suspicious. The blocked action suggests the port scan is likely targeting a critical service.",
+        "recommended_action": "Isolate the affected port and investigate the source of the scan.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    }
+  ],
+  "metrics": {
+    "average_latency_ms": 1126.71,
+    "evidence_partial_match": 0.333333,
+    "invalid_output_count": 0,
+    "is_suspicious_accuracy": 1.0,
+    "json_parse_success_rate": 1.0,
+    "label_accuracy": 1.0,
+    "schema_success_rate": 1.0,
+    "severity_accuracy": 0.0
+  },
+  "predicted_label_distribution": {
+    "port_scan_or_recon": 3
+  },
+  "sample_count": 3,
+  "samples": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-bf75e2d9b92750df",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 143,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 682
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000437",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 2134.427042,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "port_scan_or_recon: port scan detected",
+          "action=blocked: blocked port 80 and 443",
+          "source_ip=198.51.100.105"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "Port scan detected indicates a potential port scan attempt, which is suspicious. Blocking port 80 and 443 is a common security measure to prevent unauthorized access.",
+        "recommended_action": "Block the port scan attempt and investigate the source IP address.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\n\n  \"label\": \"port_scan_or_recon\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\n    \"port_scan_or_recon: port scan detected\",\n    \"action=blocked: blocked port 80 and 443\",\n    \"source_ip=198.51.100.105\"\n  ],\n  \"reason\": \"Port scan detected indicates a potential port scan attempt, which is suspicious. Blocking port 80 and 443 is a common security measure to prevent unauthorized access.\",\n  \"recommended_action\": \"Block the port scan attempt and investigate the source IP address.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b10f7aa0e417dc44",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 117,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 656
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000458",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 556.682542,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "ports=80,443,8080,8443",
+          "action=blocked",
+          "source=192.0.2.144"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "Port scan detected from source IP 192.0.2.144, blocking port 8443.",
+        "recommended_action": "Block the port scan attempt.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\n\n  \"label\": \"port_scan_or_recon\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\n    \"ports=80,443,8080,8443\",\n    \"action=blocked\",\n    \"source=192.0.2.144\"\n  ],\n  \"reason\": \"Port scan detected from source IP 192.0.2.144, blocking port 8443.\",\n  \"recommended_action\": \"Block the port scan attempt.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS"
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "requested_model": "lfm2-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-bba9753fe566bdd6",
+        "response_model": "lfm2-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 138,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 677
+        }
+      },
+      "evidence_partial_match": false,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000485",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 689.020417,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "port_scan_or_recon: port scan detected",
+          "port_scan_or_recon: port scan detected",
+          "port_scan_or_recon: port scan detected"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The port scan detected indicates a potential port scan attempt, which is suspicious. The blocked action suggests the port scan is likely targeting a critical service.",
+        "recommended_action": "Isolate the affected port and investigate the source of the scan.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\n\n  \"label\": \"port_scan_or_recon\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\n    \"port_scan_or_recon: port scan detected\",\n    \"port_scan_or_recon: port scan detected\",\n    \"port_scan_or_recon: port scan detected\"\n  ],\n  \"reason\": \"The port scan detected indicates a potential port scan attempt, which is suspicious. The blocked action suggests the port scan is likely targeting a critical service.\",\n  \"recommended_action\": \"Isolate the affected port and investigate the source of the scan.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    }
+  ],
+  "schema": "data/schemas/triage-output.schema.json",
+  "split": "data/splits/phase6-timeout-only.jsonl"
+}

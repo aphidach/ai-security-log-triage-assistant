@@ -83,9 +83,13 @@ def canonical_output(output: Any, *, record_id: str) -> JsonObject:
     evidence = output["evidence"]
     if not isinstance(evidence, list):
         raise TrainingFormatError(f"{record_id}: output.evidence must be an array")
+    if not 1 <= len(evidence) <= 3:
+        raise TrainingFormatError(f"{record_id}: output.evidence must contain one to three items")
     for index, item in enumerate(evidence):
         if not isinstance(item, str) or not item:
             raise TrainingFormatError(f"{record_id}: output.evidence[{index}] must be a non-empty string")
+        if len(item) > 160:
+            raise TrainingFormatError(f"{record_id}: output.evidence[{index}] must be 160 characters or fewer")
 
     for field in ("reason", "recommended_action"):
         value = output[field]

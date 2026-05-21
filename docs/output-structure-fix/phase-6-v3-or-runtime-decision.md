@@ -163,6 +163,23 @@ Decision:
 - Do not treat this as only a timeout setting issue.
 - Start [[output-structure-fix/phase-6-1-evidence-constraints]] to tighten the `evidence` schema and preserve the new constraint keywords in the OpenAI-compatible adapter sanitizer before rerunning smoke/mini diagnostics.
 
+### Case 1 Follow-Up: Phase 6.1 Result
+
+Phase 6.1 fixed the runtime/output-contract side of the port-scan loop:
+
+| Rerun | Split | JSON/schema | Invalid outputs | Main result |
+| --- | --- | ---: | ---: | --- |
+| Timeout-only | `data/splits/phase6-timeout-only.jsonl` | `1.0 / 1.0` | `0` | `label_accuracy = 1.0`, all `finish_reason=stop` |
+| Smoke | `data/splits/smoke-output-contract.jsonl` | `1.0 / 1.0` | `0` | output contract gate restored, `label_accuracy = 0.2` |
+| Mini semantic eval | `data/splits/mini-semantic-eval.jsonl` | `1.0 / 1.0` | `0` | `label_accuracy = 0.36`, predicted `failed_login_bruteforce` remains `20/25` |
+
+Decision:
+
+- Runtime/schema loop is no longer the blocker for these diagnostic splits.
+- Semantic quality is now the blocker.
+- Do not move to fixed `data/splits/test.jsonl` yet.
+- Continue Phase 6 with semantic error taxonomy, hard contrast examples, v3 training data decision, and/or model-capacity diagnostic.
+
 
 
 
@@ -228,9 +245,9 @@ Decision:
 
 ## Phase 6 Checklist
 
-- [ ] Rerun timeout-only diagnostic สำหรับ `sample-000437`, `sample-000458`, `sample-000485`
-- [ ] บันทึกว่า timeout เป็น runtime/config issue หรือ model behavior
-- [ ] ทำ semantic error taxonomy จาก Phase 5 report
+- [x] Rerun timeout-only diagnostic สำหรับ `sample-000437`, `sample-000458`, `sample-000485`
+- [x] บันทึกว่า timeout เป็น runtime/config issue หรือ model behavior
+- [x] ทำ semantic error taxonomy จาก Phase 5/Phase 6.1 mini eval reports
 - [ ] สรุป hard cases ที่ต้องเพิ่มใน v3
 - [ ] ตรวจ training render format ว่า assistant output เป็น raw JSON object
 - [ ] ตัดสินใจว่าต้องปรับ schema/prompt wording หรือไม่
@@ -281,6 +298,7 @@ Decision:
 | 2026-05-20 | Do Phase 6 before fixed test comparison | Phase 5 mini eval found 3 runtime timeouts and strong semantic collapse toward `failed_login_bruteforce` | Next work must separate runtime/config issues from v3 data, schema/prompt wording, and model capacity before Phase 7 |
 | 2026-05-20 | Start Phase 6.1 evidence constraints | Timeout-only diagnostics show `off` mode stops with the right broad label, while `json_object` and `structured_outputs` loop inside unbounded `evidence` until `finish_reason=length` | Tighten `evidence` constraints and adapter schema sanitizer before deciding whether to retrain v3 |
 | 2026-05-21 | Treat current label skew as prediction collapse unless source distribution changes | Generated, train, validation, test, smoke, and mini semantic splits are label-balanced; the skew appears in predictions, especially toward `failed_login_bruteforce` | Do not downsample the existing balanced training split just to fight Phase 5 prediction skew; use confusion analysis, hard contrast examples, balanced sampling policy, and imbalance-aware metrics |
+| 2026-05-21 | Move Phase 6 focus from runtime loop to semantic quality | Phase 6.1 timeout-only, smoke, and mini reruns all have JSON/schema `1.0`, invalid output `0`, and no `finish_reason=length`, but mini label accuracy is still `0.36` | Next work should build v3 hard cases or run a model-capacity diagnostic before fixed-split comparison |
 
 ## Work Log
 
@@ -291,6 +309,7 @@ Decision:
 | 2026-05-20 | Codex | Added OpenAI-compatible output token cap for Phase 6 timeout diagnosis | `scripts/model_adapters/openai_compatible.py`, `.env.example` | Adapter now sends `max_tokens=512` / `max_output_tokens=512` by default |
 | 2026-05-20 | Codex | Recorded Phase 6 case 1 conclusion and linked Phase 6.1 | `reports/openai-compatible-vllm-structured-outputs-phase6-timeout-only-timeout120.json`, `reports/openai-compatible-vllm-off-phase6-timeout-only.json`, `reports/openai-compatible-vllm-json-object-phase6-timeout-only.json` | Evidence loop identified in JSON-constrained modes |
 | 2026-05-21 | Codex | Linked Phase 6 semantic skew analysis to the label imbalance guidance page | `docs/label-imbalance-and-prediction-collapse.md` | Phase 6 now distinguishes source imbalance from prediction collapse |
+| 2026-05-21 | User/Codex | Recorded Phase 6.1 rerun results and semantic blocker | `reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` | Output contract restored; semantic collapse remains |
 
 ## Related pages
 

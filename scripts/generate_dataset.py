@@ -638,9 +638,13 @@ def validate_record(item: Record) -> None:
         raise ValueError(f"{item['id']}: suspicious flag does not match label")
     if not isinstance(evidence, list) or not evidence:
         raise ValueError(f"{item['id']}: evidence must be a non-empty list")
+    if len(evidence) > 3:
+        raise ValueError(f"{item['id']}: evidence must contain at most three items")
     if not all(isinstance(entry, str) and entry for entry in evidence):
         raise ValueError(f"{item['id']}: every evidence entry must be a non-empty string")
     for entry in evidence:
+        if len(entry) > 160:
+            raise ValueError(f"{item['id']}: evidence entry must be 160 characters or fewer: {entry}")
         if entry not in item["input"]:
             raise ValueError(f"{item['id']}: evidence not found in input: {entry}")
     for field in ["reason", "recommended_action"]:

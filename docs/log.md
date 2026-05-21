@@ -11,7 +11,7 @@ append-only log สำหรับบันทึกการเปลี่ย�
 
 **Last updated**
 
-2026-05-20
+2026-05-21
 
 ## Log
 
@@ -99,7 +99,9 @@ append-only log สำหรับบันทึกการเปลี่ย�
 | 2026-05-20 | Codex | Added a 512-token output cap to OpenAI-compatible adapter requests | `scripts/model_adapters/openai_compatible.py`, `.env.example`, `docs/Day4.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md` | Chat-completion requests now send `max_tokens=512` by default, Responses parse sends `max_output_tokens=512`, and Phase 6 timeout diagnostics can test whether port-scan hangs were unbounded generation |
 | 2026-05-20 | Codex | Recorded Phase 6 case 1 conclusion and added Phase 6.1 evidence constraints plan | `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-1-evidence-constraints.md`, `docs/output-structure-fix/README.md`, `docs/index.md` | Captures that `off` mode stops with the right broad label while `json_object` and `structured_outputs` loop in unbounded `evidence`; next path is schema tightening plus sanitizer update |
 | 2026-05-20 | Codex | Added model repetition-loop diagnostics runbook | `docs/model-repetition-loop-diagnostics.md`, `docs/index.md`, `docs/log.md` | Documents internet-checked causes of repeated-token loops and a project-specific checklist for Phase 6 timeout/loop diagnosis |
+| 2026-05-21 | Codex | Implemented Phase 6.1 evidence constraints locally | `data/schemas/triage-output.schema.json`, `scripts/model_adapters/openai_compatible.py`, `scripts/evaluate.py`, `ml/unsloth/inference.py`, `ml/unsloth/training_format.py`, `scripts/generate_dataset.py`, `scripts/probe_openai_structured_output.py`, `frontend/lib/triage-schema.ts`, `frontend/lib/prompts.ts`, `docs/output-structure-fix/phase-6-1-evidence-constraints.md`, `docs/output-structure-fix/README.md`, `docs/structured-output-fix-plan.md`, `docs/triage-output-schema.md`, `docs/index.md` | Evidence is now constrained to 1-3 exact substrings of up to 160 characters, provider schema sanitization preserves the constraint keywords, and prompt metadata moves to `triage-json-v2.1` |
 | 2026-05-21 | Codex | Added research-backed guidance for label imbalance and prediction collapse | `docs/label-imbalance-and-prediction-collapse.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/index.md`, `docs/References.md`, `docs/log.md` | Documents why Phase 6 skew is currently prediction collapse rather than source label imbalance, plus mitigation options such as hard contrast examples, balanced sampling, focal/class-balanced loss, macro metrics, and separate balanced vs real-prior eval |
+| 2026-05-21 | User/Codex | Completed Phase 6.1 diagnostic reruns and recorded the new semantic blocker | `reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json`, `docs/output-structure-fix/phase-6-1-evidence-constraints.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md` | Timeout-only, smoke, and mini eval now have JSON/schema `1.0` and invalid output `0`; mini label accuracy remains `0.36` with prediction collapse toward `failed_login_bruteforce` |
 
 ## Related pages
 

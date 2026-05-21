@@ -1,6 +1,9 @@
 import { isTriageLabel, type TriageLabel } from "./labels"
 
 export const TRIAGE_SEVERITIES = ["low", "medium", "high", "critical"] as const
+export const TRIAGE_EVIDENCE_MIN_ITEMS = 1
+export const TRIAGE_EVIDENCE_MAX_ITEMS = 3
+export const TRIAGE_EVIDENCE_MAX_LENGTH = 160
 
 export type TriageSeverity = (typeof TRIAGE_SEVERITIES)[number]
 
@@ -105,11 +108,25 @@ export function parseTriageOutput(value: unknown): TriageParseResult {
       message: "Expected evidence to be an array of non-empty strings.",
     })
   } else {
+    if (
+      candidate.evidence.length < TRIAGE_EVIDENCE_MIN_ITEMS ||
+      candidate.evidence.length > TRIAGE_EVIDENCE_MAX_ITEMS
+    ) {
+      errors.push({
+        path: "$.evidence",
+        message: "Expected evidence to contain one to three items.",
+      })
+    }
     candidate.evidence.forEach((item, index) => {
       if (typeof item !== "string" || item.length === 0) {
         errors.push({
           path: `$.evidence[${index}]`,
           message: "Expected evidence item to be a non-empty string.",
+        })
+      } else if (item.length > TRIAGE_EVIDENCE_MAX_LENGTH) {
+        errors.push({
+          path: `$.evidence[${index}]`,
+          message: "Expected evidence item to be 160 characters or fewer.",
         })
       }
     })

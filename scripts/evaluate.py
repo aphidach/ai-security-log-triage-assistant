@@ -189,12 +189,27 @@ def validate_schema(output: Any, schema: JsonObject) -> list[str]:
         errors.append("is_suspicious must be a boolean")
 
     evidence = output.get("evidence")
+    evidence_schema = properties.get("evidence", {})
+    evidence_items_schema = evidence_schema.get("items", {}) if isinstance(evidence_schema, dict) else {}
     if not isinstance(evidence, list):
         errors.append("evidence must be an array")
     else:
+        min_items = evidence_schema.get("minItems") if isinstance(evidence_schema, dict) else None
+        max_items = evidence_schema.get("maxItems") if isinstance(evidence_schema, dict) else None
+        if isinstance(min_items, int) and len(evidence) < min_items:
+            errors.append(f"evidence must contain at least {min_items} item(s)")
+        if isinstance(max_items, int) and len(evidence) > max_items:
+            errors.append(f"evidence must contain at most {max_items} item(s)")
         for index, item in enumerate(evidence):
             if not isinstance(item, str) or not item:
                 errors.append(f"evidence[{index}] must be a non-empty string")
+                continue
+            min_length = evidence_items_schema.get("minLength") if isinstance(evidence_items_schema, dict) else None
+            max_length = evidence_items_schema.get("maxLength") if isinstance(evidence_items_schema, dict) else None
+            if isinstance(min_length, int) and len(item) < min_length:
+                errors.append(f"evidence[{index}] must be at least {min_length} character(s)")
+            if isinstance(max_length, int) and len(item) > max_length:
+                errors.append(f"evidence[{index}] must be at most {max_length} character(s)")
 
     for field in ("reason", "recommended_action"):
         value = output.get(field)

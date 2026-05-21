@@ -12,14 +12,17 @@ Phase 6.1 เป็นรอบแก้เฉพาะปัญหา evidence 
 - `reports/openai-compatible-vllm-structured-outputs-phase6-timeout-only-timeout120.json` สำหรับผล `structured_outputs` ที่ชน `finish_reason=length` หลัง `max_tokens=1024` (source: reports/openai-compatible-vllm-structured-outputs-phase6-timeout-only-timeout120.json)
 - `reports/openai-compatible-vllm-json-object-phase6-timeout-only.json` สำหรับผล `json_object` ที่วนซ้ำใน `evidence` (source: reports/openai-compatible-vllm-json-object-phase6-timeout-only.json)
 - `reports/openai-compatible-vllm-off-phase6-timeout-only.json` สำหรับผล `off` mode ที่ model หยุดเองและเริ่มด้วย label `port_scan_or_recon` (source: reports/openai-compatible-vllm-off-phase6-timeout-only.json)
+- `reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json` สำหรับ timeout-only rerun หลังเพิ่ม evidence constraints (source: reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json)
+- `reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json` สำหรับ smoke rerun หลังเพิ่ม evidence constraints (source: reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json)
+- `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` สำหรับ mini semantic eval หลัง output contract กลับมาผ่าน (source: reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json)
 
 **Last updated**
 
-2026-05-20
+2026-05-21
 
 ## Status
 
-Planned. เริ่มหลัง Phase 6 case 1 แยกได้ว่า timeout เดิมคือ generation loop ใน JSON-constrained modes ไม่ใช่ prompt processing หรือ queue ค้าง
+Complete for output-contract/runtime diagnosis. The Phase 6.1 timeout-only rerun and smoke rerun both reached JSON parse `1.0`, schema `1.0`, invalid output `0`, and `finish_reason=stop`; the mini semantic eval also kept JSON/schema at `1.0` with invalid output `0`. Semantic quality is still not good enough for fixed-split comparison because mini eval label accuracy is `0.36` and predictions still collapse toward `failed_login_bruteforce`.
 
 ## Problem
 
@@ -166,6 +169,24 @@ rtk .venv/bin/python scripts/evaluate.py \
   --comparison-out reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.md
 ```
 
+```bash
+progress: [------------------------]   0% (0/3) adapter=openai-compatible elapsed=0.0s current=sample-progress: [########----------------]  33% (1/3) adapter=openai-compatible elapsed=2.1s current=sample-progress: [########----------------]  33% (1/3) adapter=openai-compatible elapsed=2.1s current=sample-progress: [################--------]  66% (2/3) adapter=openai-compatible elapsed=2.7s current=sample-progress: [################--------]  66% (2/3) adapter=openai-compatible elapsed=2.7s current=sample-progress: [########################] 100% (3/3) adapter=openai-compatible elapsed=3.4s current=sample-000485
+adapter: openai-compatible
+split: data/splits/phase6-timeout-only.jsonl
+samples: 3
+label_accuracy: 1.0
+json_parse_success_rate: 1.0
+schema_success_rate: 1.0
+severity_accuracy: 0.0
+is_suspicious_accuracy: 1.0
+evidence_partial_match: 0.333333
+average_latency_ms: 1126.71
+invalid_output_count: 0
+json_report: reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json
+markdown_report: reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.md
+
+```
+
 2. Smoke contract rerun
 
 ถ้า timeout-only split ไม่ loop แล้ว ให้ rerun smoke split ก่อน mini eval:
@@ -186,6 +207,23 @@ rtk .venv/bin/python scripts/evaluate.py \
   --comparison-out reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.md
 ```
 
+```bash
+progress: [------------------------]   0% (0/5) adapter=openai-compatible elapsed=0.0s current=sample-progress: [#####-------------------]  20% (1/5) adapter=openai-compatible elapsed=1.1s current=sample-progress: [#####-------------------]  20% (1/5) adapter=openai-compatible elapsed=1.1s current=sample-progress: [##########--------------]  40% (2/5) adapter=openai-compatible elapsed=1.6s current=sample-progress: [##########--------------]  40% (2/5) adapter=openai-compatible elapsed=1.6s current=sample-progress: [##############----------]  60% (3/5) adapter=openai-compatible elapsed=2.1s current=sample-progress: [##############----------]  60% (3/5) adapter=openai-compatible elapsed=2.1s current=sample-progress: [###################-----]  80% (4/5) adapter=openai-compatible elapsed=2.8s current=sample-progress: [###################-----]  80% (4/5) adapter=openai-compatible elapsed=2.8s current=sample-progress: [########################] 100% (5/5) adapter=openai-compatible elapsed=3.6s current=sample-000474
+adapter: openai-compatible
+split: data/splits/smoke-output-contract.jsonl
+samples: 5
+label_accuracy: 0.2
+json_parse_success_rate: 1.0
+schema_success_rate: 1.0
+severity_accuracy: 0.6
+is_suspicious_accuracy: 0.8
+evidence_partial_match: 0.6
+average_latency_ms: 710.660441
+invalid_output_count: 0
+json_report: reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json
+markdown_report: reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.md
+
+```
 3. Mini semantic eval rerun
 
 รันเฉพาะเมื่อ smoke contract ผ่าน JSON/schema ครบ:
@@ -206,6 +244,22 @@ rtk .venv/bin/python scripts/evaluate.py \
   --comparison-out reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.md
 ```
 
+```bash
+adapter: openai-compatible
+split: data/splits/mini-semantic-eval.jsonl
+samples: 25
+label_accuracy: 0.36
+json_parse_success_rate: 1.0
+schema_success_rate: 1.0
+severity_accuracy: 0.68
+is_suspicious_accuracy: 0.8
+evidence_partial_match: 0.6
+average_latency_ms: 586.249022
+invalid_output_count: 0
+json_report: reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json
+markdown_report: reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.md
+
+```
 ## Pass Criteria
 
 Phase 6.1 ผ่านเมื่อ timeout-only split มีผลดังนี้:
@@ -217,6 +271,61 @@ Phase 6.1 ผ่านเมื่อ timeout-only split มีผลดัง�
 - predicted `evidence` ทุกชิ้นเป็น substring ที่มีความหมายจาก input log
 
 หลังจากนั้น smoke split ต้องกลับมาผ่าน output contract ก่อนจึงค่อย rerun mini semantic eval
+
+## Phase 6.1 Result
+
+Run date: `2026-05-21`
+
+Timeout-only split:
+
+- split: `data/splits/phase6-timeout-only.jsonl`
+- report: `reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json`
+- `json_parse_success_rate = 1.0`
+- `schema_success_rate = 1.0`
+- `invalid_output_count = 0`
+- `label_accuracy = 1.0`
+- `average_latency_ms = 1126.71`
+- all 3 samples had `finish_reason=stop`
+- remaining issues: `severity_accuracy = 0.0`, `evidence_partial_match = 0.333333`
+
+Smoke split:
+
+- split: `data/splits/smoke-output-contract.jsonl`
+- report: `reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json`
+- `json_parse_success_rate = 1.0`
+- `schema_success_rate = 1.0`
+- `invalid_output_count = 0`
+- `label_accuracy = 0.2`
+- `average_latency_ms = 710.660441`
+- all 5 samples had `finish_reason=stop`
+
+Mini semantic eval:
+
+- split: `data/splits/mini-semantic-eval.jsonl`
+- report: `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json`
+- `json_parse_success_rate = 1.0`
+- `schema_success_rate = 1.0`
+- `invalid_output_count = 0`
+- `label_accuracy = 0.36`
+- `severity_accuracy = 0.68`
+- `is_suspicious_accuracy = 0.8`
+- `evidence_partial_match = 0.64`
+- `average_latency_ms = 609.323065`
+
+Confusion summary from mini eval:
+
+| Expected | Predicted | Count |
+| --- | --- | ---: |
+| `directory_traversal_attempt` | `directory_traversal_attempt` | 1 |
+| `directory_traversal_attempt` | `failed_login_bruteforce` | 4 |
+| `failed_login_bruteforce` | `failed_login_bruteforce` | 5 |
+| `normal` | `failed_login_bruteforce` | 4 |
+| `normal` | `sql_injection_attempt` | 1 |
+| `port_scan_or_recon` | `failed_login_bruteforce` | 2 |
+| `port_scan_or_recon` | `port_scan_or_recon` | 3 |
+| `sql_injection_attempt` | `failed_login_bruteforce` | 5 |
+
+Interpretation: Phase 6.1 fixed the evidence loop and restored the output contract, but did not solve semantic prediction collapse. Do not move to `data/splits/test.jsonl` yet; continue Phase 6 with semantic error taxonomy, hard contrast examples, and v3/model-capacity decision.
 
 ## Fail Interpretation
 
@@ -235,27 +344,31 @@ Phase 6.1 ผ่านเมื่อ timeout-only split มีผลดัง�
 
 ## Checklist
 
-- [ ] Update `data/schemas/triage-output.schema.json` evidence constraints
-- [ ] Update `PROVIDER_SCHEMA_ALLOWED_KEYS` in `scripts/model_adapters/openai_compatible.py`
-- [ ] Run evidence constraint preflight on existing splits
-- [ ] Run timeout-only diagnostic report
-- [ ] Confirm `finish_reason` is not `length`
-- [ ] Confirm raw evidence no longer loops
-- [ ] Rerun smoke contract
-- [ ] Rerun mini semantic eval only after smoke passes
-- [ ] Record result back in Phase 6 and this page
+- [x] Update `data/schemas/triage-output.schema.json` evidence constraints
+- [x] Update `PROVIDER_SCHEMA_ALLOWED_KEYS` in `scripts/model_adapters/openai_compatible.py`
+- [x] Run evidence constraint preflight on existing splits
+- [x] Run timeout-only diagnostic report
+- [x] Confirm `finish_reason` is not `length`
+- [x] Confirm raw evidence no longer loops
+- [x] Rerun smoke contract
+- [x] Rerun mini semantic eval only after smoke passes
+- [x] Record result back in Phase 6 and this page
 
 ## Work Log
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-20 | Codex | Created Phase 6.1 evidence constraints plan | `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `data/schemas/triage-output.schema.json`, `scripts/model_adapters/openai_compatible.py` | Planned |
+| 2026-05-21 | Codex | Implemented local Phase 6.1 evidence constraints and validators | `data/schemas/triage-output.schema.json`, `scripts/model_adapters/openai_compatible.py`, `scripts/evaluate.py`, `ml/unsloth/inference.py`, `frontend/lib/triage-schema.ts` | Done locally; endpoint reruns pending |
+| 2026-05-21 | Codex | Checked vLLM endpoint before Phase 6.1 diagnostic rerun | `http://192.168.8.141:8080/v1/models`, `http://192.168.8.141:8080/health` | Connection reset; remote rerun pending |
+| 2026-05-21 | User/Codex | Completed Phase 6.1 timeout-only, smoke, and mini semantic reruns | `reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` | Contract restored; semantic collapse remains |
 
 ## Decision Log
 
 | Date | Decision | Rationale | Consequence |
 | --- | --- | --- | --- |
 | 2026-05-20 | Tighten `evidence` before retraining v3 | Phase 6 case 1 shows JSON-constrained modes loop inside unbounded `evidence`, while `off` mode can stop and identify port scan | Next work should narrow schema and sanitizer behavior, then rerun timeout-only and smoke diagnostics |
+| 2026-05-21 | Treat Phase 6.1 as a contract/runtime fix, not a semantic fix | Timeout-only, smoke, and mini semantic eval now have JSON/schema `1.0` and invalid output `0`, but mini label accuracy is only `0.36` and predicted labels still skew to `failed_login_bruteforce` | Continue Phase 6 semantic analysis and v3/model-capacity decision before fixed-split comparison |
 
 ## Related pages
 

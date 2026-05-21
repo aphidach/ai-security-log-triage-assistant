@@ -40,11 +40,14 @@
       "type": "boolean"
     },
     "evidence": {
-      "description": "Concrete substrings or facts from the log that support the label.",
+      "description": "One to three short exact substrings copied from the input log. Do not use label names or invented facts.",
       "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
       "items": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "maxLength": 160
       }
     },
     "reason": {

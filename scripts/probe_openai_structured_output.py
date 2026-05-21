@@ -9,7 +9,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -211,7 +211,7 @@ def request_kwargs(mode: str, model: str, user_prompt: str, provider_schema: dic
 
 def triage_text_format() -> type[Any]:
     try:
-        from pydantic import BaseModel
+        from pydantic import BaseModel, Field
     except ImportError as exc:
         raise SystemExit("Missing Pydantic dependency. Install with `pip install pydantic`.") from exc
 
@@ -225,7 +225,10 @@ def triage_text_format() -> type[Any]:
         ]
         severity: Literal["low", "medium", "high", "critical"]
         is_suspicious: bool
-        evidence: list[str]
+        evidence: Annotated[
+            list[Annotated[str, Field(min_length=1, max_length=160)]],
+            Field(min_length=1, max_length=3),
+        ]
         reason: str
         recommended_action: str
 

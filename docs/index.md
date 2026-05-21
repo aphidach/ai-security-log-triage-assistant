@@ -12,7 +12,7 @@
 
 **Last updated**
 
-2026-05-20
+2026-05-21
 
 ## Core Pages
 
@@ -62,7 +62,7 @@
 - [[output-structure-fix/phase-4-contract-gate]]: Phase 4 contract gate ที่ผ่านแล้วสำหรับ vLLM `structured_outputs`
 - [[output-structure-fix/phase-5-mini-semantic-eval]]: Phase 5 mini semantic eval ที่พร้อมเริ่มหลัง contract ผ่าน
 - [[output-structure-fix/phase-6-v3-or-runtime-decision]]: Phase 6 decision stub สำหรับ runtime vs retrain v3
-- [[output-structure-fix/phase-6-1-evidence-constraints]]: Phase 6.1 plan สำหรับแก้ evidence loop ด้วย schema constraints และ adapter sanitizer update
+- [[output-structure-fix/phase-6-1-evidence-constraints]]: Phase 6.1 implementation สำหรับแก้ evidence loop ด้วย schema constraints, adapter sanitizer update และ validator alignment
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison stub หลัง prerequisites ครบ
 
 ## Documentation Maintenance
@@ -98,6 +98,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-20 | Codex | Refreshed structured-output phase descriptions after vLLM passed the contract gate | `docs/output-structure-fix/`, `reports/openai-compatible-vllm-structured-outputs-smoke.json` | Updated |
 | 2026-05-20 | Codex | Added model repetition-loop diagnostics page to core docs | `docs/model-repetition-loop-diagnostics.md`, `docs/index.md` | Updated |
 | 2026-05-20 | Codex | Added Phase 6.1 evidence constraints plan to the structured-output phase notes | `docs/output-structure-fix/phase-6-1-evidence-constraints.md`, `docs/index.md` | Updated |
+| 2026-05-21 | Codex | Updated Phase 6.1 index status after local implementation | `docs/output-structure-fix/phase-6-1-evidence-constraints.md`, `docs/index.md` | Endpoint rerun pending |
 | 2026-05-21 | Codex | Added label imbalance and prediction collapse guidance to core docs | `docs/label-imbalance-and-prediction-collapse.md`, `docs/index.md` | Updated |
 
 ## Decision Log
