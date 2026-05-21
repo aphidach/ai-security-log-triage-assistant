@@ -9,10 +9,11 @@ Phase 6 เป็น decision point หลัง Phase 5 พบทั้ง runt
 - `docs/structured-output-fix-plan.md` สำหรับ Phase 6 decision rules (source: docs/structured-output-fix-plan.md)
 - `docs/fine-tuning-notes.md` สำหรับ Unsloth training/export context (source: docs/fine-tuning-notes.md)
 - `docs/data-formats-for-llm-training.md` สำหรับ training render format rationale (source: docs/data-formats-for-llm-training.md)
+- `docs/label-imbalance-and-prediction-collapse.md` สำหรับกติกาแยก source data imbalance ออกจาก prediction collapse และ v3 mitigation options (source: docs/label-imbalance-and-prediction-collapse.md)
 
 **Last updated**
 
-2026-05-20
+2026-05-21
 
 ## Status
 
@@ -180,6 +181,7 @@ Decision:
 - ตาราง expected label → predicted label
 - รายการ hard cases สำหรับ v3
 - สรุปว่า error เกิดจาก label boundary, prompt wording, schema wording, training format หรือ model capacity
+- ถ้า source split ยัง balanced แต่ predicted labels เอนหนักไป label เดียว ให้ถือเป็น prediction collapse และใช้ [[label-imbalance-and-prediction-collapse]] เป็น decision guide ก่อนลดจำนวน data ของ label นั้น
 
 ### 3. Training Format Check
 
@@ -278,6 +280,7 @@ Decision:
 | --- | --- | --- | --- |
 | 2026-05-20 | Do Phase 6 before fixed test comparison | Phase 5 mini eval found 3 runtime timeouts and strong semantic collapse toward `failed_login_bruteforce` | Next work must separate runtime/config issues from v3 data, schema/prompt wording, and model capacity before Phase 7 |
 | 2026-05-20 | Start Phase 6.1 evidence constraints | Timeout-only diagnostics show `off` mode stops with the right broad label, while `json_object` and `structured_outputs` loop inside unbounded `evidence` until `finish_reason=length` | Tighten `evidence` constraints and adapter schema sanitizer before deciding whether to retrain v3 |
+| 2026-05-21 | Treat current label skew as prediction collapse unless source distribution changes | Generated, train, validation, test, smoke, and mini semantic splits are label-balanced; the skew appears in predictions, especially toward `failed_login_bruteforce` | Do not downsample the existing balanced training split just to fight Phase 5 prediction skew; use confusion analysis, hard contrast examples, balanced sampling policy, and imbalance-aware metrics |
 
 ## Work Log
 
@@ -287,10 +290,12 @@ Decision:
 | 2026-05-20 | Codex | Added Phase 6 execution plan from Phase 5 findings | `docs/output-structure-fix/phase-5-mini-semantic-eval.md` | Planned |
 | 2026-05-20 | Codex | Added OpenAI-compatible output token cap for Phase 6 timeout diagnosis | `scripts/model_adapters/openai_compatible.py`, `.env.example` | Adapter now sends `max_tokens=512` / `max_output_tokens=512` by default |
 | 2026-05-20 | Codex | Recorded Phase 6 case 1 conclusion and linked Phase 6.1 | `reports/openai-compatible-vllm-structured-outputs-phase6-timeout-only-timeout120.json`, `reports/openai-compatible-vllm-off-phase6-timeout-only.json`, `reports/openai-compatible-vllm-json-object-phase6-timeout-only.json` | Evidence loop identified in JSON-constrained modes |
+| 2026-05-21 | Codex | Linked Phase 6 semantic skew analysis to the label imbalance guidance page | `docs/label-imbalance-and-prediction-collapse.md` | Phase 6 now distinguishes source imbalance from prediction collapse |
 
 ## Related pages
 
 - [[output-structure-fix/README]]
 - [[output-structure-fix/phase-5-mini-semantic-eval]]
 - [[output-structure-fix/phase-6-1-evidence-constraints]]
+- [[label-imbalance-and-prediction-collapse]]
 - [[structured-output-fix-plan]]
