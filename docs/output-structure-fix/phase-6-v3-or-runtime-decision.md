@@ -236,6 +236,26 @@ Key findings:
 
 เป้าหมายไม่ใช่เพิ่ม data เยอะที่สุด แต่เพิ่ม case ที่ชนกับ confusion ของ Phase 5 โดยตรง
 
+### Phase 6 V3 Hard Contrast Dataset Artifact
+
+สร้าง v3 hard contrast training supplement แล้ว:
+
+```text
+scripts/create_v3_hard_contrast_dataset.py
+data/generated/v3-hard-contrast-security-triage.jsonl
+docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
+```
+
+ชุดนี้มี 50 records แบบ balanced label ละ 10 records และเน้น:
+
+- normal hard negatives เช่น single failed login, benign `select`/`union`/`sleep` search และ single connection
+- brute-force positives ที่ทำ paired contrast กับ normal เช่น `failed_attempts=12`, `failures=18`, `count=16`
+- SQLi payload ชัด เช่น quote, tautology, `UNION SELECT`, `SLEEP(`, `information_schema`
+- traversal ทั้ง `../`, encoded traversal, Unix sensitive path และ Windows path
+- port scan/recon signal เช่น `unique_ports`, `nmap fingerprint`, `SYN scan detected`
+
+ใช้เป็น training supplement เท่านั้น ห้ามนำไปปน validation/test และยังไม่ควรใช้ `data/splits/test.jsonl` จนกว่า v3 จะผ่าน smoke + mini semantic eval ใหม่
+
 ### 5. Schema And Prompt Wording Check
 
 ถ้า model สับ label เพราะคำอธิบายไม่ชัด ให้ปรับ wording โดยไม่เปลี่ยน schema shape:
@@ -260,7 +280,7 @@ Key findings:
 - [x] Rerun timeout-only diagnostic สำหรับ `sample-000437`, `sample-000458`, `sample-000485`
 - [x] บันทึกว่า timeout เป็น runtime/config issue หรือ model behavior
 - [x] ทำ semantic error taxonomy จาก Phase 5/Phase 6.1 mini eval reports
-- [ ] สรุป hard cases ที่ต้องเพิ่มใน v3
+- [x] สรุป hard cases ที่ต้องเพิ่มใน v3
 - [ ] ตรวจ training render format ว่า assistant output เป็น raw JSON object
 - [ ] ตัดสินใจว่าต้องปรับ schema/prompt wording หรือไม่
 - [ ] ตัดสินใจว่าจะ retrain v3 หรือเทียบ model capacity ก่อน
@@ -323,11 +343,13 @@ Key findings:
 | 2026-05-21 | Codex | Linked Phase 6 semantic skew analysis to the label imbalance guidance page | `docs/label-imbalance-and-prediction-collapse.md` | Phase 6 now distinguishes source imbalance from prediction collapse |
 | 2026-05-21 | User/Codex | Recorded Phase 6.1 rerun results and semantic blocker | `reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` | Output contract restored; semantic collapse remains |
 | 2026-05-21 | Codex | Added Phase 6 semantic error taxonomy infographic report | `reports/phase-6-semantic-error-taxonomy-infographic.html`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` | HTML report summarizes metrics, label distribution, confusion matrix, root-cause taxonomy, and v3 backlog |
+| 2026-05-21 | Codex | Created v3 hard contrast training supplement | `scripts/create_v3_hard_contrast_dataset.py`, `data/generated/v3-hard-contrast-security-triage.jsonl`, `docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md` | Adds 50 balanced hard contrast records for v3 training without touching validation or fixed test split |
 
 ## Related pages
 
 - [[output-structure-fix/README]]
 - [[output-structure-fix/phase-5-mini-semantic-eval]]
 - [[output-structure-fix/phase-6-1-evidence-constraints]]
+- [[output-structure-fix/phase-6-v3-hard-contrast-dataset]]
 - [[label-imbalance-and-prediction-collapse]]
 - [[structured-output-fix-plan]]
