@@ -70,5 +70,5 @@ training:
   report_to: none
 
 output:
-  output_dir: ml/unsloth/outputs/lfm2-350m-security-triage-lora
-  adapter_name: lfm2-350m-security-triage-lora
+  output_dir: ml/unsloth/outputs/lfm2-350m-v3-hard-contrast-security-triage-lora
+  adapter_name: lfm2-350m-v3-hard-contrast-security-triage-lora
