@@ -212,6 +212,44 @@ Key findings:
 - error หลักคือ label boundary และ data coverage; training format ยังเป็น low-risk แต่ต้อง verify rendered chat-template examples ก่อน retrain v3
 - v3 backlog ควรเน้น hard contrast examples ไม่ใช่เพิ่ม synthetic data แบบสุ่ม
 
+### V3 Model Mini Eval Result
+
+รอบ v3 model ที่ train ด้วย `data/splits/train-v3-hard-contrast.jsonl` ยังไม่ผ่าน mini semantic eval:
+
+| Metric | Value |
+| --- | ---: |
+| `label_accuracy` | `0.36` |
+| `json_parse_success_rate` | `0.92` |
+| `schema_success_rate` | `0.92` |
+| `invalid_output_count` | `2` |
+| predicted `failed_login_bruteforce` | `17/25` |
+
+per-label result:
+
+| Expected label | Correct | Main wrong prediction |
+| --- | ---: | --- |
+| `normal` | `0/5` | `failed_login_bruteforce` 3, `sql_injection_attempt` 1, invalid 1 |
+| `failed_login_bruteforce` | `4/5` | invalid 1 |
+| `sql_injection_attempt` | `1/5` | `failed_login_bruteforce` 4 |
+| `directory_traversal_attempt` | `1/5` | `failed_login_bruteforce` 4 |
+| `port_scan_or_recon` | `3/5` | `failed_login_bruteforce` 2 |
+
+Decision: v3 ยังแก้ prediction collapse ไม่พอ และยังมี prompt mismatch ระหว่าง train config (`triage-json-v2`) กับ runtime/eval (`triage-json-v2.1`) จึงต้องทำ v3.1 recovery ก่อน fixed test split (source: reports/openai-compatible-vllm-structured-outputs-v3-model-mini-semantic-eval.json, ml/unsloth/config.example.yaml)
+
+### V3.1 Recovery Step
+
+v3.1 recovery ทำสองอย่างก่อน train ใหม่:
+
+- align `format.prompt_version` ใน `ml/unsloth/config.example.yaml` ให้ตรงกับ runtime prompt contract `triage-json-v2.1`
+- สร้าง weighted hard-contrast split ด้วย `scripts/create_v3_1_training_split.py`: canonical train 350 records + hard contrast weighted 150 records รวมเป็น 500 records หรือ label ละ 100 โดย validation ยังเป็น 75 records หรือ label ละ 15 และ fixed `data/splits/test.jsonl` ไม่ถูกอ่านหรือแก้
+
+ตรวจ preflight ได้ด้วย:
+
+```bash
+rtk .venv/bin/python scripts/create_v3_1_training_split.py
+rtk .venv/bin/python ml/unsloth/train_lora.py --preflight-only
+```
+
 ### 3. Training Format Check
 
 ตรวจว่า training/render format ตรงกับ evaluator ที่ใช้จริง:

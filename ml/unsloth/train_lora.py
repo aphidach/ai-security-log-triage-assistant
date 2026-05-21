@@ -20,7 +20,12 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from ml.unsloth.training_format import apply_tokenizer_chat_template, format_split, load_jsonl  # noqa: E402
+from ml.unsloth.training_format import (  # noqa: E402
+    TRIAGE_PROMPT_VERSION,
+    apply_tokenizer_chat_template,
+    format_split,
+    load_jsonl,
+)
 
 
 DEFAULT_CONFIG_PATH = ROOT / "ml" / "unsloth" / "config.example.yaml"
@@ -28,6 +33,8 @@ EXPECTED_TRAIN_PATH = ROOT / "data" / "splits" / "train.jsonl"
 EXPECTED_VALIDATION_PATH = ROOT / "data" / "splits" / "validation.jsonl"
 V3_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-hard-contrast.jsonl"
 V3_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-hard-contrast.jsonl"
+V3_1_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-1-hard-contrast.jsonl"
+V3_1_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-1-hard-contrast.jsonl"
 RESERVED_TEST_PATH = ROOT / "data" / "splits" / "test.jsonl"
 SPLITS_DIR = ROOT / "data" / "splits"
 
@@ -133,8 +140,16 @@ def validate_split_path(path: Path, *, expected_path: Path, field_name: str) -> 
     if path == RESERVED_TEST_PATH.resolve():
         raise TrainingConfigError(f"{field_name} must not point to reserved test split: {path}")
     allowed_paths = {
-        "data.train_path": {EXPECTED_TRAIN_PATH.resolve(), V3_TRAIN_PATH.resolve()},
-        "data.validation_path": {EXPECTED_VALIDATION_PATH.resolve(), V3_VALIDATION_PATH.resolve()},
+        "data.train_path": {
+            EXPECTED_TRAIN_PATH.resolve(),
+            V3_TRAIN_PATH.resolve(),
+            V3_1_TRAIN_PATH.resolve(),
+        },
+        "data.validation_path": {
+            EXPECTED_VALIDATION_PATH.resolve(),
+            V3_VALIDATION_PATH.resolve(),
+            V3_1_VALIDATION_PATH.resolve(),
+        },
     }.get(field_name, {expected_path.resolve()})
     if path not in allowed_paths:
         allowed_display = ", ".join(report_path(allowed_path) for allowed_path in sorted(allowed_paths))
@@ -267,7 +282,19 @@ def build_sft_dataset(records: list[JsonObject], tokenizer: Any) -> Any:
     return Dataset.from_list([{"text": apply_tokenizer_chat_template(tokenizer, record)} for record in records])
 
 
+def validate_prompt_version(config: JsonObject) -> str:
+    format_config = require_section(config, "format")
+    config_prompt_version = format_config.get("prompt_version")
+    if config_prompt_version != TRIAGE_PROMPT_VERSION:
+        raise TrainingConfigError(
+            f"format.prompt_version ({config_prompt_version}) does not match runtime prompt contract ({TRIAGE_PROMPT_VERSION})"
+        )
+    return str(config_prompt_version)
+
+
 def build_preflight_report(config_path: Path, config: JsonObject) -> JsonObject:
+    config_prompt_version = validate_prompt_version(config)
+
     train_path, validation_path = validate_training_splits(config)
     train_records = load_jsonl(train_path)
     validation_records = load_jsonl(validation_path)
@@ -296,11 +323,16 @@ def build_preflight_report(config_path: Path, config: JsonObject) -> JsonObject:
             "reserved_test_path": report_path(RESERVED_TEST_PATH),
             "test_split_policy": "never read during training; use only after training via scripts/evaluate.py",
         },
+        "prompt": {
+            "config_prompt_version": config_prompt_version,
+            "formatter_prompt_version": TRIAGE_PROMPT_VERSION,
+        },
         "output_dir": output.get("output_dir"),
     }
 
 
 def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
+    validate_prompt_version(config)
     train_path, validation_path = validate_training_splits(config)
 
     model_config = require_section(config, "model")

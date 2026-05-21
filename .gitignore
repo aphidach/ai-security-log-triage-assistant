@@ -18,12 +18,14 @@ __pycache__/
 *$py.class
 .Python
 .venv/
+.venv*/
 venv/
 env/
 ENV/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.hypothesis/
 .coverage
 coverage.xml
 htmlcov/
@@ -54,8 +56,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 bun-debug.log*
+*.out
+*.err
 *.pid
 *.seed
+
+# Agent and analysis generated artifacts
+graphify-out/
+.cache/
 
 # Local or private data inputs
 data/raw/*
@@ -88,3 +96,4 @@ temp/
 
 
 unsloth_compiled_cache/
+**/unsloth_compiled_cache/

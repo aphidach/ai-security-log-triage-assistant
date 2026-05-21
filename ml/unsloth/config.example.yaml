@@ -12,14 +12,14 @@ model:
   dtype: bfloat16
 
 data:
-  train_path: data/splits/train-v3-hard-contrast.jsonl
-  validation_path: data/splits/validation-v3-hard-contrast.jsonl
+  train_path: data/splits/train-v3-1-hard-contrast.jsonl
+  validation_path: data/splits/validation-v3-1-hard-contrast.jsonl
   # test.jsonl is intentionally absent. Use it only after training via scripts/evaluate.py.
   input_field: input
   output_field: output
 
 format:
-  prompt_version: triage-json-v2
+  prompt_version: triage-json-v2.1
   training_record_format: chat_messages
   use_tokenizer_chat_template: true
   strict_output_schema: true
@@ -70,5 +70,5 @@ training:
   report_to: none
 
 output:
-  output_dir: ml/unsloth/outputs/lfm2-350m-v3-hard-contrast-security-triage-lora
-  adapter_name: lfm2-350m-v3-hard-contrast-security-triage-lora
+  output_dir: ml/unsloth/outputs/lfm2-350m-v3-1-hard-contrast-security-triage-lora
+  adapter_name: lfm2-350m-v3-1-hard-contrast-security-triage-lora
