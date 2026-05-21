@@ -200,6 +200,18 @@ Decision:
 - สรุปว่า error เกิดจาก label boundary, prompt wording, schema wording, training format หรือ model capacity
 - ถ้า source split ยัง balanced แต่ predicted labels เอนหนักไป label เดียว ให้ถือเป็น prediction collapse และใช้ [[label-imbalance-and-prediction-collapse]] เป็น decision guide ก่อนลดจำนวน data ของ label นั้น
 
+### Phase 6.1 Semantic Error Taxonomy Artifact
+
+สร้าง HTML infographic report แล้วที่ `reports/phase-6-semantic-error-taxonomy-infographic.html` จาก `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json`
+
+Key findings:
+
+- mini eval ยังเป็น balanced split: expected label ละ 5 ตัวอย่าง
+- predicted distribution เอนไป `failed_login_bruteforce` 20/25
+- `label_accuracy = 0.36`, แต่ `json_parse_success_rate = 1.0`, `schema_success_rate = 1.0`, `invalid_output_count = 0`
+- error หลักคือ label boundary และ data coverage; training format ยังเป็น low-risk แต่ต้อง verify rendered chat-template examples ก่อน retrain v3
+- v3 backlog ควรเน้น hard contrast examples ไม่ใช่เพิ่ม synthetic data แบบสุ่ม
+
 ### 3. Training Format Check
 
 ตรวจว่า training/render format ตรงกับ evaluator ที่ใช้จริง:
@@ -310,6 +322,7 @@ Decision:
 | 2026-05-20 | Codex | Recorded Phase 6 case 1 conclusion and linked Phase 6.1 | `reports/openai-compatible-vllm-structured-outputs-phase6-timeout-only-timeout120.json`, `reports/openai-compatible-vllm-off-phase6-timeout-only.json`, `reports/openai-compatible-vllm-json-object-phase6-timeout-only.json` | Evidence loop identified in JSON-constrained modes |
 | 2026-05-21 | Codex | Linked Phase 6 semantic skew analysis to the label imbalance guidance page | `docs/label-imbalance-and-prediction-collapse.md` | Phase 6 now distinguishes source imbalance from prediction collapse |
 | 2026-05-21 | User/Codex | Recorded Phase 6.1 rerun results and semantic blocker | `reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` | Output contract restored; semantic collapse remains |
+| 2026-05-21 | Codex | Added Phase 6 semantic error taxonomy infographic report | `reports/phase-6-semantic-error-taxonomy-infographic.html`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` | HTML report summarizes metrics, label distribution, confusion matrix, root-cause taxonomy, and v3 backlog |
 
 ## Related pages
 

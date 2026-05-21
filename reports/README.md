@@ -20,6 +20,12 @@ reports/{adapter}-{runtime}-{mode}-mini-semantic-eval.json
 reports/{adapter}-{runtime}-{mode}-mini-semantic-eval.md
 ```
 
+Semantic error taxonomy infographic:
+
+```text
+reports/phase-{n}-semantic-error-taxonomy-infographic.html
+```
+
 Canonical fixed split format:
 
 ```text

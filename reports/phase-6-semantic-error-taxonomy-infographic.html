@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase 6 Semantic Error Taxonomy</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #5e6b7a;
+      --line: #d8dee7;
+      --ok: #27745f;
+      --warn: #a06a00;
+      --bad: #b42318;
+      --blue: #245a92;
+      --teal: #287d8e;
+      --violet: #6d5d91;
+      --amber: #b06d00;
+      --green: #2e7d57;
+      --soft-red: #f8d7d4;
+      --soft-amber: #f8ead2;
+      --soft-green: #dff0e8;
+      --soft-blue: #ddeaf7;
+      --shadow: 0 12px 36px rgba(23, 32, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    header {
+      padding: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fbfcfd;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .grid.metrics {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grid.two {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    section,
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    section {
+      margin-top: 18px;
+      padding: 24px;
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .metric .value {
+      margin: 6px 0 2px;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .metric .label,
+    .note,
+    .source {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .ok {
+      color: var(--ok);
+    }
+
+    .warn {
+      color: var(--warn);
+    }
+
+    .bad {
+      color: var(--bad);
+    }
+
+    .callout {
+      border-left: 4px solid var(--bad);
+      background: #fff7f6;
+    }
+
+    .callout.good {
+      border-left-color: var(--ok);
+      background: #f2faf6;
+    }
+
+    .bar-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(190px, 260px) 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .label-name {
+      font-size: 13px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .track {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f1f4f7;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      min-width: 30px;
+      height: 100%;
+      padding-left: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .expected {
+      background: var(--blue);
+    }
+
+    .predicted {
+      background: var(--bad);
+    }
+
+    .dist-pair {
+      display: grid;
+      gap: 5px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 6px;
+      border-radius: 2px;
+    }
+
+    .legend .expected-key::before {
+      background: var(--blue);
+    }
+
+    .legend .predicted-key::before {
+      background: var(--bad);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f4f6f9;
+      font-weight: 800;
+    }
+
+    .matrix th,
+    .matrix td {
+      text-align: center;
+    }
+
+    .matrix th:first-child {
+      text-align: left;
+      min-width: 190px;
+    }
+
+    .c0 {
+      background: #ffffff;
+      color: #9aa4b2;
+    }
+
+    .c1 {
+      background: #e6eef7;
+    }
+
+    .c2 {
+      background: #d6e7f4;
+    }
+
+    .c3 {
+      background: #f8ead2;
+    }
+
+    .c4 {
+      background: #f4d3cc;
+    }
+
+    .c5 {
+      background: #d95d4f;
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .taxonomy {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .tax-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfd;
+    }
+
+    .tax-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #edf1f5;
+      color: #465465;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.high {
+      background: var(--soft-red);
+      color: #8b1d15;
+    }
+
+    .tag.medium {
+      background: var(--soft-amber);
+      color: #744a00;
+    }
+
+    .tag.low {
+      background: var(--soft-green);
+      color: #1d5c44;
+    }
+
+    .root-cause-grid {
+      display: grid;
+      grid-template-columns: 180px repeat(5, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    .root-cause-grid div {
+      padding: 10px;
+      background: var(--panel);
+    }
+
+    .root-cause-grid .head {
+      background: #f4f6f9;
+      font-weight: 800;
+    }
+
+    .risk-high {
+      background: var(--soft-red) !important;
+      font-weight: 800;
+    }
+
+    .risk-medium {
+      background: var(--soft-amber) !important;
+      font-weight: 700;
+    }
+
+    .risk-low {
+      background: var(--soft-green) !important;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfd;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .grid.metrics,
+      .grid.two,
+      .grid.three,
+      .taxonomy {
+        grid-template-columns: 1fr;
+      }
+
+      .root-cause-grid {
+        grid-template-columns: 150px repeat(5, minmax(110px, 1fr));
+        overflow-x: auto;
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        width: min(100vw - 20px, 1180px);
+        padding-top: 10px;
+      }
+
+      header,
+      section {
+        padding: 18px;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Phase 6 Semantic Error Taxonomy</h1>
+      <p class="subtitle">
+        รายงานภาพรวมจาก mini semantic eval หลัง Phase 6.1 แก้ output contract แล้ว ข้อสรุปหลักคือ JSON/schema ผ่านครบ แต่ semantic quality ยังติด prediction collapse ไปทาง <code>failed_login_bruteforce</code>
+      </p>
+      <div class="meta">
+        <span class="pill">Run date: 2026-05-21</span>
+        <span class="pill">Split: <code>data/splits/mini-semantic-eval.jsonl</code></span>
+        <span class="pill">Model: <code>lfm2-security-triage</code></span>
+        <span class="pill">Prompt: <code>triage-json-v2.1</code></span>
+        <span class="pill">Runtime: vLLM <code>structured_outputs</code></span>
+      </div>
+    </header>
+
+    <section>
+      <h2>Executive Read</h2>
+      <div class="grid three">
+        <div class="card callout good">
+          <h3>Contract กลับมานิ่งแล้ว</h3>
+          <p>JSON parse และ schema success อยู่ที่ <strong>100%</strong> ไม่มี invalid output และไม่มี evidence loop ใน mini eval รอบนี้</p>
+        </div>
+        <div class="card callout">
+          <h3>Semantic blocker ยังอยู่</h3>
+          <p>Label accuracy อยู่ที่ <strong>36%</strong> และโมเดลทาย <code>failed_login_bruteforce</code> ถึง <strong>20 จาก 25</strong> ตัวอย่าง</p>
+        </div>
+        <div class="card">
+          <h3>Decision สำหรับ Phase 6</h3>
+          <p>ยังไม่ควรแตะ fixed test split ให้ทำ hard contrast examples, ตรวจ prompt/training render และค่อยตัดสินใจ v3 หรือ model-capacity diagnostic</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Metrics Snapshot</h2>
+      <div class="grid metrics">
+        <div class="card metric">
+          <div class="label">Label accuracy</div>
+          <div class="value bad">36%</div>
+          <div class="note">9/25 correct</div>
+        </div>
+        <div class="card metric">
+          <div class="label">JSON parse</div>
+          <div class="value ok">100%</div>
+          <div class="note">25/25 parse success</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Schema success</div>
+          <div class="value ok">100%</div>
+          <div class="note">25/25 schema success</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Invalid outputs</div>
+          <div class="value ok">0</div>
+          <div class="note">no missing required fields</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Severity accuracy</div>
+          <div class="value warn">68%</div>
+          <div class="note">17/25 correct</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Suspicious boolean</div>
+          <div class="value warn">80%</div>
+          <div class="note">20/25 correct</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Evidence partial match</div>
+          <div class="value warn">60%</div>
+          <div class="note">15/25 partial match</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Average latency</div>
+          <div class="value">586ms</div>
+          <div class="note">per sample average</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Label Distribution</h2>
+      <p class="note">Mini split นี้ balanced: expected label ละ 5 ตัวอย่าง แต่ prediction ไปกองที่ <code>failed_login_bruteforce</code> 20 ตัวอย่าง</p>
+      <div class="legend">
+        <span class="expected-key">Expected</span>
+        <span class="predicted-key">Predicted</span>
+      </div>
+      <div class="bar-group">
+        <div class="bar-row">
+          <div class="label-name">normal</div>
+          <div class="dist-pair">
+            <div class="track"><div class="bar expected" style="width:25%">5</div></div>
+            <div class="track"><div class="bar predicted" style="width:0%">0</div></div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name">failed_login_bruteforce</div>
+          <div class="dist-pair">
+            <div class="track"><div class="bar expected" style="width:25%">5</div></div>
+            <div class="track"><div class="bar predicted" style="width:100%">20</div></div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name">sql_injection_attempt</div>
+          <div class="dist-pair">
+            <div class="track"><div class="bar expected" style="width:25%">5</div></div>
+            <div class="track"><div class="bar predicted" style="width:5%">1</div></div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name">directory_traversal_attempt</div>
+          <div class="dist-pair">
+            <div class="track"><div class="bar expected" style="width:25%">5</div></div>
+            <div class="track"><div class="bar predicted" style="width:5%">1</div></div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name">port_scan_or_recon</div>
+          <div class="dist-pair">
+            <div class="track"><div class="bar expected" style="width:25%">5</div></div>
+            <div class="track"><div class="bar predicted" style="width:15%">3</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Confusion Matrix</h2>
+      <p class="note">Rows คือ expected label, columns คือ predicted label</p>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Expected \ Predicted</th>
+            <th>normal</th>
+            <th>failed_login_bruteforce</th>
+            <th>sql_injection_attempt</th>
+            <th>directory_traversal_attempt</th>
+            <th>port_scan_or_recon</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>normal</th>
+            <td class="c0">0</td>
+            <td class="c4">4</td>
+            <td class="c1">1</td>
+            <td class="c0">0</td>
+            <td class="c0">0</td>
+          </tr>
+          <tr>
+            <th>failed_login_bruteforce</th>
+            <td class="c0">0</td>
+            <td class="c5">5</td>
+            <td class="c0">0</td>
+            <td class="c0">0</td>
+            <td class="c0">0</td>
+          </tr>
+          <tr>
+            <th>sql_injection_attempt</th>
+            <td class="c0">0</td>
+            <td class="c5">5</td>
+            <td class="c0">0</td>
+            <td class="c0">0</td>
+            <td class="c0">0</td>
+          </tr>
+          <tr>
+            <th>directory_traversal_attempt</th>
+            <td class="c0">0</td>
+            <td class="c4">4</td>
+            <td class="c0">0</td>
+            <td class="c1">1</td>
+            <td class="c0">0</td>
+          </tr>
+          <tr>
+            <th>port_scan_or_recon</th>
+            <td class="c0">0</td>
+            <td class="c2">2</td>
+            <td class="c0">0</td>
+            <td class="c0">0</td>
+            <td class="c3">3</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Error Taxonomy By Label</h2>
+      <div class="taxonomy">
+        <div class="tax-card">
+          <strong>normal</strong>
+          <p>ผิด 5/5: 4 ตัวถูกยกเป็น brute force และ 1 ตัวเป็น SQLi</p>
+          <p class="note">ตัวอย่าง signal ที่โมเดลสับสน: single failed login, health check <code>/ready</code>, benign search <code>sleep tracking</code></p>
+          <div class="tag-list">
+            <span class="tag high">label boundary</span>
+            <span class="tag high">data coverage</span>
+            <span class="tag medium">prompt wording</span>
+          </div>
+        </div>
+        <div class="tax-card">
+          <strong>failed_login_bruteforce</strong>
+          <p>ถูก 5/5 แต่ label นี้ sticky เกินไป กลายเป็น default suspicious label</p>
+          <p class="note">นี่คือ prediction collapse ไม่ใช่หลักฐานว่า source split เอน เพราะ mini split expected label ละ 5 เท่ากัน</p>
+          <div class="tag-list">
+            <span class="tag high">prediction collapse</span>
+            <span class="tag medium">model capacity</span>
+          </div>
+        </div>
+        <div class="tax-card">
+          <strong>sql_injection_attempt</strong>
+          <p>ผิด 5/5: ทั้งหมดถูกทายเป็น brute force</p>
+          <p class="note">payload เช่น <code>UNION SELECT</code>, <code>' OR '1'='1</code>, <code>1 OR 1=1</code> แพ้คำใบ้ฝั่ง login/auth</p>
+          <div class="tag-list">
+            <span class="tag high">label boundary</span>
+            <span class="tag high">data coverage</span>
+            <span class="tag medium">prompt wording</span>
+          </div>
+        </div>
+        <div class="tax-card">
+          <strong>directory_traversal_attempt</strong>
+          <p>ถูก 1/5, ผิดเป็น brute force 4/5</p>
+          <p class="note">ควรย้ำ traversal tokens เช่น <code>../</code>, <code>%2e%2e%2f</code>, <code>/etc/shadow</code>, <code>../../.env</code></p>
+          <div class="tag-list">
+            <span class="tag high">data coverage</span>
+            <span class="tag medium">model capacity</span>
+          </div>
+        </div>
+        <div class="tax-card">
+          <strong>port_scan_or_recon</strong>
+          <p>ถูก 3/5, ผิดเป็น brute force 2/5</p>
+          <p class="note">หลัง Phase 6.1 runtime loop หายแล้ว เหลือ semantic boundary ของ <code>nmap</code>, <code>probed_ports</code>, <code>SYN scan</code></p>
+          <div class="tag-list">
+            <span class="tag high">data coverage</span>
+            <span class="tag medium">prompt wording</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Root Cause Call</h2>
+      <p class="note">ระดับนี้เป็น diagnostic judgement จากผล mini eval รอบ Phase 6.1 ไม่ใช่ข้อสรุปถาวรก่อน retrain</p>
+      <div class="root-cause-grid">
+        <div class="head">Cause</div>
+        <div class="head">normal</div>
+        <div class="head">SQLi</div>
+        <div class="head">Traversal</div>
+        <div class="head">Port scan</div>
+        <div class="head">Overall</div>
+
+        <div class="head">Label boundary</div>
+        <div class="risk-high">High</div>
+        <div class="risk-high">High</div>
+        <div class="risk-medium">Medium</div>
+        <div class="risk-medium">Medium</div>
+        <div class="risk-high">High</div>
+
+        <div class="head">Prompt wording</div>
+        <div class="risk-medium">Medium</div>
+        <div class="risk-medium">Medium</div>
+        <div class="risk-low">Low</div>
+        <div class="risk-medium">Medium</div>
+        <div class="risk-medium">Medium</div>
+
+        <div class="head">Training format</div>
+        <div class="risk-low">Low</div>
+        <div class="risk-low">Low</div>
+        <div class="risk-low">Low</div>
+        <div class="risk-low">Low</div>
+        <div class="risk-low">Low, verify rendered examples</div>
+
+        <div class="head">Data coverage</div>
+        <div class="risk-high">High</div>
+        <div class="risk-high">High</div>
+        <div class="risk-high">High</div>
+        <div class="risk-high">High</div>
+        <div class="risk-high">High</div>
+
+        <div class="head">Model capacity</div>
+        <div class="risk-medium">Medium</div>
+        <div class="risk-medium">Medium</div>
+        <div class="risk-medium">Medium</div>
+        <div class="risk-low">Low-Medium</div>
+        <div class="risk-medium">Medium after v3 data check</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>V3 Backlog From Taxonomy</h2>
+      <ul class="checklist">
+        <li><strong>Normal hard negatives:</strong> เพิ่ม single failed login, routine health check, benign search ที่มีคำอย่าง <code>sleep</code>, <code>select</code>, <code>union</code> แต่ไม่มี attack pattern</li>
+        <li><strong>SQLi contrast set:</strong> เพิ่มตัวอย่างที่ payload อยู่ใน <code>/login</code> หรือ <code>username</code> field เพื่อสอนว่า auth route ไม่ได้แปลว่า brute force เสมอไป</li>
+        <li><strong>Traversal contrast set:</strong> เพิ่ม encoded traversal, Unix/Windows path, path probing และ paired normal static path ที่คล้ายกัน</li>
+        <li><strong>Port scan contrast set:</strong> เพิ่ม <code>nmap fingerprint</code>, <code>probed_ports</code>, <code>unique_ports</code>, <code>SYN scan detected</code> พร้อม evidence สั้นและตรง</li>
+        <li><strong>Prompt/schema wording check:</strong> ย้ำว่า brute force ต้องมี repeated failures หรือ volume signal, ส่วน evidence ต้องเป็น exact substring ที่เป็น signal จริง</li>
+        <li><strong>Training render check:</strong> ตรวจ sample ที่ผ่าน tokenizer chat template ว่า assistant output เป็น raw JSON ล้วนและจบหลัง JSON ก่อนเริ่ม retrain v3</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Do Not Do Yet</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>อย่าใช้ fixed test split</h3>
+          <p class="note">ยังอยู่ใน Phase 6 diagnostic ถ้าใช้ <code>data/splits/test.jsonl</code> ตอนนี้จะปน tuning กับ final comparison</p>
+        </div>
+        <div class="card">
+          <h3>อย่า downsample brute force ทันที</h3>
+          <p class="note">source mini split balanced อยู่ ปัญหาที่เห็นคือ prediction collapse ไม่ใช่ source imbalance ที่พิสูจน์แล้ว</p>
+        </div>
+        <div class="card">
+          <h3>อย่าเพิ่ม timeout เป็นคำตอบหลัก</h3>
+          <p class="note">Phase 6.1 แก้ loop แล้ว งานถัดไปคือ semantic quality ไม่ใช่ยืดเวลารัน</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Sources</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>Mini eval JSON</th>
+            <td><code>reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json</code></td>
+          </tr>
+          <tr>
+            <th>Mini eval Markdown</th>
+            <td><code>reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.md</code></td>
+          </tr>
+          <tr>
+            <th>Phase note</th>
+            <td><code>docs/output-structure-fix/phase-6-v3-or-runtime-decision.md</code></td>
+          </tr>
+          <tr>
+            <th>Guidance</th>
+            <td><code>docs/label-imbalance-and-prediction-collapse.md</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      Generated as a static infographic report for Phase 6 semantic error taxonomy. This report describes triage behavior only and does not claim compromise.
+    </footer>
+  </main>
+</body>
+</html>
