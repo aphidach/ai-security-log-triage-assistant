@@ -32,6 +32,7 @@
 | Phase 6 v3.1 eval | [[output-structure-fix/phase-6-v3-1-mini-semantic-eval]] | Failed semantic gate | บันทึกผล v3.1 mini semantic eval และ decision ให้ hold fixed test split |
 | Phase 6 v3.2 probe | [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]] | Failed canary, improved | บันทึกผล v3.2 hard-contrast memorization probe และ next target สำหรับ v3.3 |
 | Phase 6 v3.3 probe | [[output-structure-fix/phase-6-v3-3-targeted-canary]] | Canary improved, still held | temp 0.3 runtime probe ขยับ hard-contrast label accuracy เป็น `0.64`, มี HTML infographic แล้ว แต่ SQLi ยัง `2/10` และยังไม่เปิด fixed test split |
+| Phase 6 v3.4 plan | [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]] | Planned | วางแผน boundary repair สำหรับ SQLi, port scan และ brute-force gravity ก่อน train/eval รอบ v3.4 |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
 
 ## Operating Rules
@@ -57,6 +58,7 @@
 | 2026-05-21 | Codex | Added v3.3 targeted canary preparation page to the phase map | `docs/output-structure-fix/phase-6-v3-3-targeted-canary.md`, `data/splits/train-v3-3-targeted-hard-contrast.jsonl` | Prepared |
 | 2026-05-21 | Codex | Updated phase map after v3.3 temp 0.3 hard-contrast runtime probe | `reports/openai-compatible-vllm-structured-outputs-v3-3-temp-03-hard-contrast-memorization-probe.json`, `docs/output-structure-fix/phase-6-v3-3-targeted-canary.md` | Canary improved to `0.64`, fixed test still held |
 | 2026-05-21 | Codex | Added v3.3 temp 0.3 hard-contrast infographic to phase map evidence | `reports/phase-6-v3-3-temp-03-hard-contrast-memorization-probe-infographic.html`, `docs/output-structure-fix/phase-6-v3-3-targeted-canary.md` | Added |
+| 2026-05-21 | Codex | Added v3.4 boundary repair plan to the phase map | `docs/output-structure-fix/phase-6-v3-4-boundary-repair-plan.md` | Planned |
 
 ## Decision Log
 

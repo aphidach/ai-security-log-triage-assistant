@@ -200,6 +200,7 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "output-structure-fix/phase-6-v3-4-boundary-repair-plan.md",
     "openai-adapter-runtime-config.md",
     "lfm2-350m-model-card-notes.md",
     "output-structure-fix/phase-6-v3-3-targeted-canary.md",
@@ -226,7 +227,6 @@
     "output-contract-hardening.md",
     "triage-output-schema.md",
     "model-output/v1-lfm2-350m-security-triage.md",
-    "model-output/v2-lfm2-350m-security-triage-responses-parse.md",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",
     "assets/readme-hero.png",
