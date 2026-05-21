@@ -201,6 +201,7 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "output-structure-fix/phase-6-v3-hard-contrast-dataset.md",
     "label-imbalance-and-prediction-collapse.md",
     "output-structure-fix/phase-6-v3-or-runtime-decision.md",
     "output-structure-fix/phase-6-1-evidence-constraints.md",
@@ -227,7 +228,6 @@
     "evaluation-metrics-rationale.md",
     "data-formats-for-llm-training.md",
     "model-output/template.md",
-    "model-output/README.md",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",
     "assets/readme-hero.png",
