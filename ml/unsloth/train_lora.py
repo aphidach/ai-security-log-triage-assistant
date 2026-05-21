@@ -26,6 +26,8 @@ from ml.unsloth.training_format import apply_tokenizer_chat_template, format_spl
 DEFAULT_CONFIG_PATH = ROOT / "ml" / "unsloth" / "config.example.yaml"
 EXPECTED_TRAIN_PATH = ROOT / "data" / "splits" / "train.jsonl"
 EXPECTED_VALIDATION_PATH = ROOT / "data" / "splits" / "validation.jsonl"
+V3_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-hard-contrast.jsonl"
+V3_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-hard-contrast.jsonl"
 RESERVED_TEST_PATH = ROOT / "data" / "splits" / "test.jsonl"
 SPLITS_DIR = ROOT / "data" / "splits"
 
@@ -130,8 +132,13 @@ def require_section(config: JsonObject, name: str) -> JsonObject:
 def validate_split_path(path: Path, *, expected_path: Path, field_name: str) -> None:
     if path == RESERVED_TEST_PATH.resolve():
         raise TrainingConfigError(f"{field_name} must not point to reserved test split: {path}")
-    if path != expected_path.resolve():
-        raise TrainingConfigError(f"{field_name} must point to {expected_path.relative_to(ROOT)}")
+    allowed_paths = {
+        "data.train_path": {EXPECTED_TRAIN_PATH.resolve(), V3_TRAIN_PATH.resolve()},
+        "data.validation_path": {EXPECTED_VALIDATION_PATH.resolve(), V3_VALIDATION_PATH.resolve()},
+    }.get(field_name, {expected_path.resolve()})
+    if path not in allowed_paths:
+        allowed_display = ", ".join(report_path(allowed_path) for allowed_path in sorted(allowed_paths))
+        raise TrainingConfigError(f"{field_name} must point to one of: {allowed_display}")
     if not path.is_relative_to(SPLITS_DIR.resolve()):
         raise TrainingConfigError(f"{field_name} must stay under {SPLITS_DIR.relative_to(ROOT)}")
     if not path.exists():
@@ -228,6 +235,21 @@ def normalize_string_list(value: Any, *, field_name: str) -> list[str]:
             raise TrainingConfigError(f"{field_name}[{index}] must be a non-empty string")
         normalized.append(item.strip())
     return normalized
+
+
+def optional_step_value(value: Any) -> int | float | None:
+    if value in (None, ""):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return value
+    text = str(value).strip()
+    try:
+        number = float(text)
+    except ValueError as exc:
+        raise TrainingConfigError(f"step value must be numeric: {value}") from exc
+    return int(number) if number.is_integer() else number
 
 
 def module_leaf_names(model: Any) -> set[str]:
@@ -364,7 +386,9 @@ def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
         lr_scheduler_type=str(training_config.get("lr_scheduler_type", "linear")),
         logging_steps=int(training_config.get("logging_steps", 1)),
         eval_strategy=str(training_config.get("eval_strategy", "epoch")),
+        eval_steps=optional_step_value(training_config.get("eval_steps")),
         save_strategy=str(training_config.get("save_strategy", "epoch")),
+        save_steps=optional_step_value(training_config.get("save_steps")),
         seed=int(training_config.get("seed", 3407)),
         report_to=str(training_config.get("report_to", "none")),
         remove_unused_columns=False,
