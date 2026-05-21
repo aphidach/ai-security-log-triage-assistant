@@ -13,6 +13,7 @@
 - `.env.example` สำหรับตัวแปร `OPENAI_COMPATIBLE_*` และ `OPENAI_FINETUNE_*` (source: .env.example)
 - `frontend/package.json` สำหรับ frontend scripts ที่มีจริงใน repo (source: frontend/package.json)
 - `scripts/generate_dataset.py` สำหรับ dataset generation command และ output path (source: scripts/generate_dataset.py)
+- `scripts/create_v3_3_training_split.py` สำหรับ v3.3 targeted SQLi/port-scan training split ที่ไม่ใช้ fixed test split (source: scripts/create_v3_3_training_split.py)
 - `scripts/baseline_heuristic.py` สำหรับ heuristic baseline CLI options (source: scripts/baseline_heuristic.py)
 - `scripts/evaluate.py` สำหรับ evaluator adapters, report flags และ metric workflow (source: scripts/evaluate.py)
 - `scripts/model_adapters/prompt_contract.py` สำหรับ prompt contract inspection CLI (source: scripts/model_adapters/prompt_contract.py)
@@ -426,6 +427,13 @@ python3 ml/unsloth/training_format.py \
 python3 ml/unsloth/train_lora.py --preflight-only
 ```
 
+เตรียม v3.3 targeted SQLi/port-scan split ใหม่:
+
+```bash
+python3 scripts/create_v3_3_training_split.py
+python3 ml/unsloth/train_lora.py --preflight-only --config ml/unsloth/config.v3-3.yaml
+```
+
 เริ่ม train ตาม `ml/unsloth/config.example.yaml`:
 
 ```bash
@@ -435,10 +443,10 @@ python3 ml/unsloth/train_lora.py
 ถ้าต้องการใช้ config อื่น:
 
 ```bash
-python3 ml/unsloth/train_lora.py --config ml/unsloth/config.example.yaml
+python3 ml/unsloth/train_lora.py --config ml/unsloth/config.v3-3.yaml
 ```
 
-training path นี้ตั้งใจไม่อ่าน `data/splits/test.jsonl`; test split ใช้กับ evaluator หลัง train เท่านั้น
+training path นี้ตั้งใจไม่อ่าน `data/splits/test.jsonl`; รอบ v3.3 ต้อง train แล้วรัน hard-contrast probe บน `data/generated/v3-hard-contrast-security-triage.jsonl` ก่อน mini semantic eval และยังไม่ใช้ fixed test split
 
 ## Local LoRA Inference
 

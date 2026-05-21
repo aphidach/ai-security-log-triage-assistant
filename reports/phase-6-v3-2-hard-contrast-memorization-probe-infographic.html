@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase 6 V3.2 Hard Contrast Memorization Probe</title>
+  <style>
+    :root {
+      --bg: #f6f7f2;
+      --panel: #ffffff;
+      --ink: #18212a;
+      --muted: #5a6470;
+      --line: #d8ded4;
+      --red: #b42318;
+      --amber: #a15c00;
+      --green: #24745a;
+      --blue: #245a92;
+      --teal: #287d8e;
+      --violet: #6b5b95;
+      --soft-red: #fff0ee;
+      --soft-amber: #fff5df;
+      --soft-green: #edf8f3;
+      --shadow: 0 12px 34px rgba(24, 33, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    header,
+    section,
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      padding: 28px;
+    }
+
+    section {
+      margin-top: 18px;
+      padding: 24px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin-bottom: 12px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.94em;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fbfcfd;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .metrics {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .two {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .metric .value {
+      margin: 6px 0 2px;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .metric .label,
+    .note,
+    .source {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .bad {
+      color: var(--red);
+    }
+
+    .warn {
+      color: var(--amber);
+    }
+
+    .ok {
+      color: var(--green);
+    }
+
+    .callout {
+      border-left: 4px solid var(--amber);
+      background: var(--soft-amber);
+    }
+
+    .callout.good {
+      border-left-color: var(--green);
+      background: var(--soft-green);
+    }
+
+    .callout.bad {
+      border-left-color: var(--red);
+      background: var(--soft-red);
+    }
+
+    .progress {
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #eef2ea;
+      overflow: hidden;
+    }
+
+    .progress .fill {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding-left: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      background: var(--amber);
+      white-space: nowrap;
+    }
+
+    .bar-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(170px, 260px) 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .label-name {
+      font-size: 13px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .track {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f1f4f0;
+      overflow: hidden;
+    }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      min-width: 30px;
+      height: 100%;
+      padding-left: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .blue-bg {
+      background: var(--blue);
+    }
+
+    .teal-bg {
+      background: var(--teal);
+    }
+
+    .green-bg {
+      background: var(--green);
+    }
+
+    .amber-bg {
+      background: var(--amber);
+    }
+
+    .red-bg {
+      background: var(--red);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef2ea;
+      font-size: 13px;
+    }
+
+    td.num,
+    th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .heat-good {
+      background: var(--soft-green);
+      font-weight: 800;
+    }
+
+    .heat-bad {
+      background: var(--soft-red);
+      font-weight: 800;
+    }
+
+    .delta {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--soft-green);
+      color: var(--green);
+    }
+
+    @media (max-width: 900px) {
+      .metrics,
+      .two,
+      .three {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+      }
+
+      section,
+      header {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Phase 6 V3.2 Hard Contrast Memorization Probe</h1>
+      <p class="subtitle">v3.2 ดีขึ้นจาก v3.1 ชัดเจน แต่ยังไม่ผ่าน canary: model เริ่มเรียน normal และ traversal แล้ว แต่ SQLi กับ port scan ยังเป็นคอขวดหลัก</p>
+      <div class="meta">
+        <span class="pill">Adapter: <code>openai-compatible</code></span>
+        <span class="pill">Model: <code>lfm2-security-triage-v3-2</code></span>
+        <span class="pill">Runtime: vLLM <code>structured_outputs</code></span>
+        <span class="pill">Split: hard contrast 50 records</span>
+        <span class="pill">Prompt: <code>triage-json-v2.1</code></span>
+      </div>
+    </header>
+
+    <section>
+      <h2>Executive Readout</h2>
+      <div class="grid metrics">
+        <div class="card metric">
+          <div class="label">Label accuracy</div>
+          <div class="value warn">0.56</div>
+          <div class="note">เพิ่มจาก v3.1 hard probe 0.34</div>
+        </div>
+        <div class="card metric">
+          <div class="label">JSON / schema success</div>
+          <div class="value ok">1.00</div>
+          <div class="note">output contract นิ่งแล้ว</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Invalid outputs</div>
+          <div class="value ok">0</div>
+          <div class="note">ไม่มี schema-invalid response</div>
+        </div>
+        <div class="card metric">
+          <div class="label">Canary verdict</div>
+          <div class="value bad">Fail</div>
+          <div class="note">ยังต่ำกว่า target 0.80+</div>
+        </div>
+      </div>
+      <div class="card callout" style="margin-top:16px">
+        <h3>อ่านผลแบบสั้น</h3>
+        <p>v3.2 ลด brute-force collapse ได้จริง: predicted <code>failed_login_bruteforce</code> ลดจาก 36/50 เหลือ 21/50 แต่ model หันไป under-predict SQLi และ port scan แทน จึงยังไม่ควรใช้ fixed test split</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Canary Progress</h2>
+      <p class="note">เกณฑ์ diagnostic ที่ใช้คุยกันคือ hard-contrast memorization ควรเข้าใกล้ 0.80+ ก่อนรัน fixed split</p>
+      <div class="progress" aria-label="label accuracy 0.56 out of target 0.80">
+        <div class="fill" style="width:56%">0.56 label accuracy</div>
+      </div>
+      <div class="grid three">
+        <div class="card callout good">
+          <h3>ดีขึ้นมาก</h3>
+          <p><code>normal</code> จาก 0/10 เป็น 8/10 และ <code>directory_traversal_attempt</code> จาก 2/10 เป็น 7/10</p>
+        </div>
+        <div class="card callout bad">
+          <h3>ยังติด</h3>
+          <p><code>sql_injection_attempt</code> เหลือ 1/10 และ <code>port_scan_or_recon</code> เหลือ 2/10</p>
+        </div>
+        <div class="card callout">
+          <h3>ทิศทางถัดไป</h3>
+          <p>ทำ v3.3 targeted canary โดย weight SQLi และ port scan boundary ให้หนักขึ้น</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>V3.1 To V3.2 Comparison</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th class="num">V3.1</th>
+            <th class="num">V3.2</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>label_accuracy</code></td>
+            <td class="num">0.34</td>
+            <td class="num heat-good">0.56</td>
+            <td><span class="delta">+0.22</span></td>
+          </tr>
+          <tr>
+            <td><code>severity_accuracy</code></td>
+            <td class="num">0.64</td>
+            <td class="num heat-good">0.78</td>
+            <td><span class="delta">+0.14</span></td>
+          </tr>
+          <tr>
+            <td><code>is_suspicious_accuracy</code></td>
+            <td class="num">0.80</td>
+            <td class="num heat-good">0.90</td>
+            <td><span class="delta">+0.10</span></td>
+          </tr>
+          <tr>
+            <td>Predicted <code>failed_login_bruteforce</code></td>
+            <td class="num heat-bad">36/50</td>
+            <td class="num">21/50</td>
+            <td>brute-force collapse ลดลง</td>
+          </tr>
+          <tr>
+            <td>Average latency</td>
+            <td class="num">726 ms</td>
+            <td class="num heat-good">488 ms</td>
+            <td>เร็วขึ้นใน run นี้</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Per-Label Correctness</h2>
+      <div class="bar-group">
+        <div class="bar-row">
+          <div class="label-name"><code>normal</code> 8/10</div>
+          <div class="track"><div class="bar green-bg" style="width:80%">80%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name"><code>failed_login_bruteforce</code> 10/10</div>
+          <div class="track"><div class="bar green-bg" style="width:100%">100%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name"><code>sql_injection_attempt</code> 1/10</div>
+          <div class="track"><div class="bar red-bg" style="width:10%">10%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name"><code>directory_traversal_attempt</code> 7/10</div>
+          <div class="track"><div class="bar teal-bg" style="width:70%">70%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name"><code>port_scan_or_recon</code> 2/10</div>
+          <div class="track"><div class="bar amber-bg" style="width:20%">20%</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Predicted Label Distribution</h2>
+      <div class="bar-group">
+        <div class="bar-row">
+          <div class="label-name"><code>failed_login_bruteforce</code> 21/50</div>
+          <div class="track"><div class="bar amber-bg" style="width:42%">42%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name"><code>directory_traversal_attempt</code> 14/50</div>
+          <div class="track"><div class="bar teal-bg" style="width:28%">28%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name"><code>normal</code> 11/50</div>
+          <div class="track"><div class="bar green-bg" style="width:22%">22%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name"><code>sql_injection_attempt</code> 2/50</div>
+          <div class="track"><div class="bar red-bg" style="width:4%">4%</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="label-name"><code>port_scan_or_recon</code> 2/50</div>
+          <div class="track"><div class="bar blue-bg" style="width:4%">4%</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Confusion Matrix</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Expected \ Predicted</th>
+            <th class="num"><code>normal</code></th>
+            <th class="num"><code>failed_login_bruteforce</code></th>
+            <th class="num"><code>sql_injection_attempt</code></th>
+            <th class="num"><code>directory_traversal_attempt</code></th>
+            <th class="num"><code>port_scan_or_recon</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th><code>normal</code></th>
+            <td class="num heat-good">8</td>
+            <td class="num">2</td>
+            <td class="num">0</td>
+            <td class="num">0</td>
+            <td class="num">0</td>
+          </tr>
+          <tr>
+            <th><code>failed_login_bruteforce</code></th>
+            <td class="num">0</td>
+            <td class="num heat-good">10</td>
+            <td class="num">0</td>
+            <td class="num">0</td>
+            <td class="num">0</td>
+          </tr>
+          <tr>
+            <th><code>sql_injection_attempt</code></th>
+            <td class="num">3</td>
+            <td class="num">3</td>
+            <td class="num heat-bad">1</td>
+            <td class="num">3</td>
+            <td class="num">0</td>
+          </tr>
+          <tr>
+            <th><code>directory_traversal_attempt</code></th>
+            <td class="num">0</td>
+            <td class="num">2</td>
+            <td class="num">1</td>
+            <td class="num heat-good">7</td>
+            <td class="num">0</td>
+          </tr>
+          <tr>
+            <th><code>port_scan_or_recon</code></th>
+            <td class="num">0</td>
+            <td class="num">4</td>
+            <td class="num">0</td>
+            <td class="num">4</td>
+            <td class="num heat-bad">2</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note" style="margin-top:12px">อ่านตามแถว: label จริงอยู่ซ้าย, label ที่ model ทายอยู่ด้านบน</p>
+    </section>
+
+    <section>
+      <h2>Training Snapshot</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Config</h3>
+          <table>
+            <tbody>
+              <tr><th>Config path</th><td><code>ml/unsloth/config.v3-2.yaml</code></td></tr>
+              <tr><th>Output dir</th><td><code>ml/unsloth/outputs/lfm2-350m-v3-2-hard-contrast-security-triage-lora</code></td></tr>
+              <tr><th>Base model</th><td><code>unsloth/LFM2-350M</code></td></tr>
+              <tr><th>Max steps</th><td><code>180</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Train result</h3>
+          <table>
+            <tbody>
+              <tr><th>Train / validation records</th><td><code>500 / 75</code></td></tr>
+              <tr><th>Epoch</th><td><code>2.864</code></td></tr>
+              <tr><th>Train loss</th><td><code>1.3138311010268</code></td></tr>
+              <tr><th>Runtime</th><td><code>155.398s</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Next Move</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>1. Weight SQLi</h3>
+          <p>เพิ่มตัวอย่าง quote, tautology, <code>UNION SELECT</code>, <code>SLEEP(</code>, และ <code>information_schema</code> พร้อม normal pairs ที่มีคำคล้ายกัน</p>
+        </div>
+        <div class="card">
+          <h3>2. Weight Port Scan</h3>
+          <p>ย้ำ <code>unique_ports</code>, <code>nmap fingerprint</code>, <code>SYN scan detected</code>, horizontal scan และ service enumeration</p>
+        </div>
+        <div class="card">
+          <h3>3. Hold Fixed Test</h3>
+          <p>รัน hard-contrast probe ซ้ำก่อน mini semantic eval และยังไม่ใช้ <code>data/splits/test.jsonl</code></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Sources</h2>
+      <p class="source">Generated from <code>reports/openai-compatible-vllm-structured-outputs-v3-2-hard-contrast-memorization-probe.json</code>, <code>reports/openai-compatible-vllm-structured-outputs-v3-2-hard-contrast-memorization-probe.md</code>, <code>ml/unsloth/config.v3-2.yaml</code>, and user-provided training summary on 2026-05-21.</p>
+    </section>
+  </main>
+</body>
+</html>

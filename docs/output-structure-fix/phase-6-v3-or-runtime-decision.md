@@ -250,6 +250,48 @@ rtk .venv/bin/python scripts/create_v3_1_training_split.py
 rtk .venv/bin/python ml/unsloth/train_lora.py --preflight-only
 ```
 
+### Phase 6 V3.2 Hard-Contrast Probe
+
+v3.2 train ด้วย `ml/unsloth/config.v3-2.yaml` และเพิ่ม training strength จาก v3.1 โดยใช้ `max_steps = 180` บน train 500 records และ validation 75 records ผล hard-contrast memorization probe ดีขึ้นจาก v3.1 แต่ยังไม่ผ่าน canary (source: reports/openai-compatible-vllm-structured-outputs-v3-2-hard-contrast-memorization-probe.json, ml/unsloth/config.v3-2.yaml)
+
+| Signal | V3.1 hard probe | V3.2 hard probe | Interpretation |
+| --- | ---: | ---: | --- |
+| `label_accuracy` | `0.34` | `0.56` | ดีขึ้น แต่ยังต่ำกว่า canary target |
+| `json_parse_success_rate` | `1.0` | `1.0` | output contract stable |
+| `schema_success_rate` | `1.0` | `1.0` | schema stable |
+| `severity_accuracy` | `0.64` | `0.78` | severity ดีขึ้น |
+| `is_suspicious_accuracy` | `0.8` | `0.9` | suspicious boundary ดีขึ้น |
+| `evidence_partial_match` | `0.9` | `0.92` | evidence ยังดี |
+| predicted `failed_login_bruteforce` | `36/50` | `21/50` | brute-force collapse ลดลง |
+
+per-label result:
+
+| Expected label | Correct | Main wrong prediction |
+| --- | ---: | --- |
+| `normal` | `8/10` | `failed_login_bruteforce` 2 |
+| `failed_login_bruteforce` | `10/10` | stable |
+| `sql_injection_attempt` | `1/10` | `normal` 3, `failed_login_bruteforce` 3, `directory_traversal_attempt` 3 |
+| `directory_traversal_attempt` | `7/10` | `failed_login_bruteforce` 2, `sql_injection_attempt` 1 |
+| `port_scan_or_recon` | `2/10` | `failed_login_bruteforce` 4, `directory_traversal_attempt` 4 |
+
+Decision: v3.2 ยังไม่ควรขยับไป fixed split หรือ Phase 7 เพราะ hard-contrast training supplement เองยังได้แค่ `0.56` รอบถัดไปควรเป็น v3.3 targeted canary ที่ weight SQLi และ port scan boundary โดยตรง ไม่ใช่เพิ่มทุก label เท่ากัน (source: docs/output-structure-fix/phase-6-v3-2-hard-contrast-probe.md)
+
+### Phase 6 V3.3 Targeted Canary Preparation
+
+v3.3 เตรียม targeted training mixture แทนการเพิ่มทุก label เท่ากัน โดยเริ่มจาก v3.1 train 500 records แล้วเพิ่ม targeted weighted layer อีก 50 records จาก 30 examples ใหม่: SQLi positives 10 records ถูก weight เป็น 20, port scan positives 10 records ถูก weight เป็น 20 และ normal pairs 10 records ถูกใช้เป็น 10 เพื่อคุม false positive boundary (source: scripts/create_v3_3_training_split.py, docs/output-structure-fix/phase-6-v3-3-targeted-canary.md)
+
+v3.3 train distribution:
+
+| Label | Train records |
+| --- | ---: |
+| `normal` | 110 |
+| `failed_login_bruteforce` | 100 |
+| `sql_injection_attempt` | 120 |
+| `directory_traversal_attempt` | 100 |
+| `port_scan_or_recon` | 120 |
+
+Decision: train v3.3 ด้วย `ml/unsloth/config.v3-3.yaml`, serve model ด้วยชื่อแยก เช่น `lfm2-security-triage-v3-3`, แล้ว rerun hard-contrast memorization probe บน `data/generated/v3-hard-contrast-security-triage.jsonl` ก่อน mini semantic eval หรือ fixed split ทุกครั้ง (source: ml/unsloth/config.v3-3.yaml, data/splits/train-v3-3-targeted-hard-contrast.jsonl)
+
 ### 3. Training Format Check
 
 ตรวจว่า training/render format ตรงกับ evaluator ที่ใช้จริง:
@@ -319,9 +361,9 @@ docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
 - [x] บันทึกว่า timeout เป็น runtime/config issue หรือ model behavior
 - [x] ทำ semantic error taxonomy จาก Phase 5/Phase 6.1 mini eval reports
 - [x] สรุป hard cases ที่ต้องเพิ่มใน v3
-- [ ] ตรวจ training render format ว่า assistant output เป็น raw JSON object
+- [x] ตรวจ training render format ว่า assistant output เป็น raw JSON object
 - [ ] ตัดสินใจว่าต้องปรับ schema/prompt wording หรือไม่
-- [ ] ตัดสินใจว่าจะ retrain v3 หรือเทียบ model capacity ก่อน
+- [x] ตัดสินใจว่าจะ retrain v3 หรือเทียบ model capacity ก่อน
 - [ ] บันทึก decision ก่อนเริ่ม Phase 7
 
 ## Exit Criteria
@@ -369,6 +411,8 @@ docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
 | 2026-05-20 | Start Phase 6.1 evidence constraints | Timeout-only diagnostics show `off` mode stops with the right broad label, while `json_object` and `structured_outputs` loop inside unbounded `evidence` until `finish_reason=length` | Tighten `evidence` constraints and adapter schema sanitizer before deciding whether to retrain v3 |
 | 2026-05-21 | Treat current label skew as prediction collapse unless source distribution changes | Generated, train, validation, test, smoke, and mini semantic splits are label-balanced; the skew appears in predictions, especially toward `failed_login_bruteforce` | Do not downsample the existing balanced training split just to fight Phase 5 prediction skew; use confusion analysis, hard contrast examples, balanced sampling policy, and imbalance-aware metrics |
 | 2026-05-21 | Move Phase 6 focus from runtime loop to semantic quality | Phase 6.1 timeout-only, smoke, and mini reruns all have JSON/schema `1.0`, invalid output `0`, and no `finish_reason=length`, but mini label accuracy is still `0.36` | Next work should build v3 hard cases or run a model-capacity diagnostic before fixed-split comparison |
+| 2026-05-21 | Keep fixed test split held after v3.2 hard-contrast probe | v3.2 improves hard-contrast label accuracy to `0.56`, but SQLi is only `1/10` and port scan is only `2/10` | Next work should be v3.3 targeted canary focused on SQLi and port-scan boundary before mini semantic eval or Phase 7 |
+| 2026-05-21 | Prepare v3.3 targeted weighting before any fixed split comparison | v3.2 canary failure is concentrated in SQLi and port scan despite global improvement | v3.3 train weights SQLi and port scan, keeps validation balanced, and still requires hard-contrast probe before mini semantic eval |
 
 ## Work Log
 
@@ -382,6 +426,8 @@ docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
 | 2026-05-21 | User/Codex | Recorded Phase 6.1 rerun results and semantic blocker | `reports/openai-compatible-vllm-structured-outputs-phase6-1-evidence-constraints.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` | Output contract restored; semantic collapse remains |
 | 2026-05-21 | Codex | Added Phase 6 semantic error taxonomy infographic report | `reports/phase-6-semantic-error-taxonomy-infographic.html`, `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` | HTML report summarizes metrics, label distribution, confusion matrix, root-cause taxonomy, and v3 backlog |
 | 2026-05-21 | Codex | Created v3 hard contrast training supplement | `scripts/create_v3_hard_contrast_dataset.py`, `data/generated/v3-hard-contrast-security-triage.jsonl`, `docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md` | Adds 50 balanced hard contrast records for v3 training without touching validation or fixed test split |
+| 2026-05-21 | Codex | Recorded v3.2 hard-contrast memorization probe result | `reports/openai-compatible-vllm-structured-outputs-v3-2-hard-contrast-memorization-probe.json`, `docs/output-structure-fix/phase-6-v3-2-hard-contrast-probe.md` | v3.2 improved but still failed canary; v3.3 should target SQLi and port scan |
+| 2026-05-21 | Codex | Prepared v3.3 targeted SQLi and port-scan weighted split | `scripts/create_v3_3_training_split.py`, `data/splits/train-v3-3-targeted-hard-contrast.jsonl`, `ml/unsloth/config.v3-3.yaml` | Hard-contrast probe remains the next gate; fixed test split still held |
 
 ## Related pages
 
@@ -389,5 +435,7 @@ docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
 - [[output-structure-fix/phase-5-mini-semantic-eval]]
 - [[output-structure-fix/phase-6-1-evidence-constraints]]
 - [[output-structure-fix/phase-6-v3-hard-contrast-dataset]]
+- [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]]
+- [[output-structure-fix/phase-6-v3-3-targeted-canary]]
 - [[label-imbalance-and-prediction-collapse]]
 - [[structured-output-fix-plan]]

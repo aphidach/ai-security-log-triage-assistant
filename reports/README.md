@@ -32,6 +32,14 @@ Model-run mini semantic infographic:
 reports/phase-{n}-{model-version}-mini-semantic-eval-infographic.html
 ```
 
+Hard-contrast memorization probe:
+
+```text
+reports/{adapter}-{runtime}-{mode}-{model-version}-hard-contrast-memorization-probe.json
+reports/{adapter}-{runtime}-{mode}-{model-version}-hard-contrast-memorization-probe.md
+reports/phase-{n}-{model-version}-hard-contrast-memorization-probe-infographic.html
+```
+
 Canonical fixed split format:
 
 ```text

@@ -1,12 +1,13 @@
 # Example config for the Unsloth fine-tuning path.
-# Current default follows the v3.3 targeted hard-contrast recovery profile.
+# v3.3 keeps the v3.2 training strength but shifts the data mixture toward
+# SQL injection and port-scan hard cases before any fixed-test comparison.
 # Keep training values outside train_lora.py so each run is reproducible.
 
 model:
   base_model: unsloth/LFM2-350M
   model_family: LFM2
-  max_seq_length: 2048
-  load_in_4bit: true
+  max_seq_length: 1024
+  load_in_4bit: false
   use_gradient_checkpointing: unsloth
   dtype: bfloat16
 
