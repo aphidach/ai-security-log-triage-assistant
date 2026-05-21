@@ -29,6 +29,7 @@
 | Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | In progress | ตัดสินใจว่าจะ retrain v3, เปลี่ยน runtime หรือเปลี่ยน model candidate |
 | Phase 6.1 | [[output-structure-fix/phase-6-1-evidence-constraints]] | Contract restored; semantics still blocked | แก้ evidence loop ด้วย schema constraints และ sanitizer update |
 | Phase 6 v3 data | [[output-structure-fix/phase-6-v3-hard-contrast-dataset]] | Created | สร้าง hard contrast training supplement สำหรับแก้ prediction collapse |
+| Phase 6 v3.1 eval | [[output-structure-fix/phase-6-v3-1-mini-semantic-eval]] | Failed semantic gate | บันทึกผล v3.1 mini semantic eval และ decision ให้ hold fixed test split |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
 
 ## Operating Rules
@@ -49,6 +50,7 @@
 | 2026-05-21 | Codex | Marked Phase 6.1 local implementation complete in the phase map | `docs/output-structure-fix/phase-6-1-evidence-constraints.md`, `data/schemas/triage-output.schema.json` | Endpoint rerun pending |
 | 2026-05-21 | Codex | Updated phase map after Phase 6.1 reruns restored the output contract | `reports/openai-compatible-vllm-structured-outputs-phase6-1-*.json` | Semantic quality remains blocked |
 | 2026-05-21 | Codex | Added v3 hard contrast dataset page to the phase map | `docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md` | Created |
+| 2026-05-21 | Codex | Added v3.1 mini semantic eval page to the phase map | `docs/output-structure-fix/phase-6-v3-1-mini-semantic-eval.md`, `reports/phase-6-v3-1-mini-semantic-eval-infographic.html` | Semantic gate failed |
 
 ## Decision Log
 

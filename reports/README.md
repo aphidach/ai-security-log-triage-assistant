@@ -26,6 +26,12 @@ Semantic error taxonomy infographic:
 reports/phase-{n}-semantic-error-taxonomy-infographic.html
 ```
 
+Model-run mini semantic infographic:
+
+```text
+reports/phase-{n}-{model-version}-mini-semantic-eval-infographic.html
+```
+
 Canonical fixed split format:
 
 ```text

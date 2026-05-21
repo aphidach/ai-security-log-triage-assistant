@@ -65,6 +65,7 @@
 - [[output-structure-fix/phase-6-v3-or-runtime-decision]]: Phase 6 decision stub สำหรับ runtime vs retrain v3
 - [[output-structure-fix/phase-6-1-evidence-constraints]]: Phase 6.1 implementation สำหรับแก้ evidence loop ด้วย schema constraints, adapter sanitizer update และ validator alignment
 - [[output-structure-fix/phase-6-v3-hard-contrast-dataset]]: Phase 6 v3 hard-contrast dataset supplement สำหรับแก้ prediction collapse ด้วย paired examples และ hard negatives
+- [[output-structure-fix/phase-6-v3-1-mini-semantic-eval]]: ผล v3.1 mini semantic eval, HTML infographic, confusion matrix และ decision ให้ hold fixed test split
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison stub หลัง prerequisites ครบ
 
 ## Documentation Maintenance
@@ -104,6 +105,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-21 | Codex | Added label imbalance and prediction collapse guidance to core docs | `docs/label-imbalance-and-prediction-collapse.md`, `docs/index.md` | Updated |
 | 2026-05-21 | Codex | Added Phase 6 v3 hard contrast dataset page to the structured-output phase notes | `docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md`, `docs/index.md` | Updated |
 | 2026-05-21 | Codex | Added script runbook to core docs | `docs/script.md`, `docs/index.md` | Updated |
+| 2026-05-21 | Codex | Added Phase 6 v3.1 mini semantic eval page to the structured-output phase notes | `docs/output-structure-fix/phase-6-v3-1-mini-semantic-eval.md`, `reports/phase-6-v3-1-mini-semantic-eval-infographic.html` | Updated |
 
 ## Decision Log
 
