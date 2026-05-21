@@ -1,0 +1,54 @@
+# Example runtime config for OpenAI-compatible adapters.
+#
+# Copy this file to config-adapter.yml for local runs. The local file is ignored
+# by git because it may contain endpoint URLs or API keys.
+#
+# Precedence for base fields:
+# 1. Explicit adapter constructor arguments
+# 2. Environment variables such as OPENAI_COMPATIBLE_MODEL
+# 3. This YAML file
+# 4. Adapter defaults
+#
+# Request parameters are currently read from this YAML file. Keep deterministic
+# settings for canonical eval runs, and use separate report paths for probes.
+
+defaults:
+  request:
+    temperature: 0
+    # top_p: 1
+    # frequency_penalty: 0
+    # presence_penalty: 0
+    # seed: 3407
+    # stop:
+    #   - "```"
+    #
+    # Backend-specific parameters for OpenAI-compatible servers such as vLLM.
+    # These are not standard OpenAI API parameters, so use them only in
+    # explicitly named runtime probes.
+    # extra_body:
+    #   min_p: 0.15
+    #   repetition_penalty: 1.05
+
+openai-compatible:
+  base_url: http://192.168.8.141:8080/v1
+  api_key: local
+  model: lfm2-security-triage-v3-3
+  timeout_seconds: 120
+  max_retries: 0
+  max_tokens: 512
+  response_format: structured_outputs
+  schema_path: data/schemas/triage-output.schema.json
+  request:
+    temperature: 0
+
+openai-finetune:
+  base_url: http://localhost:8000/v1
+  api_key: changeme
+  model: lfm2-security-triage
+  timeout_seconds: 120
+  max_retries: 0
+  max_tokens: 512
+  response_format: structured_outputs
+  schema_path: data/schemas/triage-output.schema.json
+  request:
+    temperature: 0

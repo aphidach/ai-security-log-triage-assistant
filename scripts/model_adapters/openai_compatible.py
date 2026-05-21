@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import ast
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,7 +19,12 @@ from scripts.model_adapters.prompt_contract import (
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SCHEMA_PATH = ROOT / "data" / "schemas" / "triage-output.schema.json"
+DEFAULT_ADAPTER_CONFIG_PATHS = (
+    ROOT / "config-adapter.yml",
+    ROOT / "config-adapter.yaml",
+)
 PROVIDER_SCHEMA_NAME = "triage_output"
+SHARED_CONFIG_PATH_ENV = "OPENAI_ADAPTER_CONFIG_PATH"
 
 RESPONSE_FORMAT_OFF = "off"
 RESPONSE_FORMAT_JSON_OBJECT = "json_object"
@@ -72,6 +78,24 @@ FALLBACK_ERROR_PATTERNS = (
     "extra inputs are not permitted",
 )
 
+CHAT_COMPLETION_REQUEST_OPTION_KEYS = frozenset(
+    {
+        "temperature",
+        "top_p",
+        "frequency_penalty",
+        "presence_penalty",
+        "seed",
+        "stop",
+    }
+)
+RESPONSES_PARSE_REQUEST_OPTION_KEYS = frozenset({"temperature", "top_p"})
+REQUEST_OPTION_RANGES = {
+    "temperature": (0.0, 2.0),
+    "top_p": (0.0, 1.0),
+    "frequency_penalty": (-2.0, 2.0),
+    "presence_penalty": (-2.0, 2.0),
+}
+
 
 @dataclass(frozen=True, slots=True)
 class OpenAIAdapterEnv:
@@ -83,6 +107,7 @@ class OpenAIAdapterEnv:
     max_tokens: str
     response_format: str
     schema_path: str
+    config_path: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,6 +121,9 @@ class OpenAIAdapterConfig:
     response_format: str
     schema_path: Path | None
     provider_schema: dict[str, Any] | None
+    config_path: Path | None
+    request_options: dict[str, Any]
+    extra_body: dict[str, Any] | None
 
 
 OPENAI_COMPATIBLE_ENV = OpenAIAdapterEnv(
@@ -107,6 +135,7 @@ OPENAI_COMPATIBLE_ENV = OpenAIAdapterEnv(
     max_tokens="OPENAI_COMPATIBLE_MAX_TOKENS",
     response_format="OPENAI_COMPATIBLE_RESPONSE_FORMAT",
     schema_path="OPENAI_COMPATIBLE_SCHEMA_PATH",
+    config_path="OPENAI_COMPATIBLE_CONFIG_PATH",
 )
 
 OPENAI_FINETUNE_ENV = OpenAIAdapterEnv(
@@ -118,6 +147,7 @@ OPENAI_FINETUNE_ENV = OpenAIAdapterEnv(
     max_tokens="OPENAI_FINETUNE_MAX_TOKENS",
     response_format="OPENAI_FINETUNE_RESPONSE_FORMAT",
     schema_path="OPENAI_FINETUNE_SCHEMA_PATH",
+    config_path="OPENAI_FINETUNE_CONFIG_PATH",
 )
 
 
@@ -136,8 +166,10 @@ class _OpenAIAdapter:
         max_tokens: int | None = None,
         response_format: str | None = None,
         schema_path: str | Path | None = None,
+        config_path: str | Path | None = None,
     ) -> None:
         self._config, self._config_error = _build_config(
+            self.name,
             self.env,
             base_url=base_url,
             api_key=api_key,
@@ -147,6 +179,7 @@ class _OpenAIAdapter:
             max_tokens=max_tokens,
             response_format=response_format,
             schema_path=schema_path,
+            config_path=config_path,
         )
 
     def analyze(self, log_line: str) -> AdapterResult:
@@ -190,9 +223,9 @@ class _OpenAIAdapter:
             response = client.responses.parse(
                 model=self._config.model,
                 input=_message_payload(log_line),
-                temperature=0,
                 max_output_tokens=self._config.max_tokens,
                 text_format=_triage_output_model(),
+                **_responses_parse_request_options(self._config.request_options),
             )
             parsed = _extract_responses_parsed(response)
             if parsed is None:
@@ -214,6 +247,8 @@ class _OpenAIAdapter:
                 log_line=log_line,
                 max_tokens=self._config.max_tokens,
                 provider_schema=self._config.provider_schema,
+                request_options=self._config.request_options,
+                extra_body=self._config.extra_body,
             )
             try:
                 response = client.chat.completions.create(**request_kwargs)
@@ -245,6 +280,8 @@ class _OpenAIAdapter:
                 "max_tokens": self.env.max_tokens,
                 "response_format": self.env.response_format,
                 "schema_path": self.env.schema_path,
+                "config_path": self.env.config_path,
+                "shared_config_path": SHARED_CONFIG_PATH_ENV,
             },
         }
         if self._config is not None:
@@ -257,6 +294,13 @@ class _OpenAIAdapter:
                     "max_retries": self._config.max_retries,
                     "max_tokens": self._config.max_tokens,
                     "response_format_requested": self._config.response_format,
+                    "config_path": (
+                        str(self._config.config_path.relative_to(ROOT))
+                        if self._config.config_path is not None and self._config.config_path.is_relative_to(ROOT)
+                        else (str(self._config.config_path) if self._config.config_path is not None else None)
+                    ),
+                    "request_options": self._config.request_options,
+                    "extra_body": self._config.extra_body,
                     "schema_path": (
                         str(self._config.schema_path.relative_to(ROOT))
                         if self._config.schema_path is not None and self._config.schema_path.is_relative_to(ROOT)
@@ -282,6 +326,7 @@ class FineTuneAdapter(_OpenAIAdapter):
 
 
 def _build_config(
+    adapter_name: str,
     env: OpenAIAdapterEnv,
     *,
     base_url: str | None,
@@ -292,38 +337,46 @@ def _build_config(
     max_tokens: int | None,
     response_format: str | None,
     schema_path: str | Path | None,
+    config_path: str | Path | None,
 ) -> tuple[OpenAIAdapterConfig | None, str | None]:
     try:
+        config_path_value = _adapter_config_path(env, config_path)
+        file_config = _adapter_file_config(config_path_value, adapter_name)
         response_format_value = _enum_config(
             env.response_format,
             response_format,
+            config_value=file_config.get("response_format"),
             default=RESPONSE_FORMAT_RESPONSES_PARSE,
             choices=RESPONSE_FORMAT_CHOICES,
         )
         timeout_value = _float_config(
             env.timeout_seconds,
             timeout_seconds,
+            config_value=file_config.get("timeout_seconds"),
             default=30.0,
             minimum=0.1,
         )
         max_retries_value = _int_config(
             env.max_retries,
             max_retries,
+            config_value=file_config.get("max_retries"),
             default=1,
             minimum=0,
         )
         max_tokens_value = _int_config(
             env.max_tokens,
             max_tokens,
+            config_value=file_config.get("max_tokens"),
             default=512,
             minimum=1,
         )
+        request_options, extra_body = _request_config(file_config)
     except ValueError as exc:
         return None, str(exc)
 
-    base_url_value = base_url if base_url is not None else os.getenv(env.base_url)
-    api_key_value = api_key if api_key is not None else os.getenv(env.api_key)
-    model_value = model if model is not None else os.getenv(env.model)
+    base_url_value = _string_config(env.base_url, base_url, config_value=file_config.get("base_url"))
+    api_key_value = _string_config(env.api_key, api_key, config_value=file_config.get("api_key"))
+    model_value = _string_config(env.model, model, config_value=file_config.get("model"))
     if not model_value and response_format_value == RESPONSE_FORMAT_RESPONSES_PARSE:
         model_value = "current"
 
@@ -350,6 +403,7 @@ def _build_config(
             schema_path_value = _path_config(
                 env.schema_path,
                 schema_path,
+                config_value=file_config.get("schema_path"),
                 default=DEFAULT_SCHEMA_PATH,
             )
             provider_schema = _sanitize_provider_schema(_load_json_schema(schema_path_value))
@@ -367,20 +421,74 @@ def _build_config(
             response_format=response_format_value,
             schema_path=schema_path_value,
             provider_schema=provider_schema,
+            config_path=config_path_value,
+            request_options=request_options,
+            extra_body=extra_body,
         ),
         None,
     )
+
+
+def _adapter_config_path(env: OpenAIAdapterEnv, explicit: str | Path | None) -> Path | None:
+    raw_value = explicit or os.getenv(env.config_path) or os.getenv(SHARED_CONFIG_PATH_ENV)
+    if raw_value:
+        candidate = _resolve_repo_path(raw_value)
+        if not candidate.is_file():
+            raise ValueError(f"{env.config_path} must point to an existing file: {candidate}")
+        return candidate
+
+    for candidate in DEFAULT_ADAPTER_CONFIG_PATHS:
+        if candidate.is_file():
+            return candidate.resolve()
+    return None
+
+
+def _adapter_file_config(path: Path | None, adapter_name: str) -> dict[str, Any]:
+    if path is None:
+        return {}
+    config = _load_yaml_object(path)
+    defaults = _mapping_config(config.get("defaults"), field_name=f"{path}:defaults")
+    adapter_section = (
+        config.get(adapter_name)
+        or config.get(adapter_name.replace("-", "_"))
+        or config.get(adapter_name.replace("-", ""))
+    )
+    adapter_config = _mapping_config(adapter_section, field_name=f"{path}:{adapter_name}")
+    return _deep_merge(defaults, adapter_config)
+
+
+def _string_config(env_name: str, explicit: str | None, *, config_value: Any = None) -> str | None:
+    if explicit is not None:
+        return explicit
+    env_value = os.getenv(env_name)
+    if env_value is not None:
+        return env_value
+    if config_value is None:
+        return None
+    if not isinstance(config_value, (str, int, float)):
+        raise ValueError(f"{env_name} must be a string")
+    return str(config_value)
 
 
 def _float_config(
     env_name: str,
     explicit: float | None,
     *,
+    config_value: Any = None,
     default: float,
     minimum: float,
 ) -> float:
     raw_value: float | str
-    raw_value = explicit if explicit is not None else os.getenv(env_name, str(default))
+    env_value = os.getenv(env_name)
+    raw_value = (
+        explicit
+        if explicit is not None
+        else env_value
+        if env_value is not None
+        else config_value
+        if config_value is not None
+        else str(default)
+    )
     try:
         value = float(raw_value)
     except (TypeError, ValueError) as exc:
@@ -394,11 +502,21 @@ def _int_config(
     env_name: str,
     explicit: int | None,
     *,
+    config_value: Any = None,
     default: int,
     minimum: int,
 ) -> int:
     raw_value: int | str
-    raw_value = explicit if explicit is not None else os.getenv(env_name, str(default))
+    env_value = os.getenv(env_name)
+    raw_value = (
+        explicit
+        if explicit is not None
+        else env_value
+        if env_value is not None
+        else config_value
+        if config_value is not None
+        else str(default)
+    )
     try:
         value = int(raw_value)
     except (TypeError, ValueError) as exc:
@@ -412,10 +530,20 @@ def _enum_config(
     env_name: str,
     explicit: str | None,
     *,
+    config_value: Any = None,
     default: str,
     choices: tuple[str, ...],
 ) -> str:
-    raw_value = explicit if explicit is not None else os.getenv(env_name, default)
+    env_value = os.getenv(env_name)
+    raw_value = (
+        explicit
+        if explicit is not None
+        else env_value
+        if env_value is not None
+        else config_value
+        if config_value is not None
+        else default
+    )
     value = str(raw_value).strip().lower()
     if value not in choices:
         raise ValueError(f"{env_name} must be one of: {', '.join(choices)}")
@@ -426,15 +554,72 @@ def _path_config(
     env_name: str,
     explicit: str | Path | None,
     *,
+    config_value: Any = None,
     default: Path,
 ) -> Path:
-    raw_value = explicit if explicit is not None else os.getenv(env_name, str(default))
-    candidate = Path(str(raw_value)).expanduser()
-    if not candidate.is_absolute():
-        candidate = (ROOT / candidate).resolve()
+    env_value = os.getenv(env_name)
+    raw_value = (
+        explicit
+        if explicit is not None
+        else env_value
+        if env_value is not None
+        else config_value
+        if config_value is not None
+        else str(default)
+    )
+    candidate = _resolve_repo_path(raw_value)
     if not candidate.is_file():
         raise ValueError(f"{env_name} must point to an existing file: {candidate}")
     return candidate
+
+
+def _resolve_repo_path(value: str | Path) -> Path:
+    candidate = Path(str(value)).expanduser()
+    if not candidate.is_absolute():
+        candidate = (ROOT / candidate).resolve()
+    return candidate.resolve()
+
+
+def _request_config(config: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    request = _mapping_config(config.get("request"), field_name="request")
+    request_options: dict[str, Any] = {"temperature": 0}
+    extra_body = request.get("extra_body")
+    if extra_body is not None and not isinstance(extra_body, dict):
+        raise ValueError("request.extra_body must be a YAML object")
+
+    for key, value in request.items():
+        if key == "extra_body":
+            continue
+        if key not in CHAT_COMPLETION_REQUEST_OPTION_KEYS:
+            allowed = ", ".join(sorted(CHAT_COMPLETION_REQUEST_OPTION_KEYS | {"extra_body"}))
+            raise ValueError(f"request.{key} is not supported. Allowed keys: {allowed}")
+        if value is None:
+            continue
+        request_options[key] = _validate_request_option(key, value)
+
+    return request_options, dict(extra_body) if isinstance(extra_body, dict) and extra_body else None
+
+
+def _validate_request_option(key: str, value: Any) -> Any:
+    if key in REQUEST_OPTION_RANGES:
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            raise ValueError(f"request.{key} must be a number")
+        minimum, maximum = REQUEST_OPTION_RANGES[key]
+        numeric_value = float(value)
+        if not minimum <= numeric_value <= maximum:
+            raise ValueError(f"request.{key} must be between {minimum} and {maximum}")
+        return numeric_value
+    if key == "seed":
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise ValueError("request.seed must be an integer")
+        return value
+    if key == "stop":
+        if isinstance(value, str):
+            return value
+        if isinstance(value, list) and all(isinstance(item, str) and item for item in value):
+            return value
+        raise ValueError("request.stop must be a string or list of strings")
+    raise ValueError(f"Unsupported request option: {key}")
 
 
 def _load_json_schema(path: Path) -> dict[str, Any]:
@@ -447,6 +632,123 @@ def _load_json_schema(path: Path) -> dict[str, Any]:
     if not isinstance(schema, dict):
         raise ValueError(f"Schema file {path} must contain a JSON object")
     return schema
+
+
+def _load_yaml_object(path: Path) -> dict[str, Any]:
+    try:
+        import yaml  # type: ignore[import-not-found]
+    except ModuleNotFoundError:
+        config = _load_simple_yaml_object(path)
+    else:
+        try:
+            config = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except OSError as exc:
+            raise ValueError(f"Unable to read adapter config file {path}: {exc}") from exc
+
+    if config is None:
+        return {}
+    if not isinstance(config, dict):
+        raise ValueError(f"Adapter config file {path} must contain a YAML object")
+    return config
+
+
+def _load_simple_yaml_object(path: Path) -> dict[str, Any]:
+    try:
+        raw_lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        raise ValueError(f"Unable to read adapter config file {path}: {exc}") from exc
+
+    parsed_lines: list[tuple[int, int, str]] = []
+    for line_number, raw_line in enumerate(raw_lines, start=1):
+        if not raw_line.strip() or raw_line.lstrip().startswith("#"):
+            continue
+        if "\t" in raw_line[: len(raw_line) - len(raw_line.lstrip())]:
+            raise ValueError(f"{path}:{line_number}: indentation must use spaces")
+        indent = len(raw_line) - len(raw_line.lstrip(" "))
+        parsed_lines.append((line_number, indent, raw_line.strip()))
+
+    root: dict[str, Any] = {}
+    stack: list[tuple[int, Any]] = [(-1, root)]
+    for index, (line_number, indent, line) in enumerate(parsed_lines):
+        while stack and indent <= stack[-1][0]:
+            stack.pop()
+        if not stack:
+            raise ValueError(f"{path}:{line_number}: invalid indentation")
+        parent = stack[-1][1]
+
+        if line.startswith("- "):
+            if not isinstance(parent, list):
+                raise ValueError(f"{path}:{line_number}: list item appears outside a list")
+            parent.append(_parse_yaml_scalar(line[2:].strip()))
+            continue
+
+        if ":" not in line:
+            raise ValueError(f"{path}:{line_number}: expected `key: value`")
+        if not isinstance(parent, dict):
+            raise ValueError(f"{path}:{line_number}: mapping entry appears inside a scalar list")
+
+        key, raw_value = line.split(":", 1)
+        key = key.strip()
+        if not key:
+            raise ValueError(f"{path}:{line_number}: empty key")
+        raw_value = raw_value.strip()
+        if raw_value:
+            parent[key] = _parse_yaml_scalar(raw_value)
+            continue
+
+        next_line = next((candidate for candidate in parsed_lines[index + 1 :] if candidate[1] > indent), None)
+        container: dict[str, Any] | list[Any]
+        container = [] if next_line is not None and next_line[2].startswith("- ") else {}
+        parent[key] = container
+        stack.append((indent, container))
+
+    return root
+
+
+def _parse_yaml_scalar(value: str) -> Any:
+    normalized = value.strip().lower()
+    if normalized in {"null", "none", "~"}:
+        return None
+    if normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    if value.startswith(("'", '"')):
+        try:
+            return ast.literal_eval(value)
+        except (SyntaxError, ValueError):
+            return value.strip("'\"")
+    if value.startswith("[") or value.startswith("{"):
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            pass
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        return value
+
+
+def _mapping_config(value: Any, *, field_name: str) -> dict[str, Any]:
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise ValueError(f"{field_name} must be a YAML object")
+    return dict(value)
+
+
+def _deep_merge(left: dict[str, Any], right: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(left)
+    for key, value in right.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
 
 
 def _sanitize_provider_schema(schema: dict[str, Any]) -> dict[str, Any]:
@@ -540,17 +842,21 @@ def _chat_completion_kwargs(
     log_line: str,
     max_tokens: int,
     provider_schema: dict[str, Any] | None,
+    request_options: dict[str, Any],
+    extra_body: dict[str, Any] | None,
 ) -> dict[str, Any]:
     kwargs: dict[str, Any] = {
         "model": model,
         "messages": _message_payload(log_line),
-        "temperature": 0,
         "max_tokens": max_tokens,
+        **request_options,
     }
     if request_mode == REQUEST_MODE_PLAIN:
+        _apply_extra_body(kwargs, extra_body)
         return kwargs
     if request_mode == REQUEST_MODE_JSON_OBJECT:
         kwargs["response_format"] = {"type": "json_object"}
+        _apply_extra_body(kwargs, extra_body)
         return kwargs
     if provider_schema is None:
         raise ValueError("Provider schema is required for structured output request modes")
@@ -563,14 +869,33 @@ def _chat_completion_kwargs(
                 "schema": provider_schema,
             },
         }
+        _apply_extra_body(kwargs, extra_body)
         return kwargs
     if request_mode == REQUEST_MODE_STRUCTURED_OUTPUTS:
-        kwargs["extra_body"] = {"structured_outputs": {"json": provider_schema}}
+        _apply_extra_body(kwargs, extra_body, {"structured_outputs": {"json": provider_schema}})
         return kwargs
     if request_mode == REQUEST_MODE_GUIDED_JSON:
-        kwargs["extra_body"] = {"guided_json": provider_schema}
+        _apply_extra_body(kwargs, extra_body, {"guided_json": provider_schema})
         return kwargs
     raise ValueError(f"Unsupported request mode: {request_mode}")
+
+
+def _responses_parse_request_options(request_options: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: value
+        for key, value in request_options.items()
+        if key in RESPONSES_PARSE_REQUEST_OPTION_KEYS
+    }
+
+
+def _apply_extra_body(
+    kwargs: dict[str, Any],
+    configured_extra_body: dict[str, Any] | None,
+    mode_extra_body: dict[str, Any] | None = None,
+) -> None:
+    merged_extra_body = _deep_merge(configured_extra_body or {}, mode_extra_body or {})
+    if merged_extra_body:
+        kwargs["extra_body"] = merged_extra_body
 
 
 def _should_fallback_for_error(request_mode: str, error: Exception) -> bool:

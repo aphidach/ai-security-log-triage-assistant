@@ -40,6 +40,14 @@ reports/{adapter}-{runtime}-{mode}-{model-version}-hard-contrast-memorization-pr
 reports/phase-{n}-{model-version}-hard-contrast-memorization-probe-infographic.html
 ```
 
+Runtime-probe variants may add a short setting token before `hard-contrast`, for example:
+
+```text
+reports/{adapter}-{runtime}-{mode}-{model-version}-temp-03-hard-contrast-memorization-probe.json
+reports/{adapter}-{runtime}-{mode}-{model-version}-temp-03-hard-contrast-memorization-probe.md
+reports/phase-{n}-{model-version}-temp-03-hard-contrast-memorization-probe-infographic.html
+```
+
 Canonical fixed split format:
 
 ```text

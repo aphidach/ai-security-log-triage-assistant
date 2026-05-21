@@ -29,6 +29,7 @@
 - [[label-imbalance-and-prediction-collapse]]: แนวทางแยก data imbalance ออกจาก prediction collapse ใน Phase 6 พร้อม research-backed mitigation เช่น balanced sampling, focal/class-balanced loss, hard contrast examples และ macro metrics
 - [[fine-tuning-notes]]: notes สำหรับ Unsloth fine-tuning path, Colab/GPU setup, limitation และ Day 6 handoff
 - [[lfm2-350m-model-card-notes]]: สรุปคำแนะนำจาก Hugging Face model card ของ `unsloth/LFM2-350M` และผลต่อ config v3.3, chat template, generation params และ runtime probe
+- [[openai-adapter-runtime-config]]: วิธีใช้ `config-adapter.yml` เพื่อปรับ OpenAI-compatible adapter runtime เช่น `temperature`, `top_p`, structured output mode และ backend `extra_body`
 - [[model-repetition-loop-diagnostics]]: runbook สำหรับแยกสาเหตุ model loop token ซ้ำ ๆ จาก decoding, EOS/chat template, structured outputs, runtime, quantization และ fine-tuning format
 - [[output-contract-hardening]]: สรุปรอบแก้ prompt `v2`, structured output adapter, schema sanitizer, smoke split ใหม่ และ decision ว่ายังไม่ retrain ทันที
 - [[structured-output-reliability-research-2026]]: สรุปข้อมูลปี 2026 เรื่อง structured output reliability, constrained decoding, validation/retry และแผนตัดสินใจต่อหลัง smoke ยังผ่าน JSON/schema เพียง 1/5
@@ -68,7 +69,7 @@
 - [[output-structure-fix/phase-6-v3-hard-contrast-dataset]]: Phase 6 v3 hard-contrast dataset supplement สำหรับแก้ prediction collapse ด้วย paired examples และ hard negatives
 - [[output-structure-fix/phase-6-v3-1-mini-semantic-eval]]: ผล v3.1 mini semantic eval, HTML infographic, confusion matrix และ decision ให้ hold fixed test split
 - [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]]: ผล v3.2 hard-contrast memorization probe, HTML infographic, confusion matrix และ decision ให้ทำ v3.3 targeted canary ก่อน fixed split
-- [[output-structure-fix/phase-6-v3-3-targeted-canary]]: preparation สำหรับ v3.3 targeted weighted split, SQLi/port-scan weighting และ hard-contrast-first gate ก่อน mini semantic eval
+- [[output-structure-fix/phase-6-v3-3-targeted-canary]]: preparation, HTML infographic และผล hard-contrast runtime probe ของ v3.3 targeted weighted split; temp 0.3 ขยับ label accuracy เป็น `0.64` แต่ fixed test ยัง held
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison stub หลัง prerequisites ครบ
 
 ## Documentation Maintenance
@@ -112,6 +113,9 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-21 | Codex | Added Phase 6 v3.2 hard-contrast probe page to the structured-output phase notes | `docs/output-structure-fix/phase-6-v3-2-hard-contrast-probe.md`, `reports/phase-6-v3-2-hard-contrast-memorization-probe-infographic.html` | Updated |
 | 2026-05-21 | Codex | Added Phase 6 v3.3 targeted canary preparation page to the structured-output phase notes | `docs/output-structure-fix/phase-6-v3-3-targeted-canary.md`, `scripts/create_v3_3_training_split.py` | Updated |
 | 2026-05-21 | Codex | Added LFM2-350M model-card note to the core docs index | `docs/lfm2-350m-model-card-notes.md`, `docs/index.md` | Updated |
+| 2026-05-21 | Codex | Added OpenAI adapter runtime config page to the core docs index | `docs/openai-adapter-runtime-config.md`, `config-adapter.example.yml` | Updated |
+| 2026-05-21 | Codex | Updated v3.3 index entry after temp 0.3 hard-contrast runtime probe | `docs/output-structure-fix/phase-6-v3-3-targeted-canary.md`, `reports/openai-compatible-vllm-structured-outputs-v3-3-temp-03-hard-contrast-memorization-probe.json` | Updated |
+| 2026-05-21 | Codex | Added v3.3 temp 0.3 infographic link to index context | `reports/phase-6-v3-3-temp-03-hard-contrast-memorization-probe-infographic.html`, `docs/output-structure-fix/phase-6-v3-3-targeted-canary.md` | Updated |
 
 ## Decision Log
 
