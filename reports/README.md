@@ -48,6 +48,13 @@ reports/{adapter}-{runtime}-{mode}-{model-version}-temp-03-hard-contrast-memoriz
 reports/phase-{n}-{model-version}-temp-03-hard-contrast-memorization-probe-infographic.html
 ```
 
+Boundary failure slices:
+
+```text
+reports/phase-{n}-{model-version}-boundary-failure-slice.json
+reports/phase-{n}-{model-version}-boundary-failure-slice.md
+```
+
 Canonical fixed split format:
 
 ```text

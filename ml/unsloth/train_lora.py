@@ -37,6 +37,8 @@ V3_1_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-1-hard-contrast.jsonl"
 V3_1_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-1-hard-contrast.jsonl"
 V3_3_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-3-targeted-hard-contrast.jsonl"
 V3_3_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-3-targeted-hard-contrast.jsonl"
+V3_4_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-4-boundary-repair.jsonl"
+V3_4_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-4-boundary-repair.jsonl"
 RESERVED_TEST_PATH = ROOT / "data" / "splits" / "test.jsonl"
 SPLITS_DIR = ROOT / "data" / "splits"
 
@@ -147,12 +149,14 @@ def validate_split_path(path: Path, *, expected_path: Path, field_name: str) -> 
             V3_TRAIN_PATH.resolve(),
             V3_1_TRAIN_PATH.resolve(),
             V3_3_TRAIN_PATH.resolve(),
+            V3_4_TRAIN_PATH.resolve(),
         },
         "data.validation_path": {
             EXPECTED_VALIDATION_PATH.resolve(),
             V3_VALIDATION_PATH.resolve(),
             V3_1_VALIDATION_PATH.resolve(),
             V3_3_VALIDATION_PATH.resolve(),
+            V3_4_VALIDATION_PATH.resolve(),
         },
     }.get(field_name, {expected_path.resolve()})
     if path not in allowed_paths:
