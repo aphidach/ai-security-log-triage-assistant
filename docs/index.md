@@ -74,6 +74,7 @@
 - [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]]: แผนและสถานะ v3.4 boundary repair; temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68` พร้อม HTML infographic แล้ว และ fixed test ยัง held
 - [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]]: แผนและผล v3.5 จาก failure slice v3.4 temp 0; ปิดเป็น final Phase 6 repair run หลัง 2048 temp 0.3 ได้ label accuracy `0.88`, JSON/schema `1.0`, invalid `0` แต่ไม่ใช่ Phase 7 clearance
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison result; heuristic label accuracy `1.0`, v3.5 as-is label accuracy `0.84`, JSON/schema `1.0`, final decision `hold`
+- [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]]: Phase 8 v4 SQLi-first repair preparation; failure slice, 160-record supplement, train split `1070`, config, and tests are ready while fixed test stays out of tuning
 
 ## Documentation Maintenance
 
@@ -130,6 +131,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-22 | Codex | Updated Phase 7 index entry after adding copyable CLI runbook | `docs/output-structure-fix/phase-7-fixed-split-comparison.md`, `docs/index.md` | Runbook prepared |
 | 2026-05-22 | Codex | Added Day 7 demo script to the docs index | `docs/demo-script.md`, `docs/Day7.md`, `README.md` | Ready |
 | 2026-05-22 | Codex | Updated index after Phase 7 fixed split evaluation | `docs/output-structure-fix/phase-7-fixed-split-comparison.md`, `reports/comparison.md`, `reports/phase-7-fixed-split-summary.html` | Decision `hold` |
+| 2026-05-22 | Codex | Added Phase 8 v4 SQLi-first repair page to the docs index | `docs/output-structure-fix/phase-8-v4-sqli-boundary-repair-plan.md`, `data/splits/train-v4-sqli-boundary-repair.jsonl`, `ml/unsloth/config.v4.yaml` | Prepared |
 
 ## Decision Log
 

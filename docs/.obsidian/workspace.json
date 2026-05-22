@@ -200,6 +200,7 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "output-structure-fix/phase-8-v4-sqli-boundary-repair-plan.md",
     "demo-script.md",
     "Day6.md",
     "Day7.md",
@@ -226,7 +227,6 @@
     "output-structure-fix/phase-3-runtime-capability-matrix.md",
     "output-structure-fix/README.md",
     "output-structure-fix",
-    "structured-output-reliability-research-2026.md",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",
     "assets/readme-hero.png",

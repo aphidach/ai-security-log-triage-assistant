@@ -2,7 +2,7 @@
 
 **Summary**
 
-โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 6 ปิดแล้วหลัง v3.5: vLLM structured output path และ evidence constraints แก้ output loop ได้ ส่วน v3.5 ลด broad semantic collapse ได้ แต่ fixed split ยังไม่ถูกเปิด
+โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 7 fixed split comparison ปิดด้วย decision `hold` และ Phase 8/v4 ถูกเตรียมเป็น SQLi-first repair experiment ใหม่ โดยไม่ใช้ fixed split เป็น tuning feedback
 
 หน้า `docs/structured-output-fix-plan.md` ยังเป็น master plan ส่วนโฟลเดอร์นี้ใช้เก็บรายละเอียดการทำงาน คำสั่งที่ต้องรัน หลักฐานที่ต้องเก็บ และ pass/fail condition ของแต่ละ phase ตั้งแต่ Phase 1 เป็นต้นไป
 
@@ -35,6 +35,7 @@
 | Phase 6 v3.4 plan | [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]] | Temp 0 checked, still held | v3.4 temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68`; SQLi/invalid output/traversal/brute-force gravity ยัง block Phase 7 |
 | Phase 6 v3.5 plan | [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]] | Closed with limitations | 2048 temp 0.3 ขยับ hard-contrast label accuracy เป็น `0.88` และ JSON/schema เป็น `1.0`; canonical temp 0 และ SQLi ยัง held จึงปิดเป็น measured repair run ไม่ใช่ Phase 7 clearance |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Executed; hold | fixed split comparison เสร็จแล้ว: heuristic label accuracy `1.0`, v3.5 label accuracy `0.84`, JSON/schema `1.0`, invalid `0`; final decision `hold` |
+| Phase 8 v4 | [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]] | Prepared | v4 SQLi-first repair เตรียม failure slice, 160-record supplement, train split `1070`, config และ tests แล้ว; ยังไม่ train |
 
 ## Operating Rules
 
@@ -70,6 +71,7 @@
 | 2026-05-22 | User/Codex | Closed Phase 6 and v3.5 in the phase map | `docs/output-structure-fix/README.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` | Closed with limitations |
 | 2026-05-22 | Codex | Updated Phase 7 phase map status after adding copyable CLI runbook | `docs/output-structure-fix/phase-7-fixed-split-comparison.md`, `docs/output-structure-fix/README.md` | Runbook prepared |
 | 2026-05-22 | Codex | Updated phase map after Phase 7 fixed split evaluation | `reports/comparison.md`, `reports/phase-7-fixed-split-summary.html`, `docs/output-structure-fix/phase-7-fixed-split-comparison.md` | Executed; decision `hold` |
+| 2026-05-22 | Codex | Added Phase 8 v4 SQLi-first repair page to the phase map | `docs/output-structure-fix/phase-8-v4-sqli-boundary-repair-plan.md`, `data/splits/train-v4-sqli-boundary-repair.jsonl`, `ml/unsloth/config.v4.yaml` | Prepared |
 
 ## Decision Log
 
@@ -84,6 +86,7 @@
 | 2026-05-22 | Hold fixed split after 2048 runtime probe | 2048 temp 0.3 ผ่าน output contract แล้ว แต่ canonical temp 0 ยังไม่ผ่าน และ SQLi ยัง `6/10` ต่ำกว่า gate เดิม | mini semantic ถ้ารันต่อควร mark เป็น runtime-only exploratory; fixed test ยังไม่เปิด |
 | 2026-05-22 | ปิด Phase 6 หลัง v3.5 | Phase 6 ให้คำตอบเชิง decision ครบแล้ว แม้ยังไม่ใช่ Phase 7 clearance | future SQLi repair หรือ model-capacity diagnostic ต้องเริ่มเป็นรอบใหม่; fixed test ยัง held |
 | 2026-05-22 | Hold v3.5 after Phase 7 | Fixed split evaluation preserved output contract but did not beat the heuristic baseline | Any future model repair must be a new experiment; Phase 7 result remains historical evidence |
+| 2026-05-22 | Start Phase 8 as v4 SQLi-first repair | Phase 7 and v3.5 hard-contrast failures point to SQLi/quote-heavy boundaries as the narrow blocker | v4 uses hard-contrast-derived repair data and must not reuse fixed split results for tuning |
 
 ## Related pages
 
@@ -92,3 +95,4 @@
 - [[output-contract-hardening]]
 - [[model-output/v2-lfm2-350m-security-triage-responses-parse]]
 - [[Day6]]
+- [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]]
