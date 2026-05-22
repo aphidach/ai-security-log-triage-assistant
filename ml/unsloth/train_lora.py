@@ -279,15 +279,6 @@ def optional_step_value(value: Any) -> int | float | None:
     return int(number) if number.is_integer() else number
 
 
-def module_leaf_names(model: Any) -> set[str]:
-    names: set[str] = set()
-    for module_name, _ in model.named_modules():
-        if not module_name:
-            continue
-        names.add(module_name.split(".")[-1])
-    return names
-
-
 def build_sft_dataset(records: list[JsonObject], tokenizer: Any) -> Any:
     from datasets import Dataset
 
@@ -388,14 +379,6 @@ def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
         lora_config.get("target_modules", ["all-linear"]),
         field_name="lora.target_modules",
     )
-    if target_modules != ["all-linear"]:
-        available_modules = module_leaf_names(model)
-        missing_modules = sorted(set(target_modules) - available_modules)
-        if missing_modules:
-            raise TrainingConfigError(
-                "lora.target_modules contains names not found in the loaded model: "
-                + ", ".join(missing_modules)
-            )
 
     model = FastLanguageModel.get_peft_model(
         model,

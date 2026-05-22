@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "output-structure-fix/phase-6-v3-4-boundary-repair-plan.md",
+                "file": "output-structure-fix/phase-6-v3-5-boundary-repair-plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "phase-6-v3-4-boundary-repair-plan"
+              "title": "phase-6-v3-5-boundary-repair-plan"
             }
           }
         ],
@@ -200,9 +200,9 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "output-structure-fix/phase-6-v3-4-boundary-repair-plan.md",
     "output-structure-fix/phase-6-v3-5-boundary-repair-plan.md",
     "data-formats-for-llm-training.md",
-    "output-structure-fix/phase-6-v3-4-boundary-repair-plan.md",
     "openai-adapter-runtime-config.md",
     "lfm2-350m-model-card-notes.md",
     "output-structure-fix/phase-6-v3-3-targeted-canary.md",
