@@ -6,7 +6,7 @@
 model:
   base_model: unsloth/LFM2-350M
   model_family: LFM2
-  max_seq_length: 1024
+  max_seq_length: 2048
   load_in_4bit: false
   use_gradient_checkpointing: unsloth
   dtype: bfloat16
@@ -71,5 +71,5 @@ training:
   report_to: none
 
 output:
-  output_dir: ml/unsloth/outputs/lfm2-350m-v3-5-boundary-repair-security-triage-lora
-  adapter_name: lfm2-350m-v3-5-boundary-repair-security-triage-lora
+  output_dir: ml/unsloth/outputs/lfm2-350m-v3-5-2048-boundary-repair-security-triage-lora
+  adapter_name: lfm2-350m-v3-5-2048-boundary-repair-security-triage-lora
