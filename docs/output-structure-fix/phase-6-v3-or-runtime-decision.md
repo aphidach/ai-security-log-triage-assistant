@@ -2,7 +2,7 @@
 
 **Summary**
 
-Phase 6 เป็น decision point หลัง Phase 5 พบทั้ง runtime timeout และ semantic drift ต้องแยกให้ชัดก่อนว่าจะซ่อม runtime, ทำ v3 training data, ปรับ schema/prompt หรือเทียบ model capacity
+Phase 6 ปิดแล้วในฐานะ decision and repair phase หลัง Phase 5 พบทั้ง runtime timeout และ semantic drift ผลลัพธ์คือ runtime/output-contract loop ถูกแยกและซ่อมด้วย evidence constraints, v3 training data ถูกสร้างหลายรอบจนถึง v3.5, และ fixed split ยังไม่ถูกใช้ระหว่าง tuning
 
 **Sources**
 
@@ -13,11 +13,13 @@ Phase 6 เป็น decision point หลัง Phase 5 พบทั้ง runt
 
 **Last updated**
 
-2026-05-21
+2026-05-22
 
 ## Status
 
-Planned. เริ่มจาก Phase 5 result ที่ vLLM mini semantic eval ได้ JSON/schema `0.88`, label accuracy `0.24`, มี 3 port-scan timeouts และ prediction เอนหนักไปทาง `failed_login_bruteforce` (source: docs/output-structure-fix/phase-5-mini-semantic-eval.md)
+Closed with limitations. Phase 6 เริ่มจาก Phase 5 result ที่ vLLM mini semantic eval ได้ JSON/schema `0.88`, label accuracy `0.24`, มี 3 port-scan timeouts และ prediction เอนหนักไปทาง `failed_login_bruteforce` (source: docs/output-structure-fix/phase-5-mini-semantic-eval.md)
+
+สถานะปิดคือ Phase 6 แก้โจทย์ decision ได้แล้ว: Phase 6.1 restored output contract บน diagnostic splits, hard-contrast/v3 training path ถูกพิสูจน์ผ่าน v3.1 ถึง v3.5, และ v3.5 ลด broad prediction collapse ได้ชัด แต่ canonical temp 0 และ SQLi canary ยัง held ดังนั้น fixed `data/splits/test.jsonl` ยังคงปิดไว้สำหรับ Phase 7 หรือ experiment ใหม่
 
 ## Goal
 
@@ -364,7 +366,17 @@ docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
 - [x] ตรวจ training render format ว่า assistant output เป็น raw JSON object
 - [ ] ตัดสินใจว่าต้องปรับ schema/prompt wording หรือไม่
 - [x] ตัดสินใจว่าจะ retrain v3 หรือเทียบ model capacity ก่อน
-- [ ] บันทึก decision ก่อนเริ่ม Phase 7
+- [x] บันทึก decision ก่อนเริ่ม Phase 7
+
+## Closure Result
+
+Phase 6 exits with these decisions:
+
+- `runtime_change`: use vLLM structured outputs plus evidence constraints as the working constrained-output path.
+- `v3_training_data`: keep the hard-contrast repair dataset approach as validated by v3.5 broad boundary gains.
+- `schema_or_prompt_wording`: no broad prompt/schema expansion inside Phase 6; remaining SQLi/quote-heavy work is future targeted repair.
+- `model_capacity_comparison`: keep as optional future diagnostic, not a Phase 6 blocker.
+- `ready_for_phase_7`: no; fixed split remains unopened because canonical temp 0 and SQLi canary still fail strict gates.
 
 ## Exit Criteria
 
@@ -374,6 +386,8 @@ docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
 - v3 training data plan พร้อม hard-case list
 - schema/prompt wording patch พร้อม smoke rerun plan
 - model capacity diagnostic plan พร้อม candidate runtime
+
+Phase 6 satisfies this exit condition through runtime/config fix evidence, v3 training data evidence, and a clear no-go decision for Phase 7 fixed split.
 
 ยังไม่ควรเริ่ม Phase 7 จนกว่า:
 
@@ -413,6 +427,7 @@ docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
 | 2026-05-21 | Move Phase 6 focus from runtime loop to semantic quality | Phase 6.1 timeout-only, smoke, and mini reruns all have JSON/schema `1.0`, invalid output `0`, and no `finish_reason=length`, but mini label accuracy is still `0.36` | Next work should build v3 hard cases or run a model-capacity diagnostic before fixed-split comparison |
 | 2026-05-21 | Keep fixed test split held after v3.2 hard-contrast probe | v3.2 improves hard-contrast label accuracy to `0.56`, but SQLi is only `1/10` and port scan is only `2/10` | Next work should be v3.3 targeted canary focused on SQLi and port-scan boundary before mini semantic eval or Phase 7 |
 | 2026-05-21 | Prepare v3.3 targeted weighting before any fixed split comparison | v3.2 canary failure is concentrated in SQLi and port scan despite global improvement | v3.3 train weights SQLi and port scan, keeps validation balanced, and still requires hard-contrast probe before mini semantic eval |
+| 2026-05-22 | Close Phase 6 after v3.5 | v3.5 produced enough evidence to close the decision loop: broad boundary repair improved, runtime evidence is strong, and the remaining blocker is narrow SQLi/quote-heavy behavior rather than an unresolved Phase 6 direction | Phase 6 is `closed_with_limitations`; Phase 7 fixed split remains unopened and future SQLi repair should be named separately |
 
 ## Work Log
 
@@ -428,6 +443,7 @@ docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md
 | 2026-05-21 | Codex | Created v3 hard contrast training supplement | `scripts/create_v3_hard_contrast_dataset.py`, `data/generated/v3-hard-contrast-security-triage.jsonl`, `docs/output-structure-fix/phase-6-v3-hard-contrast-dataset.md` | Adds 50 balanced hard contrast records for v3 training without touching validation or fixed test split |
 | 2026-05-21 | Codex | Recorded v3.2 hard-contrast memorization probe result | `reports/openai-compatible-vllm-structured-outputs-v3-2-hard-contrast-memorization-probe.json`, `docs/output-structure-fix/phase-6-v3-2-hard-contrast-probe.md` | v3.2 improved but still failed canary; v3.3 should target SQLi and port scan |
 | 2026-05-21 | Codex | Prepared v3.3 targeted SQLi and port-scan weighted split | `scripts/create_v3_3_training_split.py`, `data/splits/train-v3-3-targeted-hard-contrast.jsonl`, `ml/unsloth/config.v3-3.yaml` | Hard-contrast probe remains the next gate; fixed test split still held |
+| 2026-05-22 | User/Codex | Closed Phase 6 after v3.5 training and hard-contrast probes | `docs/Day6.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md`, `reports/phase-6-v3-5-boundary-training-result.md` | Closed with limitations; fixed test split still held |
 
 ## Related pages
 

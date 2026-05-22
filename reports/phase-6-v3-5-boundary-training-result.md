@@ -2,7 +2,7 @@
 
 **Summary**
 
-The v3.5 boundary repair fine-tune completed with `train_records=910`, `validation_records=75`, and final `train_loss=0.6392523148461529` from the user-provided training output. The run was later aligned to 2048-token train/runtime context. The best 2048 hard-contrast runtime probe reached `label_accuracy=0.88`, JSON/schema `1.0`, and invalid output `0`, but strict gate status is still held because canonical temp 0 remains at JSON/schema `0.98` and SQLi is still below the `7/10` target.
+The v3.5 boundary repair fine-tune completed with `train_records=910`, `validation_records=75`, and final `train_loss=0.6392523148461529` from the user-provided training output. The run was later aligned to 2048-token train/runtime context. The best 2048 hard-contrast runtime probe reached `label_accuracy=0.88`, JSON/schema `1.0`, and invalid output `0`. Phase 6 is now closed with limitations: v3.5 is a measured repair success, not Phase 7 fixed-split clearance, because canonical temp 0 remains at JSON/schema `0.98` and SQLi is still below the `7/10` target.
 
 **Sources**
 
@@ -16,7 +16,7 @@ The v3.5 boundary repair fine-tune completed with `train_records=910`, `validati
 
 **Status**
 
-`training_complete_probed`
+`training_complete_probed_phase6_closed`
 
 ## Training Run
 
@@ -66,4 +66,4 @@ reports/phase-6-v3-5-temp-03-2048-hard-contrast-memorization-probe-infographic.h
 
 ## Decision
 
-Do not advance to Phase 7 fixed split yet. The 2048 temp 0.3 probe is strong enough to justify one more decision point: either run mini semantic eval as a runtime-only exploratory check, clearly marked non-canonical, or do a narrow v3.5.1 SQLi repair to reach `>=7/10` under canonical temp 0. This remains a triage-pattern evaluation, not a claim that any single log proves compromise.
+Close Phase 6 after v3.5. Do not advance to Phase 7 fixed split yet. Any SQLi/quote-heavy repair or model-capacity diagnostic should be a separately named future experiment, while fixed `data/splits/test.jsonl` remains unopened. This remains a triage-pattern evaluation, not a claim that any single log proves compromise.

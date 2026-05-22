@@ -2,7 +2,7 @@
 
 **Summary**
 
-แผนนี้แปลง `Recommended Next Plan` จาก research note ให้เป็นงานลงมือทำสำหรับแก้ปัญหา output contract หลัง smoke test เดิมผ่าน JSON/schema ได้เพียง 1/5 samples และบันทึกสถานะล่าสุดที่ vLLM `structured_outputs` ผ่าน output contract แล้ว
+แผนนี้แปลง `Recommended Next Plan` จาก research note ให้เป็นงานลงมือทำสำหรับแก้ปัญหา output contract หลัง smoke test เดิมผ่าน JSON/schema ได้เพียง 1/5 samples และบันทึกสถานะล่าสุดที่ Phase 6 ปิดแล้วหลัง v3.5 โดย fixed split ยังไม่ถูกเปิด
 
 เป้าหมายของแผนนี้คือพิสูจน์ก่อนว่า serving backend บังคับ structured output แบบ constrained decoding ได้จริงหรือไม่ ถ้ายังทำไม่ได้ ห้ามใช้ fixed test split เป็น comparison หลัก และห้ามสรุปว่า fine-tuned model พร้อมใช้จากตัวอย่างที่ผ่านเพียง 1 sample
 
@@ -29,7 +29,7 @@
 
 **Last updated**
 
-2026-05-21
+2026-05-22
 
 ## Goal
 
@@ -60,7 +60,7 @@
 | Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path |
 | Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed |
 | Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Superseded by Phase 6.1 mini rerun |
-| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | In progress; semantic decision needed |
+| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Closed with limitations after v3.5 |
 | Phase 6.1 | [[output-structure-fix/phase-6-1-evidence-constraints]] | Contract restored; semantics still blocked |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft |
 
@@ -290,7 +290,9 @@ Result:
 
 ## Phase 6: Decide V3 Training Or Runtime Change
 
-สถานะ: decision point
+สถานะ: closed with limitations
+
+Phase 6 ปิดหลัง v3.5 เพราะได้ decision evidence ครบ: runtime/output-contract loop ถูกแก้ด้วย vLLM structured outputs และ evidence constraints, semantic collapse ถูกซ่อมบางส่วนด้วย hard-contrast/v3 repair data, และ remaining SQLi/quote-heavy issue ถูกแยกเป็น future work ไม่ใช่เหตุผลให้ลาก Phase 6 ต่อ fixed `data/splits/test.jsonl` ยังไม่ถูกใช้
 
 ถ้า contract fail เพราะ runtime:
 
@@ -347,13 +349,13 @@ Pass condition:
 
 ## Immediate Next Tasks
 
-งานที่ควรเริ่มก่อนที่สุด:
+งาน immediate ของแผนนี้เสร็จแล้วใน Phase 6 และถูกบันทึกใน phase-detail docs แล้ว:
 
-1. สร้าง mini semantic eval split 20-25 samples จาก validation/dev data ที่ไม่ใช่ `data/splits/test.jsonl`
-2. รัน mini semantic eval ด้วย vLLM `structured_outputs` และ report path แบบ `reports/openai-compatible-vllm-structured-outputs-mini-semantic-eval.json`
-3. จัดกลุ่ม semantic failures: label confusion, severity drift, suspicious boolean drift และ evidence ที่ไม่เป็น substring จาก log
-4. ตัดสินใจ Phase 6 ว่าควรแก้ dataset/training format, retrain v3 หรือเพิ่ม runtime fallback
-5. คง `data/splits/test.jsonl` เป็น fixed comparison split จนกว่า mini semantic eval จะให้ error profile ชัดเจน
+1. สร้าง mini semantic eval split จาก validation/dev data ที่ไม่ใช่ `data/splits/test.jsonl`
+2. รัน mini semantic eval ด้วย vLLM `structured_outputs`
+3. จัดกลุ่ม semantic failures เป็น taxonomy และ hard-case backlog
+4. train/probe v3 repair path จนถึง v3.5
+5. ปิด Phase 6 โดยคง `data/splits/test.jsonl` เป็น fixed comparison split สำหรับ Phase 7 หรือรอบใหม่
 
 ## Work Log
 
@@ -365,6 +367,7 @@ Pass condition:
 | 2026-05-20 | Codex | Started Phase 1 by creating phase-detail notes and backend inventory report template | `docs/output-structure-fix/`, `reports/structured-output-backend-inventory.md` | In progress |
 | 2026-05-20 | User/Codex | Recorded vLLM `structured_outputs` smoke contract pass and moved active work to Phase 5 | `reports/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output-capability-matrix.md`, `docs/output-structure-fix/` | Passed contract gate |
 | 2026-05-20 | User/Codex | Completed Phase 2 runtime probe comparison for Unsloth Studio and vLLM | `reports/structured-output-probe-*.json`, `docs/output-structure-fix/phase-2-probe-hardening.md` | Complete |
+| 2026-05-22 | User/Codex | Closed Phase 6 after v3.5 repair run and kept fixed split held | `docs/Day6.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` | Closed with limitations |
 
 ## Decision Log
 
@@ -378,6 +381,7 @@ Pass condition:
 | 2026-05-20 | ใช้ vLLM `structured_outputs` เป็น runtime สำหรับ Phase 5 | smoke contract ผ่านครบ: JSON parse `1.0`, schema `1.0`, invalid output `0`; แต่ label accuracy ยัง `0.2` | งานถัดไปแยก semantic quality ออกจาก output formatting และยังไม่ใช้ fixed test split |
 | 2026-05-20 | Treat Unsloth Studio as non-gating for output contract | Phase 2 probes show markdown fences in 4/5 baseline samples and 4 completed adversarial samples | Unsloth Studio can remain a debugging runtime, but contract gate and Phase 5 should use vLLM |
 | 2026-05-20 | Treat vLLM adversarial timeouts as robustness follow-up | vLLM adversarial completed samples stayed valid JSON with no fences, but 2/5 timed out | Latency/timeout tuning should be tracked separately from schema enforcement |
+| 2026-05-22 | Close Phase 6 after v3.5 | v3.5 delivers enough evidence to close the runtime-vs-training decision loop even though it is not fixed-split clearance | Future SQLi/quote-heavy repair or model-capacity comparison should be a new phase or named experiment |
 
 ## Related pages
 

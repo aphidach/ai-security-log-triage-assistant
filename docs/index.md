@@ -64,14 +64,14 @@
 - [[output-structure-fix/phase-3-runtime-capability-matrix]]: Phase 3 runtime/mode matrix พร้อมผล vLLM `structured_outputs` ที่ผ่าน output contract
 - [[output-structure-fix/phase-4-contract-gate]]: Phase 4 contract gate ที่ผ่านแล้วสำหรับ vLLM `structured_outputs`
 - [[output-structure-fix/phase-5-mini-semantic-eval]]: Phase 5 mini semantic eval ที่พร้อมเริ่มหลัง contract ผ่าน
-- [[output-structure-fix/phase-6-v3-or-runtime-decision]]: Phase 6 decision stub สำหรับ runtime vs retrain v3
+- [[output-structure-fix/phase-6-v3-or-runtime-decision]]: Phase 6 decision and repair note; ปิดแล้วหลัง v3.5 โดย fixed split ยัง held
 - [[output-structure-fix/phase-6-1-evidence-constraints]]: Phase 6.1 implementation สำหรับแก้ evidence loop ด้วย schema constraints, adapter sanitizer update และ validator alignment
 - [[output-structure-fix/phase-6-v3-hard-contrast-dataset]]: Phase 6 v3 hard-contrast dataset supplement สำหรับแก้ prediction collapse ด้วย paired examples และ hard negatives
 - [[output-structure-fix/phase-6-v3-1-mini-semantic-eval]]: ผล v3.1 mini semantic eval, HTML infographic, confusion matrix และ decision ให้ hold fixed test split
 - [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]]: ผล v3.2 hard-contrast memorization probe, HTML infographic, confusion matrix และ decision ให้ทำ v3.3 targeted canary ก่อน fixed split
 - [[output-structure-fix/phase-6-v3-3-targeted-canary]]: preparation, HTML infographic และผล hard-contrast runtime probe ของ v3.3 targeted weighted split; temp 0.3 ขยับ label accuracy เป็น `0.64` แต่ fixed test ยัง held
 - [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]]: แผนและสถานะ v3.4 boundary repair; temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68` พร้อม HTML infographic แล้ว และ fixed test ยัง held
-- [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]]: แผนและผล v3.5 จาก failure slice v3.4 temp 0; 2048 temp 0.3 hard-contrast ได้ label accuracy `0.88`, JSON/schema `1.0`, invalid `0` แต่ canonical temp 0 และ SQLi gate ยัง held
+- [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]]: แผนและผล v3.5 จาก failure slice v3.4 temp 0; ปิดเป็น final Phase 6 repair run หลัง 2048 temp 0.3 ได้ label accuracy `0.88`, JSON/schema `1.0`, invalid `0` แต่ไม่ใช่ Phase 7 clearance
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison stub หลัง prerequisites ครบ
 
 ## Documentation Maintenance
@@ -125,6 +125,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-22 | Codex | Added v3.5 boundary repair page to the structured-output phase notes | `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md`, `reports/phase-6-v3-5-boundary-failure-slice.json`, `data/splits/train-v3-5-boundary-repair.jsonl`, `ml/unsloth/config.v3-5.yaml`, `tests/test_v3_5_boundary_repair_workflow.py` | Dataset/config prepared |
 | 2026-05-22 | Codex | Updated v3.5 index entry after hard-contrast temp 0 and temp 0.3 probes | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-0-hard-contrast-memorization-probe-infographic.html` | Improved but held |
 | 2026-05-22 | Codex | Updated v3.5 index entry after 2048-token hard-contrast probes | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-03-2048-hard-contrast-memorization-probe-infographic.html` | Runtime improved but held |
+| 2026-05-22 | User/Codex | Marked Phase 6 and v3.5 closed in the docs index | `docs/Day6.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` | Closed with limitations |
 
 ## Decision Log
 

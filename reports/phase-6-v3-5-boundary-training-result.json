@@ -1,6 +1,6 @@
 {
   "artifact": "phase-6-v3-5-boundary-training-result",
-  "status": "training_complete_probed",
+  "status": "training_complete_probed_phase6_closed",
   "recorded_at": "2026-05-22",
   "source": "user-provided training output in Codex session",
   "config_path": "ml/unsloth/config.v3-5.yaml",
@@ -60,10 +60,16 @@
     "predicted_failed_login_bruteforce": "12/50",
     "fixed_test_split_status": "held"
   },
+  "closure": {
+    "phase_6_status": "closed_with_limitations",
+    "v3_5_status": "completed_measured_repair_run",
+    "phase_7_clearance": false,
+    "fixed_test_split_status": "held",
+    "future_work_note": "Any SQLi/quote-heavy repair or model-capacity diagnostic should be a separately named future experiment, not a continuation of Phase 6."
+  },
   "next_actions": [
-    "Do not run fixed data/splits/test.jsonl yet.",
-    "Do not run mini semantic eval until SQLi and output-contract gates are repaired or explicitly waived.",
-    "Create a v3.5.1 SQLi/quote-output repair slice from the v3.5 temp 0 report.",
-    "Target v3-hard-000030 quote escaping and SQLi-to-traversal confusion before Phase 7."
+    "Do not run fixed data/splits/test.jsonl until a later go/no-go decision.",
+    "Treat v3.5 as closed and measured, not promoted.",
+    "Keep remaining SQLi/quote-heavy work outside Phase 6."
   ]
 }

@@ -2,7 +2,7 @@
 
 **Summary**
 
-โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ vLLM `structured_outputs` ผ่าน output contract แล้ว และงานถัดไปคือ semantic error analysis
+โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 6 ปิดแล้วหลัง v3.5: vLLM structured output path และ evidence constraints แก้ output loop ได้ ส่วน v3.5 ลด broad semantic collapse ได้ แต่ fixed split ยังไม่ถูกเปิด
 
 หน้า `docs/structured-output-fix-plan.md` ยังเป็น master plan ส่วนโฟลเดอร์นี้ใช้เก็บรายละเอียดการทำงาน คำสั่งที่ต้องรัน หลักฐานที่ต้องเก็บ และ pass/fail condition ของแต่ละ phase ตั้งแต่ Phase 1 เป็นต้นไป
 
@@ -26,14 +26,14 @@
 | Phase 3 | [[output-structure-fix/phase-3-runtime-capability-matrix]] | Passed for vLLM path | ทดสอบ runtime/mode candidate ด้วย smoke split เดียวกัน |
 | Phase 4 | [[output-structure-fix/phase-4-contract-gate]] | Passed | ตั้ง gate ที่ต้องผ่านก่อนดู semantic quality |
 | Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Superseded by Phase 6.1 mini rerun | วัด semantic error profile หลัง contract ผ่าน |
-| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | In progress | ตัดสินใจว่าจะ retrain v3, เปลี่ยน runtime หรือเปลี่ยน model candidate |
+| Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Closed with limitations | runtime/output-contract decision และ v3 repair path ปิดแล้วหลัง v3.5; fixed split ยัง held |
 | Phase 6.1 | [[output-structure-fix/phase-6-1-evidence-constraints]] | Contract restored; semantics still blocked | แก้ evidence loop ด้วย schema constraints และ sanitizer update |
 | Phase 6 v3 data | [[output-structure-fix/phase-6-v3-hard-contrast-dataset]] | Created | สร้าง hard contrast training supplement สำหรับแก้ prediction collapse |
 | Phase 6 v3.1 eval | [[output-structure-fix/phase-6-v3-1-mini-semantic-eval]] | Failed semantic gate | บันทึกผล v3.1 mini semantic eval และ decision ให้ hold fixed test split |
 | Phase 6 v3.2 probe | [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]] | Failed canary, improved | บันทึกผล v3.2 hard-contrast memorization probe และ next target สำหรับ v3.3 |
 | Phase 6 v3.3 probe | [[output-structure-fix/phase-6-v3-3-targeted-canary]] | Canary improved, still held | temp 0.3 runtime probe ขยับ hard-contrast label accuracy เป็น `0.64`, มี HTML infographic แล้ว แต่ SQLi ยัง `2/10` และยังไม่เปิด fixed test split |
 | Phase 6 v3.4 plan | [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]] | Temp 0 checked, still held | v3.4 temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68`; SQLi/invalid output/traversal/brute-force gravity ยัง block Phase 7 |
-| Phase 6 v3.5 plan | [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]] | 2048 runtime improved, still held | 2048 temp 0.3 ขยับ hard-contrast label accuracy เป็น `0.88` และ JSON/schema เป็น `1.0` แต่ canonical temp 0 ยัง `0.84`/invalid `1` และ SQLi ยังต่ำกว่า gate; fixed test ยัง held |
+| Phase 6 v3.5 plan | [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]] | Closed with limitations | 2048 temp 0.3 ขยับ hard-contrast label accuracy เป็น `0.88` และ JSON/schema เป็น `1.0`; canonical temp 0 และ SQLi ยัง held จึงปิดเป็น measured repair run ไม่ใช่ Phase 7 clearance |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
 
 ## Operating Rules
@@ -67,6 +67,7 @@
 | 2026-05-22 | Codex | Added v3.5 boundary repair plan, failure slice, dataset/config, and test coverage to the phase map | `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md`, `reports/phase-6-v3-5-boundary-failure-slice.json`, `data/splits/train-v3-5-boundary-repair.jsonl`, `ml/unsloth/config.v3-5.yaml`, `tests/test_v3_5_boundary_repair_workflow.py` | Dataset/config prepared, train pending |
 | 2026-05-22 | Codex | Updated phase map after v3.5 temp 0 and temp 0.3 hard-contrast probes and HTML reports | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-0-hard-contrast-memorization-probe-infographic.html`, `reports/phase-6-v3-5-temp-03-hard-contrast-memorization-probe-infographic.html` | Improved to `0.84`, fixed test still held |
 | 2026-05-22 | Codex | Updated phase map after v3.5 2048-token hard-contrast probes and HTML reports | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-03-2048-hard-contrast-memorization-probe-infographic.html` | Temp 0.3 improved to `0.88` with contract `1.0`, fixed test still held |
+| 2026-05-22 | User/Codex | Closed Phase 6 and v3.5 in the phase map | `docs/output-structure-fix/README.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` | Closed with limitations |
 
 ## Decision Log
 
@@ -79,6 +80,7 @@
 | 2026-05-22 | เพิ่ม v3.5 เป็น failure-driven repair ก่อน Phase 7 | v3.4 temp 0 ยังมี label accuracy `0.68`, invalid output `1`, SQLi `3/10`, traversal `5/10` และ predicted brute force `19/50` | ต้อง train/probe v3.5 บน hard-contrast และ mini semantic eval ก่อนเปิด fixed test split |
 | 2026-05-22 | Hold v3.5 before mini semantic eval | v3.5 temp 0 ผ่าน overall label gate แล้ว แต่ SQLi ยัง `4/10` และ output contract ยังไม่เต็ม | ทำ v3.5.1 SQLi/quote-output repair ก่อนรัน mini semantic หรือ fixed split |
 | 2026-05-22 | Hold fixed split after 2048 runtime probe | 2048 temp 0.3 ผ่าน output contract แล้ว แต่ canonical temp 0 ยังไม่ผ่าน และ SQLi ยัง `6/10` ต่ำกว่า gate เดิม | mini semantic ถ้ารันต่อควร mark เป็น runtime-only exploratory; fixed test ยังไม่เปิด |
+| 2026-05-22 | ปิด Phase 6 หลัง v3.5 | Phase 6 ให้คำตอบเชิง decision ครบแล้ว แม้ยังไม่ใช่ Phase 7 clearance | future SQLi repair หรือ model-capacity diagnostic ต้องเริ่มเป็นรอบใหม่; fixed test ยัง held |
 
 ## Related pages
 
