@@ -32,7 +32,7 @@
 | Phase 6 v3.1 eval | [[output-structure-fix/phase-6-v3-1-mini-semantic-eval]] | Failed semantic gate | บันทึกผล v3.1 mini semantic eval และ decision ให้ hold fixed test split |
 | Phase 6 v3.2 probe | [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]] | Failed canary, improved | บันทึกผล v3.2 hard-contrast memorization probe และ next target สำหรับ v3.3 |
 | Phase 6 v3.3 probe | [[output-structure-fix/phase-6-v3-3-targeted-canary]] | Canary improved, still held | temp 0.3 runtime probe ขยับ hard-contrast label accuracy เป็น `0.64`, มี HTML infographic แล้ว แต่ SQLi ยัง `2/10` และยังไม่เปิด fixed test split |
-| Phase 6 v3.4 plan | [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]] | Runtime probe improved, still held | v3.4 temp 0.3 hard-contrast ขยับ label accuracy เป็น `0.72` และมี HTML infographic แล้ว แต่ SQLi/invalid output/brute-force gravity ยัง block Phase 7 |
+| Phase 6 v3.4 plan | [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]] | Temp 0 checked, still held | v3.4 temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68`; SQLi/invalid output/traversal/brute-force gravity ยัง block Phase 7 |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
 
 ## Operating Rules
@@ -62,6 +62,7 @@
 | 2026-05-22 | Codex | Updated phase map after v3.4 boundary failure slice was generated | `reports/phase-6-v3-4-boundary-failure-slice.json`, `reports/phase-6-v3-4-boundary-failure-slice.md` | Failure slice complete |
 | 2026-05-22 | Codex | Updated phase map after v3.4 boundary repair split/config preparation | `data/splits/train-v3-4-boundary-repair.jsonl`, `ml/unsloth/config.v3-4.yaml` | Dataset/config prepared |
 | 2026-05-22 | Codex | Updated phase map after v3.4 temp 0.3 hard-contrast runtime probe and HTML report | `reports/openai-compatible-vllm-structured-outputs-v3-4-temp-03-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-4-temp-03-hard-contrast-memorization-probe-infographic.html` | Improved to `0.72`, fixed test still held |
+| 2026-05-22 | Codex | Updated phase map after v3.4 temp 0 hard-contrast probe and HTML report | `reports/openai-compatible-vllm-structured-outputs-v3-4-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-4-temp-0-hard-contrast-memorization-probe-infographic.html` | `label_accuracy=0.68`, fixed test still held |
 
 ## Decision Log
 

@@ -70,7 +70,7 @@
 - [[output-structure-fix/phase-6-v3-1-mini-semantic-eval]]: ผล v3.1 mini semantic eval, HTML infographic, confusion matrix และ decision ให้ hold fixed test split
 - [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]]: ผล v3.2 hard-contrast memorization probe, HTML infographic, confusion matrix และ decision ให้ทำ v3.3 targeted canary ก่อน fixed split
 - [[output-structure-fix/phase-6-v3-3-targeted-canary]]: preparation, HTML infographic และผล hard-contrast runtime probe ของ v3.3 targeted weighted split; temp 0.3 ขยับ label accuracy เป็น `0.64` แต่ fixed test ยัง held
-- [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]]: แผนและสถานะ v3.4 boundary repair; temp 0.3 hard-contrast ขยับ label accuracy เป็น `0.72` และมี HTML infographic แล้ว แต่ fixed test ยัง held
+- [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]]: แผนและสถานะ v3.4 boundary repair; temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68` พร้อม HTML infographic แล้ว และ fixed test ยัง held
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison stub หลัง prerequisites ครบ
 
 ## Documentation Maintenance
@@ -120,6 +120,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-21 | Codex | Added v3.4 boundary repair plan to the structured-output phase notes | `docs/output-structure-fix/phase-6-v3-4-boundary-repair-plan.md`, `docs/index.md` | Planned |
 | 2026-05-22 | Codex | Updated v3.4 index entry after boundary repair split/config preparation | `docs/output-structure-fix/phase-6-v3-4-boundary-repair-plan.md`, `data/splits/train-v3-4-boundary-repair.jsonl`, `ml/unsloth/config.v3-4.yaml` | Prepared |
 | 2026-05-22 | Codex | Updated v3.4 index entry after temp 0.3 hard-contrast runtime probe and HTML infographic | `reports/openai-compatible-vllm-structured-outputs-v3-4-temp-03-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-4-temp-03-hard-contrast-memorization-probe-infographic.html` | Improved but held |
+| 2026-05-22 | Codex | Updated v3.4 index entry after temp 0 hard-contrast probe and HTML infographic | `reports/openai-compatible-vllm-structured-outputs-v3-4-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-4-temp-0-hard-contrast-memorization-probe-infographic.html` | Canonical check held |
 
 ## Decision Log
 
