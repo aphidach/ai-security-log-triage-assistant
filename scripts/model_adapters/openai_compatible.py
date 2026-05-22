@@ -13,8 +13,9 @@ from typing import Annotated, Any, Literal
 from scripts.model_adapters.base import AdapterResult
 from scripts.model_adapters.prompt_contract import (
     TRIAGE_PROMPT_VERSION,
-    TRIAGE_SYSTEM_PROMPT,
     build_triage_user_prompt,
+    get_triage_system_prompt,
+    validate_triage_prompt_version,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -117,6 +118,7 @@ class OpenAIAdapterEnv:
     response_format: str
     schema_path: str
     config_path: str
+    prompt_version: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -133,6 +135,7 @@ class OpenAIAdapterConfig:
     config_path: Path | None
     request_options: dict[str, Any]
     extra_body: dict[str, Any] | None
+    prompt_version: str
 
 
 OPENAI_COMPATIBLE_ENV = OpenAIAdapterEnv(
@@ -145,6 +148,7 @@ OPENAI_COMPATIBLE_ENV = OpenAIAdapterEnv(
     response_format="OPENAI_COMPATIBLE_RESPONSE_FORMAT",
     schema_path="OPENAI_COMPATIBLE_SCHEMA_PATH",
     config_path="OPENAI_COMPATIBLE_CONFIG_PATH",
+    prompt_version="OPENAI_COMPATIBLE_PROMPT_VERSION",
 )
 
 OPENAI_FINETUNE_ENV = OpenAIAdapterEnv(
@@ -157,6 +161,7 @@ OPENAI_FINETUNE_ENV = OpenAIAdapterEnv(
     response_format="OPENAI_FINETUNE_RESPONSE_FORMAT",
     schema_path="OPENAI_FINETUNE_SCHEMA_PATH",
     config_path="OPENAI_FINETUNE_CONFIG_PATH",
+    prompt_version="OPENAI_FINETUNE_PROMPT_VERSION",
 )
 
 
@@ -176,6 +181,7 @@ class _OpenAIAdapter:
         response_format: str | None = None,
         schema_path: str | Path | None = None,
         config_path: str | Path | None = None,
+        prompt_version: str | None = None,
     ) -> None:
         self._config, self._config_error = _build_config(
             self.name,
@@ -189,6 +195,7 @@ class _OpenAIAdapter:
             response_format=response_format,
             schema_path=schema_path,
             config_path=config_path,
+            prompt_version=prompt_version,
         )
 
     def analyze(self, log_line: str) -> AdapterResult:
@@ -231,7 +238,7 @@ class _OpenAIAdapter:
         if self._config.response_format == RESPONSE_FORMAT_RESPONSES_PARSE:
             response = client.responses.parse(
                 model=self._config.model,
-                input=_message_payload(log_line),
+                input=_message_payload(log_line, prompt_version=self._config.prompt_version),
                 max_output_tokens=self._config.max_tokens,
                 text_format=_triage_output_model(),
                 **_responses_parse_request_options(self._config.request_options),
@@ -258,6 +265,7 @@ class _OpenAIAdapter:
                 provider_schema=self._config.provider_schema,
                 request_options=self._config.request_options,
                 extra_body=self._config.extra_body,
+                prompt_version=self._config.prompt_version,
             )
             try:
                 response = client.chat.completions.create(**request_kwargs)
@@ -279,7 +287,7 @@ class _OpenAIAdapter:
     def _metadata(self) -> dict[str, Any]:
         metadata: dict[str, Any] = {
             "adapter": self.name,
-            "prompt_version": TRIAGE_PROMPT_VERSION,
+            "prompt_version": self._config.prompt_version if self._config is not None else TRIAGE_PROMPT_VERSION,
             "env": {
                 "base_url": self.env.base_url,
                 "api_key": self.env.api_key,
@@ -291,6 +299,7 @@ class _OpenAIAdapter:
                 "schema_path": self.env.schema_path,
                 "config_path": self.env.config_path,
                 "shared_config_path": SHARED_CONFIG_PATH_ENV,
+                "prompt_version": self.env.prompt_version,
                 "temperature": _request_option_env_name(self.env, "temperature"),
                 "top_p": _request_option_env_name(self.env, "top_p"),
                 "frequency_penalty": _request_option_env_name(self.env, "frequency_penalty"),
@@ -354,6 +363,7 @@ def _build_config(
     response_format: str | None,
     schema_path: str | Path | None,
     config_path: str | Path | None,
+    prompt_version: str | None = None,
 ) -> tuple[OpenAIAdapterConfig | None, str | None]:
     try:
         config_path_value = _adapter_config_path(env, config_path)
@@ -385,6 +395,11 @@ def _build_config(
             config_value=file_config.get("max_tokens"),
             default=512,
             minimum=1,
+        )
+        prompt_version_value = _prompt_version_config(
+            env,
+            prompt_version,
+            config_value=file_config.get("prompt_version"),
         )
         request_options, extra_body = _request_config(file_config, env=env)
     except ValueError as exc:
@@ -440,6 +455,7 @@ def _build_config(
             config_path=config_path_value,
             request_options=request_options,
             extra_body=extra_body,
+            prompt_version=prompt_version_value,
         ),
         None,
     )
@@ -484,6 +500,21 @@ def _string_config(env_name: str, explicit: str | None, *, config_value: Any = N
     if not isinstance(config_value, (str, int, float)):
         raise ValueError(f"{env_name} must be a string")
     return str(config_value)
+
+
+def _prompt_version_config(
+    env: OpenAIAdapterEnv,
+    explicit: str | None,
+    *,
+    config_value: Any = None,
+) -> str:
+    raw_value = _string_config(env.prompt_version, explicit, config_value=config_value)
+    if raw_value is None:
+        return TRIAGE_PROMPT_VERSION
+    try:
+        return validate_triage_prompt_version(str(raw_value).strip())
+    except ValueError as exc:
+        raise ValueError(str(exc)) from exc
 
 
 def _float_config(
@@ -891,9 +922,9 @@ def _client_base_url(base_url: str) -> str:
     return endpoint
 
 
-def _message_payload(log_line: str) -> list[dict[str, str]]:
+def _message_payload(log_line: str, *, prompt_version: str = TRIAGE_PROMPT_VERSION) -> list[dict[str, str]]:
     return [
-        {"role": "system", "content": TRIAGE_SYSTEM_PROMPT},
+        {"role": "system", "content": get_triage_system_prompt(prompt_version)},
         {"role": "user", "content": build_triage_user_prompt(log_line)},
     ]
 
@@ -925,10 +956,11 @@ def _chat_completion_kwargs(
     provider_schema: dict[str, Any] | None,
     request_options: dict[str, Any],
     extra_body: dict[str, Any] | None,
+    prompt_version: str = TRIAGE_PROMPT_VERSION,
 ) -> dict[str, Any]:
     kwargs: dict[str, Any] = {
         "model": model,
-        "messages": _message_payload(log_line),
+        "messages": _message_payload(log_line, prompt_version=prompt_version),
         "max_tokens": max_tokens,
         **request_options,
     }

@@ -14,6 +14,8 @@ v4.1 เป็น repair รอบแคบต่อจาก v4 ที่ถู
 - `tests/test_v4_1_sqli_boundary_repair_workflow.py` สำหรับ regression checks (source: tests/test_v4_1_sqli_boundary_repair_workflow.py)
 - `reports/phase-8-v4-1-sqli-boundary-training-result.json` และ `.md` สำหรับ training metrics และ hard-contrast gate decision (source: reports/phase-8-v4-1-sqli-boundary-training-result.json)
 - `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json` และ temp 0.3 report สำหรับ v4.1 hard-contrast probe results (source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
+- `docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md` สำหรับ next diagnostic หลัง v4.1 held (source: docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md)
+- `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json` และ temp 0.3 report สำหรับ v4.2 prompt diagnostic result (source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json)
 
 **Last updated**
 
@@ -146,6 +148,8 @@ v4.1 improves the SQLi boundary over v4 (`4/10`) and reduces SQLi-to-traversal m
 | --- | --- | --- | --- | --- |
 | 2026-05-22 | Codex | Created v4.1 failure slice, deterministic supplement, config, split artifacts, and regression tests | `scripts/create_v4_1_sqli_failure_slice.py`, `scripts/create_v4_1_sqli_boundary_repair_dataset.py`, `ml/unsloth/config.v4-1.yaml`, `tests/test_v4_1_sqli_boundary_repair_workflow.py` | Prepared |
 | 2026-05-22 | User/Codex | Recorded v4.1 training completion and ran temp 0/temp 0.3 hard-contrast probes | `reports/phase-8-v4-1-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
+| 2026-05-22 | Codex | Prepared v4.2 SQLi-priority prompt diagnostic as the next step after v4.1 held | `docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md`, `reports/phase-8-v4-2-sqli-priority-diagnostic-slice.json` | Prepared |
+| 2026-05-22 | Codex | Recorded v4.2 prompt diagnostic result after v4.1 held | `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json` | Held |
 
 ## Decision Log
 
@@ -155,11 +159,14 @@ v4.1 improves the SQLi boundary over v4 (`4/10`) and reduces SQLi-to-traversal m
 | 2026-05-22 | Use v4 train as the base split but train from base model | Need preserve v4 guard data while avoiding adapter-to-adapter drift | v4.1 train grows to 1220 records, config starts from `unsloth/LFM2-350M` |
 | 2026-05-22 | Stop data-only repair if v4.1 SQLi stays `<=6/10` | Repeated SQLi failure after a narrow supplement would suggest capacity, prompt, or serving architecture needs diagnosis | Next phase should be capacity/architecture diagnostic rather than another broad data append |
 | 2026-05-22 | Hold v4.1 before mini semantic eval | v4.1 keeps output contract reliable and improves SQLi, but canonical temp 0 SQLi remains `6/10` and temp 0.3 SQLi remains `7/10` | Do not run mini semantic eval or fixed comparison; next work should be capacity/architecture diagnostic before any v4.2 |
+| 2026-05-22 | Make v4.2 prompt-priority diagnostic first | This follows the v4.1 stop condition while keeping the v4.1 adapter and data constant | v4.2 tests `triage-json-v2.2-sqli-priority` on hard-contrast only before any mini semantic eval |
+| 2026-05-22 | Do not continue prompt-only repair from v4.2 | v4.2 fixed the SQLi-to-traversal symptom but damaged other boundaries and output contract at temp 0.3 | Next step should compare capacity/architecture rather than rewrite the prompt again |
 
 ## Related pages
 
 - [[output-structure-fix/README]]
 - [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]]
+- [[output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan]]
 - [[output-structure-fix/phase-7-fixed-split-comparison]]
 - [[data-card]]
 - [[fine-tuning-notes]]

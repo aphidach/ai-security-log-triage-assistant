@@ -37,6 +37,9 @@ openai-compatible:
   max_retries: 0
   max_tokens: 512
   response_format: structured_outputs
+  # Optional prompt profile. Default is triage-json-v2.1.
+  # Use triage-json-v2.2-sqli-priority only for explicitly named v4.2 probes.
+  # prompt_version: triage-json-v2.2-sqli-priority
   schema_path: data/schemas/triage-output.schema.json
   request:
     temperature: 0
@@ -49,6 +52,7 @@ openai-finetune:
   max_retries: 0
   max_tokens: 512
   response_format: structured_outputs
+  # prompt_version: triage-json-v2.1
   schema_path: data/schemas/triage-output.schema.json
   request:
     temperature: 0

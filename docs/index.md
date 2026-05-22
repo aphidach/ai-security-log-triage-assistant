@@ -76,6 +76,8 @@
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison result; heuristic label accuracy `1.0`, v3.5 as-is label accuracy `0.84`, JSON/schema `1.0`, final decision `hold`
 - [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]]: Phase 8 v4 SQLi-first repair trained and probed; hard-contrast JSON/schema `1.0`, invalid `0`, but label accuracy `0.84` and SQLi `4/10` keep mini semantic and fixed comparison held
 - [[output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan]]: Phase 8 v4.1 narrow SQLi-boundary repair trained/probed; JSON/schema `1.0`, invalid `0`, but temp 0 SQLi `6/10` and temp 0.3 SQLi `7/10` keep mini semantic and fixed comparison held
+- [[output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan]]: Phase 8 v4.2 SQLi-priority prompt diagnostic probed/held; prompt v2.2 reduced SQLi-to-traversal to `0/10` but temp 0 label accuracy fell to `0.64`, SQLi stayed `4/10`, and temp 0.3 lost JSON/schema `1.0`
+- [[output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan]]: Phase 8 v4.3 capacity/architecture diagnostic plan; keeps default prompt `triage-json-v2.1`, creates no new train artifacts, and uses hard-contrast probes instead of the historical fixed test split
 
 ## Documentation Maintenance
 
@@ -136,6 +138,9 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-22 | User/Codex | Updated Phase 8 index entry after v4 training and hard-contrast probes | `reports/phase-8-v4-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
 | 2026-05-22 | Codex | Added Phase 8 v4.1 SQLi-boundary repair page to the docs index | `docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md`, `data/splits/train-v4-1-sqli-boundary-repair.jsonl`, `ml/unsloth/config.v4-1.yaml` | Prepared |
 | 2026-05-22 | User/Codex | Updated Phase 8 v4.1 index entry after training and hard-contrast probes | `reports/phase-8-v4-1-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
+| 2026-05-22 | Codex | Added Phase 8 v4.2 SQLi-priority prompt diagnostic page to the docs index | `docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md`, `reports/phase-8-v4-2-sqli-priority-diagnostic-slice.json`, `scripts/model_adapters/prompt_contract.py` | Prepared |
+| 2026-05-22 | Codex | Updated Phase 8 v4.2 index entry after hard-contrast prompt probes | `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json` | Held |
+| 2026-05-22 | Codex | Added Phase 8 v4.3 capacity/architecture diagnostic plan to the docs index | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `tests/test_v4_3_capacity_diagnostic_plan.py` | Planned |
 
 ## Decision Log
 

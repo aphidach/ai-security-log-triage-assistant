@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 
 TRIAGE_PROMPT_VERSION = "triage-json-v2.1"
+SQLI_PRIORITY_PROMPT_VERSION = "triage-json-v2.2-sqli-priority"
+PROMPT_VERSIONS = (TRIAGE_PROMPT_VERSION, SQLI_PRIORITY_PROMPT_VERSION)
 
 TRIAGE_LABELS = (
     "normal",
@@ -84,6 +86,36 @@ TRIAGE_SYSTEM_PROMPT = "\n".join(
     ]
 )
 
+SQLI_PRIORITY_RULES = "\n".join(
+    [
+        "",
+        "SQLi priority rules:",
+        "- If a request, query parameter, body field, username, search term, filter, or API argument contains SQL injection cues, choose sql_injection_attempt even when the surrounding route is login, search, API, error, or blocked traffic.",
+        "- SQL injection cues include OR 1=1, quoted tautologies such as ' OR '1'='1, SQL comments such as '--, --, or /* */, timing payloads such as SLEEP, pg_sleep, or WAITFOR DELAY, schema discovery such as information_schema, sqlite_master, or pg_catalog, and stacked statements such as ;DROP TABLE or ;SELECT.",
+        "- A SQL comment marker or destructive SQL verb is not directory traversal unless file/path access evidence is also present.",
+        "- A timing SQL payload such as SLEEP or pg_sleep is not port scan or recon unless explicit host, port, service, scan, or enumeration evidence is present.",
+        "- A login or failed-auth context is not brute force unless repeated failures, a short window, many users, or many password attempts are present.",
+        "- Traversal requires file or path access evidence such as ../, encoded traversal, /etc/passwd, win.ini, .env, WEB-INF, or php://filter.",
+        "- Recon requires explicit scanning, probing, enumeration, many ports, many hosts, nmap, SYN scan, or service discovery evidence.",
+    ]
+)
+
+TRIAGE_SYSTEM_PROMPT_V2_2_SQLI_PRIORITY = TRIAGE_SYSTEM_PROMPT + SQLI_PRIORITY_RULES
+
+
+def get_triage_system_prompt(prompt_version: str = TRIAGE_PROMPT_VERSION) -> str:
+    if prompt_version == TRIAGE_PROMPT_VERSION:
+        return TRIAGE_SYSTEM_PROMPT
+    if prompt_version == SQLI_PRIORITY_PROMPT_VERSION:
+        return TRIAGE_SYSTEM_PROMPT_V2_2_SQLI_PRIORITY
+    raise ValueError(f"Unsupported triage prompt version: {prompt_version}")
+
+
+def validate_triage_prompt_version(prompt_version: str) -> str:
+    if prompt_version not in PROMPT_VERSIONS:
+        raise ValueError(f"prompt_version must be one of: {', '.join(PROMPT_VERSIONS)}")
+    return prompt_version
+
 
 def build_triage_user_prompt(log_line: str) -> str:
     return "\n".join(
@@ -112,6 +144,12 @@ def parse_args() -> argparse.Namespace:
         default="",
         help="Security log line to use when --kind=user.",
     )
+    parser.add_argument(
+        "--prompt-version",
+        choices=PROMPT_VERSIONS,
+        default=TRIAGE_PROMPT_VERSION,
+        help=f"System prompt profile to print when --kind=system. Default: {TRIAGE_PROMPT_VERSION}.",
+    )
     return parser.parse_args()
 
 
@@ -128,7 +166,7 @@ def main() -> int:
         print(build_triage_user_prompt(args.log_line))
         return 0
 
-    print(TRIAGE_SYSTEM_PROMPT)
+    print(get_triage_system_prompt(args.prompt_version))
     return 0
 
 
