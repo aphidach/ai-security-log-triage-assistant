@@ -14,7 +14,7 @@ Phase 8 / v4 เป็น experiment ใหม่หลัง Phase 7 ตัด�
 - `tests/test_v4_sqli_boundary_repair_workflow.py` สำหรับ regression checks (source: tests/test_v4_sqli_boundary_repair_workflow.py)
 - `reports/phase-8-v4-sqli-boundary-training-result.json` และ `.md` สำหรับ training metrics และ hard-contrast gate decision (source: reports/phase-8-v4-sqli-boundary-training-result.json)
 - `reports/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json` และ `reports/openai-compatible-vllm-structured-outputs-v4-temp-03-2048-hard-contrast-memorization-probe.json` สำหรับ v4 hard-contrast probes (source: reports/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json)
-- `docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md` สำหรับ next repair หลัง v4 held (source: docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md)
+- `docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md` และ `reports/phase-8-v4-1-sqli-boundary-training-result.json` สำหรับ next repair หลัง v4 held และผล v4.1 (source: docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md, source: reports/phase-8-v4-1-sqli-boundary-training-result.json)
 
 **Last updated**
 
@@ -127,6 +127,7 @@ v4 repaired the hard-contrast invalid-output issue and kept the small guard labe
 | 2026-05-22 | Codex | Created v4 SQLi-first failure slice, deterministic supplement, config, split artifacts, and regression tests | `scripts/create_v4_sqli_failure_slice.py`, `scripts/create_v4_sqli_boundary_repair_dataset.py`, `ml/unsloth/config.v4.yaml`, `tests/test_v4_sqli_boundary_repair_workflow.py` | Prepared |
 | 2026-05-22 | User/Codex | Recorded v4 training completion and ran temp 0/temp 0.3 hard-contrast probes | `reports/phase-8-v4-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
 | 2026-05-22 | Codex | Prepared v4.1 as the next narrow SQLi-boundary repair | `docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md`, `data/splits/train-v4-1-sqli-boundary-repair.jsonl`, `ml/unsloth/config.v4-1.yaml` | Follow-up prepared |
+| 2026-05-22 | User/Codex | Recorded v4.1 follow-up training and hard-contrast result | `reports/phase-8-v4-1-sqli-boundary-training-result.json`, `docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md` | Follow-up held |
 
 ## Decision Log
 
@@ -137,6 +138,7 @@ v4 repaired the hard-contrast invalid-output issue and kept the small guard labe
 | 2026-05-22 | Do not reuse fixed split for v4 tuning | Phase 7 fixed split is already historical evidence for v3.5 | v4 gates use hard-contrast and mini semantic eval only until a separately planned final comparison |
 | 2026-05-22 | Hold v4 before mini semantic eval | v4 passes JSON/schema on hard-contrast but stays at label accuracy `0.84` and SQLi `4/10` | Do not run mini semantic eval or fixed comparison from this v4 checkpoint; the next change should target SQLi-vs-traversal/normal/port boundaries more directly or reconsider model capacity |
 | 2026-05-22 | Use v4.1 as the immediate follow-up | v4 failure slice shows the remaining hard-contrast blocker is concentrated in SQLi boundary errors | v4.1 uses v4 train as base, adds a 150-record SQLi-heavy supplement, and keeps fixed test held |
+| 2026-05-22 | Hold v4.1 follow-up | v4.1 improves SQLi from `4/10` to `6/10` temp 0 and `7/10` temp 0.3 but still misses SQLi `>=8/10` | Phase 8 should pause data-only repair and plan capacity/architecture diagnostics before any v4.2 |
 
 ## Related pages
 

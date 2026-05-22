@@ -2,7 +2,7 @@
 
 **Summary**
 
-โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 7 fixed split comparison ปิดด้วย decision `hold`, Phase 8/v4 train/probe แล้วแต่ยัง held เพราะ SQLi hard-contrast ยัง `4/10`, และ v4.1 เตรียม SQLi-boundary repair รอบแคบไว้สำหรับ train รอบถัดไปแล้ว
+โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 7 fixed split comparison ปิดด้วย decision `hold`, Phase 8/v4 train/probe แล้วแต่ยัง held เพราะ SQLi hard-contrast ยัง `4/10`, และ v4.1 train/probe แล้วแต่ยัง held เพราะ canonical temp 0 SQLi ยัง `6/10`
 
 หน้า `docs/structured-output-fix-plan.md` ยังเป็น master plan ส่วนโฟลเดอร์นี้ใช้เก็บรายละเอียดการทำงาน คำสั่งที่ต้องรัน หลักฐานที่ต้องเก็บ และ pass/fail condition ของแต่ละ phase ตั้งแต่ Phase 1 เป็นต้นไป
 
@@ -36,7 +36,7 @@
 | Phase 6 v3.5 plan | [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]] | Closed with limitations | 2048 temp 0.3 ขยับ hard-contrast label accuracy เป็น `0.88` และ JSON/schema เป็น `1.0`; canonical temp 0 และ SQLi ยัง held จึงปิดเป็น measured repair run ไม่ใช่ Phase 7 clearance |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Executed; hold | fixed split comparison เสร็จแล้ว: heuristic label accuracy `1.0`, v3.5 label accuracy `0.84`, JSON/schema `1.0`, invalid `0`; final decision `hold` |
 | Phase 8 v4 | [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]] | Trained/probed; held | v4 SQLi-first repair train แล้วและ hard-contrast temp 0/temp 0.3 ได้ label accuracy `0.84`, JSON/schema `1.0`, invalid `0`, SQLi `4/10`; ยังไม่เปิด mini semantic หรือ fixed split |
-| Phase 8 v4.1 | [[output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan]] | Prepared | v4.1 เพิ่ม failure slice จาก v4 temp 0/temp 0.3, supplement 150 records, train 1220 records และ config `ml/unsloth/config.v4-1.yaml`; fixed test ยัง held |
+| Phase 8 v4.1 | [[output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan]] | Trained/probed; held | v4.1 train แล้วและ hard-contrast temp 0 ได้ label accuracy `0.88`, SQLi `6/10`; temp 0.3 ได้ `0.90`, SQLi `7/10`; JSON/schema `1.0`, invalid `0`, fixed test ยัง held |
 
 ## Operating Rules
 
@@ -75,6 +75,7 @@
 | 2026-05-22 | Codex | Added Phase 8 v4 SQLi-first repair page to the phase map | `docs/output-structure-fix/phase-8-v4-sqli-boundary-repair-plan.md`, `data/splits/train-v4-sqli-boundary-repair.jsonl`, `ml/unsloth/config.v4.yaml` | Prepared |
 | 2026-05-22 | User/Codex | Updated phase map after v4 training and hard-contrast probes | `reports/phase-8-v4-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
 | 2026-05-22 | Codex | Added Phase 8 v4.1 SQLi-boundary repair page to the phase map | `docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md`, `data/splits/train-v4-1-sqli-boundary-repair.jsonl`, `ml/unsloth/config.v4-1.yaml` | Prepared |
+| 2026-05-22 | User/Codex | Updated phase map after v4.1 training and hard-contrast probes | `reports/phase-8-v4-1-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
 
 ## Decision Log
 
@@ -92,6 +93,7 @@
 | 2026-05-22 | Start Phase 8 as v4 SQLi-first repair | Phase 7 and v3.5 hard-contrast failures point to SQLi/quote-heavy boundaries as the narrow blocker | v4 uses hard-contrast-derived repair data and must not reuse fixed split results for tuning |
 | 2026-05-22 | Hold v4 after hard-contrast probes | v4 restores JSON/schema reliability but SQLi stays `4/10`, below the `8/10` gate | Stop before mini semantic eval; next work should either make a narrower SQLi-boundary repair or run a model-capacity diagnostic |
 | 2026-05-22 | Prepare v4.1 as narrow SQLi-boundary repair | v4 failure slice shows the remaining issue is mostly SQLi predicted as traversal, not output contract failure | v4.1 appends focused SQLi contrast data to v4 train and holds mini semantic/fixed split until hard-contrast gates pass |
+| 2026-05-22 | Hold v4.1 after hard-contrast probes | v4.1 improves SQLi but still misses SQLi `>=8/10`, with temp 0 at `6/10` and temp 0.3 at `7/10` | Do not run mini semantic eval; next work should be capacity/architecture diagnostic before any v4.2 |
 
 ## Related pages
 

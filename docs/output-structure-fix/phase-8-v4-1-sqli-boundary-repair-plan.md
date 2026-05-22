@@ -12,6 +12,8 @@ v4.1 เป็น repair รอบแคบต่อจาก v4 ที่ถู
 - `scripts/create_v4_1_sqli_boundary_repair_dataset.py`, `data/generated/v4-1-sqli-boundary-repair-security-triage.jsonl`, `data/splits/train-v4-1-sqli-boundary-repair.jsonl` และ `data/splits/validation-v4-1-sqli-boundary-repair.jsonl` สำหรับ deterministic supplement และ split artifacts (source: scripts/create_v4_1_sqli_boundary_repair_dataset.py)
 - `ml/unsloth/config.v4-1.yaml` สำหรับ v4.1 training config (source: ml/unsloth/config.v4-1.yaml)
 - `tests/test_v4_1_sqli_boundary_repair_workflow.py` สำหรับ regression checks (source: tests/test_v4_1_sqli_boundary_repair_workflow.py)
+- `reports/phase-8-v4-1-sqli-boundary-training-result.json` และ `.md` สำหรับ training metrics และ hard-contrast gate decision (source: reports/phase-8-v4-1-sqli-boundary-training-result.json)
+- `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json` และ temp 0.3 report สำหรับ v4.1 hard-contrast probe results (source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
 
 **Last updated**
 
@@ -19,7 +21,7 @@ v4.1 เป็น repair รอบแคบต่อจาก v4 ที่ถู
 
 ## Status
 
-Prepared for training. v4.1 failure slice, 150-record supplement, 1220-record train split, unchanged balanced 75-record validation copy, training config, preflight allowlist และ regression test พร้อมแล้ว ขั้นต่อไปคือ train จาก base `unsloth/LFM2-350M` ด้วย `ml/unsloth/config.v4-1.yaml` แล้ว serve alias `lfm2-security-triage-v4-1` เพื่อรัน hard-contrast gates เท่านั้นก่อน
+Trained and hard-contrast probed; held. v4.1 trained from base `unsloth/LFM2-350M`, served as alias `lfm2-security-triage-v4-1`, and kept JSON/schema contract at `1.0` on both hard-contrast probes. It improves SQLi over v4, but still misses the Phase 8 gate because canonical temp 0 has label accuracy `0.88` and SQLi `6/10`, while temp 0.3 reaches label accuracy `0.90` but SQLi only `7/10`. Mini semantic eval and fixed comparison stay blocked.
 
 ## Failure Slice
 
@@ -107,6 +109,33 @@ OPENAI_COMPATIBLE_TEMPERATURE=0 \
 
 Acceptance gates for both temp 0 and temp 0.3: JSON/schema `1.0`, invalid `0`, label accuracy `>=0.90`, SQLi `>=8/10`, SQLi predicted as traversal `<=2/10`, normal `>=8/10`, traversal `>=9/10`, port/recon `>=9/10`, predicted brute-force `<=14/50`
 
+## Training Result
+
+User-provided training completion for `ml/unsloth/config.v4-1.yaml`:
+
+| Field | Value |
+| --- | ---: |
+| Train records | `1220` |
+| Validation records | `75` |
+| Epoch | `3.9901639344262296` |
+| Train loss | `0.5194365828985074` |
+| Train runtime | `459.4452` seconds |
+| Train samples/sec | `10.622` |
+| Train steps/sec | `1.328` |
+
+`/v1/models` showed `lfm2-security-triage-v4-1` served on vLLM with parent `unsloth/LFM2-350M` and adapter root under the v4.1 output directory before the probes ran.
+
+## Hard-Contrast Result
+
+Both v4.1 probes used only `data/generated/v3-hard-contrast-security-triage.jsonl`; fixed `data/splits/test.jsonl` was not used.
+
+| Probe | Label accuracy | JSON/schema | Invalid | SQLi | SQLi -> traversal | Normal | Traversal | Port/recon | Predicted brute-force | Decision |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| temp 0 | `0.88` | `1.0 / 1.0` | `0` | `6/10` | `2/10` | `8/10` | `10/10` | `10/10` | `12/50` | Held |
+| temp 0.3 | `0.90` | `1.0 / 1.0` | `0` | `7/10` | `1/10` | `8/10` | `10/10` | `10/10` | `12/50` | Held |
+
+v4.1 improves the SQLi boundary over v4 (`4/10`) and reduces SQLi-to-traversal misses, but it still misses the required SQLi `>=8/10` gate. Remaining temp 0 failures are `normal_to_failed_login_bruteforce=2`, `sqli_to_traversal=2`, `sqli_to_normal=1`, and `sqli_to_port=1`. Remaining temp 0.3 failures are `normal_to_failed_login_bruteforce=2`, `sqli_to_traversal=1`, `sqli_to_normal=1`, and `sqli_to_port=1`.
+
 ## Hold Fixed Test
 
 `data/splits/test.jsonl` must not be used again in Phase 8. If v4.1 later needs a final comparison, plan it separately and prefer a new frozen holdout if the goal is genuinely unseen evidence
@@ -116,6 +145,7 @@ Acceptance gates for both temp 0 and temp 0.3: JSON/schema `1.0`, invalid `0`, l
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-22 | Codex | Created v4.1 failure slice, deterministic supplement, config, split artifacts, and regression tests | `scripts/create_v4_1_sqli_failure_slice.py`, `scripts/create_v4_1_sqli_boundary_repair_dataset.py`, `ml/unsloth/config.v4-1.yaml`, `tests/test_v4_1_sqli_boundary_repair_workflow.py` | Prepared |
+| 2026-05-22 | User/Codex | Recorded v4.1 training completion and ran temp 0/temp 0.3 hard-contrast probes | `reports/phase-8-v4-1-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
 
 ## Decision Log
 
@@ -124,6 +154,7 @@ Acceptance gates for both temp 0 and temp 0.3: JSON/schema `1.0`, invalid `0`, l
 | 2026-05-22 | Make v4.1 a narrow SQLi-boundary repair | v4 restored JSON/schema reliability but stayed at SQLi `4/10`, mostly SQLi predicted as traversal | Supplement weights SQLi more heavily than v4 while keeping only small guard sets |
 | 2026-05-22 | Use v4 train as the base split but train from base model | Need preserve v4 guard data while avoiding adapter-to-adapter drift | v4.1 train grows to 1220 records, config starts from `unsloth/LFM2-350M` |
 | 2026-05-22 | Stop data-only repair if v4.1 SQLi stays `<=6/10` | Repeated SQLi failure after a narrow supplement would suggest capacity, prompt, or serving architecture needs diagnosis | Next phase should be capacity/architecture diagnostic rather than another broad data append |
+| 2026-05-22 | Hold v4.1 before mini semantic eval | v4.1 keeps output contract reliable and improves SQLi, but canonical temp 0 SQLi remains `6/10` and temp 0.3 SQLi remains `7/10` | Do not run mini semantic eval or fixed comparison; next work should be capacity/architecture diagnostic before any v4.2 |
 
 ## Related pages
 
