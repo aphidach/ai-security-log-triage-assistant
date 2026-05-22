@@ -34,7 +34,7 @@
 | Phase 6 v3.3 probe | [[output-structure-fix/phase-6-v3-3-targeted-canary]] | Canary improved, still held | temp 0.3 runtime probe ขยับ hard-contrast label accuracy เป็น `0.64`, มี HTML infographic แล้ว แต่ SQLi ยัง `2/10` และยังไม่เปิด fixed test split |
 | Phase 6 v3.4 plan | [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]] | Temp 0 checked, still held | v3.4 temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68`; SQLi/invalid output/traversal/brute-force gravity ยัง block Phase 7 |
 | Phase 6 v3.5 plan | [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]] | Closed with limitations | 2048 temp 0.3 ขยับ hard-contrast label accuracy เป็น `0.88` และ JSON/schema เป็น `1.0`; canonical temp 0 และ SQLi ยัง held จึงปิดเป็น measured repair run ไม่ใช่ Phase 7 clearance |
-| Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
+| Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Executed; hold | fixed split comparison เสร็จแล้ว: heuristic label accuracy `1.0`, v3.5 label accuracy `0.84`, JSON/schema `1.0`, invalid `0`; final decision `hold` |
 
 ## Operating Rules
 
@@ -68,6 +68,8 @@
 | 2026-05-22 | Codex | Updated phase map after v3.5 temp 0 and temp 0.3 hard-contrast probes and HTML reports | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-0-hard-contrast-memorization-probe-infographic.html`, `reports/phase-6-v3-5-temp-03-hard-contrast-memorization-probe-infographic.html` | Improved to `0.84`, fixed test still held |
 | 2026-05-22 | Codex | Updated phase map after v3.5 2048-token hard-contrast probes and HTML reports | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-03-2048-hard-contrast-memorization-probe-infographic.html` | Temp 0.3 improved to `0.88` with contract `1.0`, fixed test still held |
 | 2026-05-22 | User/Codex | Closed Phase 6 and v3.5 in the phase map | `docs/output-structure-fix/README.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` | Closed with limitations |
+| 2026-05-22 | Codex | Updated Phase 7 phase map status after adding copyable CLI runbook | `docs/output-structure-fix/phase-7-fixed-split-comparison.md`, `docs/output-structure-fix/README.md` | Runbook prepared |
+| 2026-05-22 | Codex | Updated phase map after Phase 7 fixed split evaluation | `reports/comparison.md`, `reports/phase-7-fixed-split-summary.html`, `docs/output-structure-fix/phase-7-fixed-split-comparison.md` | Executed; decision `hold` |
 
 ## Decision Log
 
@@ -81,6 +83,7 @@
 | 2026-05-22 | Hold v3.5 before mini semantic eval | v3.5 temp 0 ผ่าน overall label gate แล้ว แต่ SQLi ยัง `4/10` และ output contract ยังไม่เต็ม | ทำ v3.5.1 SQLi/quote-output repair ก่อนรัน mini semantic หรือ fixed split |
 | 2026-05-22 | Hold fixed split after 2048 runtime probe | 2048 temp 0.3 ผ่าน output contract แล้ว แต่ canonical temp 0 ยังไม่ผ่าน และ SQLi ยัง `6/10` ต่ำกว่า gate เดิม | mini semantic ถ้ารันต่อควร mark เป็น runtime-only exploratory; fixed test ยังไม่เปิด |
 | 2026-05-22 | ปิด Phase 6 หลัง v3.5 | Phase 6 ให้คำตอบเชิง decision ครบแล้ว แม้ยังไม่ใช่ Phase 7 clearance | future SQLi repair หรือ model-capacity diagnostic ต้องเริ่มเป็นรอบใหม่; fixed test ยัง held |
+| 2026-05-22 | Hold v3.5 after Phase 7 | Fixed split evaluation preserved output contract but did not beat the heuristic baseline | Any future model repair must be a new experiment; Phase 7 result remains historical evidence |
 
 ## Related pages
 

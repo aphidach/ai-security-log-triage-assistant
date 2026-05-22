@@ -62,7 +62,7 @@
 | Phase 5 | [[output-structure-fix/phase-5-mini-semantic-eval]] | Superseded by Phase 6.1 mini rerun |
 | Phase 6 | [[output-structure-fix/phase-6-v3-or-runtime-decision]] | Closed with limitations after v3.5 |
 | Phase 6.1 | [[output-structure-fix/phase-6-1-evidence-constraints]] | Contract restored; semantics still blocked |
-| Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft |
+| Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Executed; decision `hold` |
 
 ## Phase 0: Freeze And Preserve Evidence
 
@@ -368,6 +368,7 @@ Pass condition:
 | 2026-05-20 | User/Codex | Recorded vLLM `structured_outputs` smoke contract pass and moved active work to Phase 5 | `reports/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output-capability-matrix.md`, `docs/output-structure-fix/` | Passed contract gate |
 | 2026-05-20 | User/Codex | Completed Phase 2 runtime probe comparison for Unsloth Studio and vLLM | `reports/structured-output-probe-*.json`, `docs/output-structure-fix/phase-2-probe-hardening.md` | Complete |
 | 2026-05-22 | User/Codex | Closed Phase 6 after v3.5 repair run and kept fixed split held | `docs/Day6.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` | Closed with limitations |
+| 2026-05-22 | Codex | Ran Phase 7 fixed split comparison and generated final summary artifacts | `reports/comparison.md`, `reports/phase-7-fixed-split-summary.html`, `docs/output-structure-fix/phase-7-fixed-split-comparison.md` | Executed; decision `hold` |
 
 ## Decision Log
 
@@ -382,6 +383,7 @@ Pass condition:
 | 2026-05-20 | Treat Unsloth Studio as non-gating for output contract | Phase 2 probes show markdown fences in 4/5 baseline samples and 4 completed adversarial samples | Unsloth Studio can remain a debugging runtime, but contract gate and Phase 5 should use vLLM |
 | 2026-05-20 | Treat vLLM adversarial timeouts as robustness follow-up | vLLM adversarial completed samples stayed valid JSON with no fences, but 2/5 timed out | Latency/timeout tuning should be tracked separately from schema enforcement |
 | 2026-05-22 | Close Phase 6 after v3.5 | v3.5 delivers enough evidence to close the runtime-vs-training decision loop even though it is not fixed-split clearance | Future SQLi/quote-heavy repair or model-capacity comparison should be a new phase or named experiment |
+| 2026-05-22 | Hold v3.5 after Phase 7 fixed split | v3.5 preserved output contract on the fixed split but did not outperform the heuristic baseline | Keep the result as final Phase 7 evidence; future repair must not tune from this fixed split result |
 
 ## Related pages
 

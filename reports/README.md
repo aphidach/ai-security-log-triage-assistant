@@ -62,6 +62,16 @@ reports/finetuned-eval.json
 reports/comparison.md
 ```
 
+Phase-specific fixed split format:
+
+```text
+reports/phase-7-heuristic-fixed-split-eval.json
+reports/phase-7-heuristic-fixed-split-eval.md
+reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json
+reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.md
+reports/phase-7-fixed-split-summary.html
+```
+
 Phase 0 evidence files:
 
 ```text

@@ -1,0 +1,3293 @@
+{
+  "adapter": "heuristic",
+  "adapter_metadata": {
+    "adapter": "heuristic"
+  },
+  "counts": {
+    "evidence_partial_match": 75,
+    "failure": 0,
+    "invalid_output": 0,
+    "is_suspicious_correct": 75,
+    "json_parse_success": 75,
+    "label_correct": 75,
+    "schema_success": 75,
+    "severity_correct": 75
+  },
+  "expected_label_distribution": {
+    "directory_traversal_attempt": 15,
+    "failed_login_bruteforce": 15,
+    "normal": 15,
+    "port_scan_or_recon": 15,
+    "sql_injection_attempt": 15
+  },
+  "failures": [],
+  "metrics": {
+    "average_latency_ms": 0.045752,
+    "evidence_partial_match": 1.0,
+    "invalid_output_count": 0,
+    "is_suspicious_accuracy": 1.0,
+    "json_parse_success_rate": 1.0,
+    "label_accuracy": 1.0,
+    "schema_success_rate": 1.0,
+    "severity_accuracy": 1.0
+  },
+  "predicted_label_distribution": {
+    "directory_traversal_attempt": 15,
+    "failed_login_bruteforce": 15,
+    "normal": 15,
+    "port_scan_or_recon": 15,
+    "sql_injection_attempt": 15
+  },
+  "sample_count": 75,
+  "samples": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000474",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.911958,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000335",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.084917,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/static/../config.yml",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "/static/../config.yml",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000331",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.023708,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET /download?file=..\\..\\windows\\win.ini",
+          "403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /download?file=..\\..\\windows\\win.ini",
+          "403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000137",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.034458,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000388",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.02575,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET /download?file=..%2f..%2fetc%2fpasswd",
+          "404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /download?file=..%2f..%2fetc%2fpasswd",
+          "404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000353",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.022625,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/static/..%2f..%2fapp%2fsettings.py",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "/static/..%2f..%2fapp%2fsettings.py",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000035",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.031625,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000248",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.043209,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "SLEEP(5)",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SLEEP(5)",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000164",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.05575,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "POST /login",
+          "status=401 repeated=18",
+          "python-requests"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed login responses from one automated client.",
+        "recommended_action": "Review WAF and application logs for the source and consider temporary blocking.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "POST /login",
+          "status=401 repeated=18",
+          "python-requests"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed login responses from one automated client.",
+        "recommended_action": "Review WAF and application logs for the source and consider temporary blocking.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000455",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.058083,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=135,139,445,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=135,139,445,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000013",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.03125,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "critical",
+      "id": "sample-000240",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.018,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "critical",
+      "prediction": {
+        "evidence": [
+          "DROP TABLE users--",
+          "403"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "critical"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "DROP TABLE users--",
+          "403"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "critical"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000046",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.070333,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "GET /health",
+          "200",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a routine service health check with a successful response.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /health",
+          "200",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a routine service health check with a successful response.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000419",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.04525,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=22,80,443,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=22,80,443,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000065",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.046083,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000020",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.062917,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000084",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.062125,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "/search?q=admin+guide",
+          "200"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request completed successfully and does not contain a suspicious attack pattern.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "/search?q=admin+guide",
+          "200"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request completed successfully and does not contain a suspicious attack pattern.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000136",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.042083,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "POST /login",
+          "status=401 repeated=17",
+          "python-requests"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed login responses from one automated client.",
+        "recommended_action": "Review WAF and application logs for the source and consider temporary blocking.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "POST /login",
+          "status=401 repeated=17",
+          "python-requests"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed login responses from one automated client.",
+        "recommended_action": "Review WAF and application logs for the source and consider temporary blocking.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000006",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.03125,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "GET /ready",
+          "200",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a routine service health check with a successful response.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /ready",
+          "200",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a routine service health check with a successful response.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000078",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.031458,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000364",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.02275,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET /download?file=../../../../var/log/auth.log",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /download?file=../../../../var/log/auth.log",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000218",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.008333,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "id=1 OR 1=1",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "id=1 OR 1=1",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000444",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.034875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=25,110,143,587,993"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=25,110,143,587,993"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000225",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.014875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "q=information_schema.tables",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "q=information_schema.tables",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000368",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.023,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/static/..%2f..%2fapp%2fsettings.py",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "/static/..%2f..%2fapp%2fsettings.py",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000500",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.061541,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=135,139,445,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=135,139,445,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000325",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.028333,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET /download?file=..%2f..%2fetc%2fpasswd",
+          "404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /download?file=..%2f..%2fetc%2fpasswd",
+          "404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000119",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.035792,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "event_id=4625",
+          "count=11",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "event_id=4625",
+          "count=11",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000228",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.0195,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "' OR '1'='1",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "' OR '1'='1",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000234",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.010833,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "q=SLEEP(5)",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "q=SLEEP(5)",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000422",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.038958,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000121",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.038,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 14 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 14 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000302",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.021958,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/static/../config.yml",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "/static/../config.yml",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000053",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.035333,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000246",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.012875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "q=SLEEP(5)",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "q=SLEEP(5)",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000473",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.038375,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=25,110,143,587,993"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=25,110,143,587,993"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000032",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.064542,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "Successful login",
+          "user analyst"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows a successful authentication event without suspicious repetition.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Successful login",
+          "user analyst"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows a successful authentication event without suspicious repetition.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000397",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.027291,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET /download?file=../../../../var/log/auth.log",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /download?file=../../../../var/log/auth.log",
+          "400"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000462",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.038417,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000450",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.036875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000116",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.038209,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "POST /login",
+          "status=401 repeated=29",
+          "python-requests"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed login responses from one automated client.",
+        "recommended_action": "Review WAF and application logs for the source and consider temporary blocking.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "POST /login",
+          "status=401 repeated=29",
+          "python-requests"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed login responses from one automated client.",
+        "recommended_action": "Review WAF and application logs for the source and consider temporary blocking.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000290",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.025542,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "UNION SELECT token FROM sessions--",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "UNION SELECT token FROM sessions--",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000303",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.029625,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "rule=path_traversal",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "rule=path_traversal",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000480",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.036042,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=80,443,8080,8443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000175",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.038125,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "event_id=4625",
+          "count=15",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "event_id=4625",
+          "count=15",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000199",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.037458,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "event_id=4625",
+          "count=12",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "event_id=4625",
+          "count=12",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000436",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.067375,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "sequential connection attempts",
+          "unique_ports=6"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The flow shows sequential attempts against several destination ports.",
+        "recommended_action": "Correlate with firewall and IDS logs to determine the scan scope.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "sequential connection attempts",
+          "unique_ports=6"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The flow shows sequential attempts against several destination ports.",
+        "recommended_action": "Correlate with firewall and IDS logs to determine the scan scope.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000042",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.034,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "Successful login",
+          "user deploy"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows a successful authentication event without suspicious repetition.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Successful login",
+          "user deploy"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows a successful authentication event without suspicious repetition.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000262",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.006041,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "username=' OR '1'='1",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "username=' OR '1'='1",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000109",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.037125,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 17 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 17 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000346",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.027708,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET /download?file=%2e%2e%2f%2e%2e%2fwindows%2fwin.ini",
+          "403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /download?file=%2e%2e%2f%2e%2e%2fwindows%2fwin.ini",
+          "403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000371",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.0265,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/static/..%2f..%2fapp%2fsettings.py",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "/static/..%2f..%2fapp%2fsettings.py",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000028",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.036,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "failed_attempts=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "A single failed authentication event is not enough to classify as brute force.",
+        "recommended_action": "Monitor for repeated failures from the same source before escalating.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000253",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.004958,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "username=admin'--",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "username=admin'--",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000177",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.038541,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 7 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 7 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000469",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.0425,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "sequential connection attempts",
+          "unique_ports=4"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The flow shows sequential attempts against several destination ports.",
+        "recommended_action": "Correlate with firewall and IDS logs to determine the scan scope.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "sequential connection attempts",
+          "unique_ports=4"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The flow shows sequential attempts against several destination ports.",
+        "recommended_action": "Correlate with firewall and IDS logs to determine the scan scope.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000283",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.005833,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "username=%27%20OR%201%3D1--",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "username=%27%20OR%201%3D1--",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000238",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.004708,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "username=' OR '1'='1",
+          "status=401"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "username=' OR '1'='1",
+          "status=401"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000306",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.022917,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "rule=path_traversal",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "rule=path_traversal",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000147",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.053083,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "event_id=4625",
+          "count=9",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "event_id=4625",
+          "count=9",
+          "status=failed_logon"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "Multiple failed Windows logon events indicate a brute force pattern.",
+        "recommended_action": "Check whether the target account was locked and review related endpoint events.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000263",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.024291,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "SLEEP(5)",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SLEEP(5)",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000350",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.024625,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "/static/../config.yml",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "/static/../config.yml",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000161",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.035875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 18 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 18 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000265",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.004875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "username=admin'--",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "username=admin'--",
+          "status=403"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000113",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.036375,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 23 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 23 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000236",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.025792,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "UNION SELECT token FROM sessions--",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "UNION SELECT token FROM sessions--",
+          "status=400"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The log contains SQL syntax or encoded SQL operators in a user-controlled request field.",
+        "recommended_action": "Review related web and database logs for the source and verify whether the request reached sensitive query paths.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000348",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.027875,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "rule=path_traversal",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "rule=path_traversal",
+          "status=404"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The request contains parent-directory traversal sequences targeting files outside the intended path.",
+        "recommended_action": "Review web server and WAF logs to confirm the request was blocked and search for related attempts from the source.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000424",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.043417,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "sequential connection attempts",
+          "unique_ports=4"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The flow shows sequential attempts against several destination ports.",
+        "recommended_action": "Correlate with firewall and IDS logs to determine the scan scope.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "sequential connection attempts",
+          "unique_ports=4"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The flow shows sequential attempts against several destination ports.",
+        "recommended_action": "Correlate with firewall and IDS logs to determine the scan scope.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000100",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.0355,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log shows one allowed connection, not a scan across multiple ports.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000446",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.037667,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=135,139,445,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=135,139,445,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "sample-000467",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.036959,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=22,80,443,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "SYN scan detected",
+          "ports=22,80,443,3389"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The firewall detected connection attempts across multiple destination ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000197",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.035583,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 21 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 21 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short time window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "sample-000140",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.038125,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "POST /login",
+          "status=401 repeated=27",
+          "python-requests"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed login responses from one automated client.",
+        "recommended_action": "Review WAF and application logs for the source and consider temporary blocking.",
+        "severity": "high"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "POST /login",
+          "status=401 repeated=27",
+          "python-requests"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed login responses from one automated client.",
+        "recommended_action": "Review WAF and application logs for the source and consider temporary blocking.",
+        "severity": "high"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000089",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.036166,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "/search?q=select+book",
+          "200"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request completed successfully and does not contain a suspicious attack pattern.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "/search?q=select+book",
+          "200"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request completed successfully and does not contain a suspicious attack pattern.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "heuristic"
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000086",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 0.030667,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "GET /ready",
+          "200",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a routine service health check with a successful response.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "raw_prediction": {
+        "evidence": [
+          "GET /ready",
+          "200",
+          "kube-probe/1.29"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a routine service health check with a successful response.",
+        "recommended_action": "No immediate action required. Continue normal monitoring.",
+        "severity": "low"
+      },
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    }
+  ],
+  "schema": "data/schemas/triage-output.schema.json",
+  "split": "data/splits/test.jsonl"
+}

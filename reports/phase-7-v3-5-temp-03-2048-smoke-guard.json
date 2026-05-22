@@ -1,0 +1,774 @@
+{
+  "adapter": "openai-compatible",
+  "adapter_metadata": {
+    "adapter": "openai-compatible",
+    "base_url": "http://192.168.8.141:8080/v1",
+    "config_path": "config-adapter.yml",
+    "env": {
+      "api_key": "OPENAI_COMPATIBLE_API_KEY",
+      "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+      "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+      "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+      "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+      "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+      "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+      "model": "OPENAI_COMPATIBLE_MODEL",
+      "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+      "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+      "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+      "seed": "OPENAI_COMPATIBLE_SEED",
+      "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+      "stop": "OPENAI_COMPATIBLE_STOP",
+      "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+      "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+      "top_p": "OPENAI_COMPATIBLE_TOP_P"
+    },
+    "extra_body": {
+      "min_p": 0.15,
+      "repetition_penalty": 1.05
+    },
+    "finish_reason": "stop",
+    "max_retries": 0,
+    "max_tokens": 512,
+    "model": "lfm2-security-triage-v3-5",
+    "prompt_version": "triage-json-v2.1",
+    "request_options": {
+      "temperature": 0.3,
+      "top_p": 0.9
+    },
+    "requested_model": "lfm2-security-triage-v3-5",
+    "response_format_attempted_modes": [
+      "structured_outputs_json"
+    ],
+    "response_format_mode": "structured_outputs_json",
+    "response_format_requested": "structured_outputs",
+    "response_id": "chatcmpl-ac16ebff16ba4c61",
+    "response_model": "lfm2-security-triage-v3-5",
+    "schema_path": "data/schemas/triage-output.schema.json",
+    "timeout_seconds": 120.0,
+    "usage": {
+      "completion_tokens": 56,
+      "completion_tokens_details": null,
+      "prompt_tokens": 530,
+      "prompt_tokens_details": null,
+      "total_tokens": 586
+    }
+  },
+  "counts": {
+    "evidence_partial_match": 5,
+    "failure": 3,
+    "invalid_output": 0,
+    "is_suspicious_correct": 5,
+    "json_parse_success": 5,
+    "label_correct": 4,
+    "schema_success": 5,
+    "severity_correct": 3
+  },
+  "expected_label_distribution": {
+    "directory_traversal_attempt": 1,
+    "failed_login_bruteforce": 1,
+    "normal": 1,
+    "port_scan_or_recon": 1,
+    "sql_injection_attempt": 1
+  },
+  "failures": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage-v3-5",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "requested_model": "lfm2-security-triage-v3-5",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-9718699d2ad0d091",
+        "response_model": "lfm2-security-triage-v3-5",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 81,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 614
+        }
+      },
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "severity_mismatch"
+      ],
+      "id": "sample-000137",
+      "input": "May 17 08:24:39 auth-01 sshd[3146]: Failed password for admin from 192.0.2.105 port 34263 ssh2; repeated 11 times in 5 minutes",
+      "latency_ms": 412.015917,
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed authentication attempts suggesting password guessing or brute force activity.",
+        "recommended_action": "Review the Windows authentication log and check if the source IP is blocked.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage-v3-5",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "requested_model": "lfm2-security-triage-v3-5",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-9ec518b687936eff",
+        "response_model": "lfm2-security-triage-v3-5",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 88,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 627
+        }
+      },
+      "expected": {
+        "evidence": [
+          "id=9 AND SLEEP(5)",
+          "status=500"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The API request includes SQL operators or functions inside a query parameter.",
+        "recommended_action": "Inspect API logs and database query logs for related requests from the same source.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch"
+      ],
+      "id": "sample-000248",
+      "input": "2026-05-17T19:00:50+07:00 api-gateway: GET /api/users?id=9 AND SLEEP(5) src=198.51.100.169 status=500 upstream_ms=3904",
+      "latency_ms": 462.79225,
+      "prediction": {
+        "evidence": [
+          "id=9 AND SLEEP(5)"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The API request includes a trailing slash and sleep duration exceeding 5 seconds.",
+        "recommended_action": "Review web application logs for the source IP and verify that the request did not bypass proxy or firewall.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage-v3-5",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "requested_model": "lfm2-security-triage-v3-5",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8871f16563f57ba1",
+        "response_model": "lfm2-security-triage-v3-5",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 87,
+          "completion_tokens_details": null,
+          "prompt_tokens": 546,
+          "prompt_tokens_details": null,
+          "total_tokens": 633
+        }
+      },
+      "expected": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "severity_mismatch"
+      ],
+      "id": "sample-000474",
+      "input": "2026-05-17T09:27:34+07:00 ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205; probed_ports=21,22,23,25,80,443; packets=106",
+      "latency_ms": 470.628334,
+      "prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified a fingerprint of scanning activity across multiple ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "schema_errors": []
+    }
+  ],
+  "metrics": {
+    "average_latency_ms": 745.481692,
+    "evidence_partial_match": 1.0,
+    "invalid_output_count": 0,
+    "is_suspicious_accuracy": 1.0,
+    "json_parse_success_rate": 1.0,
+    "label_accuracy": 0.8,
+    "schema_success_rate": 1.0,
+    "severity_accuracy": 0.6
+  },
+  "predicted_label_distribution": {
+    "directory_traversal_attempt": 2,
+    "failed_login_bruteforce": 1,
+    "normal": 1,
+    "port_scan_or_recon": 1
+  },
+  "sample_count": 5,
+  "samples": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage-v3-5",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "requested_model": "lfm2-security-triage-v3-5",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-ac16ebff16ba4c61",
+        "response_model": "lfm2-security-triage-v3-5",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 56,
+          "completion_tokens_details": null,
+          "prompt_tokens": 530,
+          "prompt_tokens_details": null,
+          "total_tokens": 586
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000035",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 1994.541583,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "allowed tcp connection",
+          "session_count=1"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The event is a routine allowed connection.",
+        "recommended_action": "No immediate action required.",
+        "severity": "low"
+      },
+      "raw_prediction": "{\"label\":\"normal\",\"severity\":\"low\",\"is_suspicious\":false,\"evidence\":[\"allowed tcp connection\",\"session_count=1\"],\"reason\":\"The event is a routine allowed connection.\",\"recommended_action\":\"No immediate action required.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage-v3-5",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "requested_model": "lfm2-security-triage-v3-5",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-9718699d2ad0d091",
+        "response_model": "lfm2-security-triage-v3-5",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 81,
+          "completion_tokens_details": null,
+          "prompt_tokens": 533,
+          "prompt_tokens_details": null,
+          "total_tokens": 614
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000137",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 412.015917,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed authentication attempts suggesting password guessing or brute force activity.",
+        "recommended_action": "Review the Windows authentication log and check if the source IP is blocked.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"Failed password\",\"repeated 11 times\"],\"reason\":\"The log shows repeated failed authentication attempts suggesting password guessing or brute force activity.\",\"recommended_action\":\"Review the Windows authentication log and check if the source IP is blocked.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage-v3-5",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "requested_model": "lfm2-security-triage-v3-5",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-9ec518b687936eff",
+        "response_model": "lfm2-security-triage-v3-5",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 88,
+          "completion_tokens_details": null,
+          "prompt_tokens": 539,
+          "prompt_tokens_details": null,
+          "total_tokens": 627
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000248",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 462.79225,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "id=9 AND SLEEP(5)"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The API request includes a trailing slash and sleep duration exceeding 5 seconds.",
+        "recommended_action": "Review web application logs for the source IP and verify that the request did not bypass proxy or firewall.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\"label\":\"directory_traversal_attempt\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"id=9 AND SLEEP(5)\"], \"reason\":\"The API request includes a trailing slash and sleep duration exceeding 5 seconds.\",\"recommended_action\":\"Review web application logs for the source IP and verify that the request did not bypass proxy or firewall.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage-v3-5",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "requested_model": "lfm2-security-triage-v3-5",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-ac3b2f0b9488ced5",
+        "response_model": "lfm2-security-triage-v3-5",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 76,
+          "completion_tokens_details": null,
+          "prompt_tokens": 547,
+          "prompt_tokens_details": null,
+          "total_tokens": 623
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000331",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 387.430375,
+      "predicted_is_suspicious": true,
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "....",
+          "win.ini",
+          "403"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The file contains a Windows-style traversal path.",
+        "recommended_action": "Review web server logs and verify that the request did not reach external directories.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\"label\":\"directory_traversal_attempt\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"....\",\"win.ini\",\"403\"],\"reason\":\"The file contains a Windows-style traversal path.\",\"recommended_action\":\"Review web server logs and verify that the request did not reach external directories.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "lfm2-security-triage-v3-5",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "requested_model": "lfm2-security-triage-v3-5",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8871f16563f57ba1",
+        "response_model": "lfm2-security-triage-v3-5",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 87,
+          "completion_tokens_details": null,
+          "prompt_tokens": 546,
+          "prompt_tokens_details": null,
+          "total_tokens": 633
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000474",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 470.628334,
+      "predicted_is_suspicious": true,
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "prediction": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified a fingerprint of scanning activity across multiple ports.",
+        "recommended_action": "Review network logs for additional reconnaissance from the source IP.",
+        "severity": "medium"
+      },
+      "raw_prediction": "{\"label\":\"port_scan_or_recon\",\"severity\":\"medium\",\"is_suspicious\":true,\"evidence\":[\"nmap fingerprint\",\"probed_ports=21,22,23,25,80,443\"],\"reason\":\"The IDS identified a fingerprint of scanning activity across multiple ports.\",\"recommended_action\":\"Review network logs for additional reconnaissance from the source IP.\"}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    }
+  ],
+  "schema": "data/schemas/triage-output.schema.json",
+  "split": "data/splits/smoke-output-contract.jsonl"
+}

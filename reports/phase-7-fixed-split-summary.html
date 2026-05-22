@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phase 7 Fixed Split Summary</title>
+  <style>
+    :root { --ink:#172033; --muted:#5c6b80; --line:#d9e0ea; --bg:#f6f8fb; --panel:#ffffff; --green:#1f8a5b; --amber:#b7791f; --red:#b42318; --blue:#2f6fed; }
+    * { box-sizing:border-box; } body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg); }
+    header { padding:34px 42px 22px; background:#fff; border-bottom:1px solid var(--line); } main { padding:24px 42px 42px; max-width:1180px; margin:0 auto; }
+    h1 { margin:0 0 10px; font-size:30px; letter-spacing:0; } h2 { margin:0 0 14px; font-size:18px; } h3 { margin:0 0 8px; font-size:15px; } p { color:var(--muted); line-height:1.55; }
+    .status { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:6px; background:#fff7ed; color:#9a3412; border:1px solid #fed7aa; font-weight:700; }
+    .grid { display:grid; gap:14px; } .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); margin-bottom:22px; } .two { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+    .panel, .metric, .example { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; box-shadow:0 1px 2px rgba(16,24,40,.04); }
+    .metric span { display:block; color:var(--muted); font-size:13px; margin-bottom:8px; } .metric strong { font-size:24px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; } th,td { padding:9px 8px; border-bottom:1px solid var(--line); text-align:left; } th { color:var(--muted); font-size:12px; text-transform:uppercase; } td:not(:first-child), th:not(:first-child) { text-align:right; }
+    .bar-row { display:grid; grid-template-columns:210px 1fr 42px; gap:10px; align-items:center; margin:10px 0; } .bar-label { font-size:13px; overflow-wrap:anywhere; } .bar-track { height:13px; background:#e8edf4; border-radius:999px; overflow:hidden; } .bar-fill { height:100%; border-radius:999px; background:var(--blue); } .bar-count { text-align:right; font-variant-numeric:tabular-nums; color:var(--muted); }
+    pre { white-space:pre-wrap; overflow-wrap:anywhere; background:#0f172a; color:#e2e8f0; padding:12px; border-radius:6px; font-size:12px; line-height:1.5; }
+    .callout { border-left:4px solid var(--amber); padding:12px 14px; background:#fffbeb; color:#78350f; border-radius:4px; }
+    @media (max-width:900px) { header, main { padding-left:18px; padding-right:18px; } .metrics,.two { grid-template-columns:1fr; } .bar-row { grid-template-columns:145px 1fr 36px; } table { font-size:12px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="status">Decision: HOLD</div>
+    <h1>Phase 7 Fixed Split Summary</h1>
+    <p>As-is evaluation of <strong>lfm2-security-triage-v3-5</strong> against the heuristic baseline on <code>data/splits/test.jsonl</code>. This report describes triage behavior only and does not claim compromise detection.</p>
+  </header>
+  <main>
+    <section class="grid metrics"><section class="metric"><span>Decision</span><strong>hold</strong></section><section class="metric"><span>Heuristic label accuracy</span><strong>1</strong></section><section class="metric"><span>v3.5 label accuracy</span><strong>0.84</strong></section><section class="metric"><span>v3.5 JSON/schema</span><strong>1 / 1</strong></section><section class="metric"><span>v3.5 invalid outputs</span><strong>0</strong></section><section class="metric"><span>v3.5 avg latency</span><strong>445.131 ms</strong></section></section>
+    <section class="panel">
+      <h2>Readout</h2>
+      <p class="callout">v3.5 preserved JSON/schema validity on the fixed split, but it did not beat the deterministic heuristic baseline. Keep v3.5 held from promotion; use this fixed split result as historical evidence only.</p>
+    </section>
+    <section class="grid two" style="margin-top:16px;">
+      <section class="panel"><h2>Metric Comparison</h2><table><thead><tr><th>Metric</th><th>Heuristic</th><th>v3.5</th></tr></thead><tbody><tr><td>Label accuracy</td><td>1</td><td>0.84</td></tr><tr><td>JSON parse success</td><td>1</td><td>1</td></tr><tr><td>Schema success</td><td>1</td><td>1</td></tr><tr><td>Severity accuracy</td><td>1</td><td>0.76</td></tr><tr><td>Suspicious accuracy</td><td>1</td><td>0.933333</td></tr><tr><td>Evidence partial match</td><td>1</td><td>0.973333</td></tr><tr><td>Average latency ms</td><td>0.045752</td><td>445.131</td></tr><tr><td>Invalid outputs</td><td>0</td><td>0</td></tr></tbody></table></section>
+      <section class="panel"><h2>v3.5 Predicted Labels</h2><div class="bar-row"><div class="bar-label">normal</div><div class="bar-track"><div class="bar-fill" style="width:16%"></div></div><div class="bar-count">12</div></div><div class="bar-row"><div class="bar-label">failed_login_bruteforce</div><div class="bar-track"><div class="bar-fill" style="width:24%"></div></div><div class="bar-count">18</div></div><div class="bar-row"><div class="bar-label">sql_injection_attempt</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-count">10</div></div><div class="bar-row"><div class="bar-label">directory_traversal_attempt</div><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><div class="bar-count">19</div></div><div class="bar-row"><div class="bar-label">port_scan_or_recon</div><div class="bar-track"><div class="bar-fill" style="width:21%"></div></div><div class="bar-count">16</div></div></section>
+    </section>
+    <section class="panel" style="margin-top:16px;"><h2>Label Results</h2><table><thead><tr><th>Label</th><th>Expected</th><th>Heuristic correct</th><th>v3.5 correct</th><th>v3.5 predicted</th></tr></thead><tbody><tr><td>normal</td><td>15</td><td>15/15</td><td>11/15</td><td>12</td></tr><tr><td>failed_login_bruteforce</td><td>15</td><td>15/15</td><td>14/15</td><td>18</td></tr><tr><td>sql_injection_attempt</td><td>15</td><td>15/15</td><td>9/15</td><td>10</td></tr><tr><td>directory_traversal_attempt</td><td>15</td><td>15/15</td><td>14/15</td><td>19</td></tr><tr><td>port_scan_or_recon</td><td>15</td><td>15/15</td><td>15/15</td><td>16</td></tr></tbody></table></section>
+    <section class="panel" style="margin-top:16px;"><h2>v3.5 Failure Reasons</h2><table><thead><tr><th>Reason</th><th>Count</th></tr></thead><tbody><tr><td>severity_mismatch</td><td>18</td></tr><tr><td>label_mismatch</td><td>12</td></tr><tr><td>is_suspicious_mismatch</td><td>5</td></tr><tr><td>evidence_partial_mismatch</td><td>2</td></tr></tbody></table></section>
+    <section style="margin-top:16px;"><h2>Concrete Error Examples</h2><div class="grid"><article class="example">
+      <h3>sample-000248</h3>
+      <p><strong>Reasons:</strong> label_mismatch</p>
+      <p><strong>Expected:</strong> sql_injection_attempt / high / suspicious True</p>
+      <p><strong>Predicted:</strong> directory_traversal_attempt / high / suspicious True</p>
+      <pre>2026-05-17T19:00:50+07:00 api-gateway: GET /api/users?id=9 AND SLEEP(5) src=198.51.100.169 status=500 upstream_ms=3904</pre>
+    </article><article class="example">
+      <h3>sample-000013</h3>
+      <p><strong>Reasons:</strong> label_mismatch, severity_mismatch, is_suspicious_mismatch</p>
+      <p><strong>Expected:</strong> normal / low / suspicious False</p>
+      <p><strong>Predicted:</strong> failed_login_bruteforce / high / suspicious True</p>
+      <pre>May 17 08:29:28 vpn-01 sshd[8158]: Failed password for admin from 198.51.100.225 port 44971 ssh2; failed_attempts=1</pre>
+    </article><article class="example">
+      <h3>sample-000136</h3>
+      <p><strong>Reasons:</strong> label_mismatch, severity_mismatch, is_suspicious_mismatch</p>
+      <p><strong>Expected:</strong> failed_login_bruteforce / medium / suspicious True</p>
+      <p><strong>Predicted:</strong> normal / low / suspicious False</p>
+      <pre>2026-05-17T19:42:27+07:00 waf: POST /login src=192.0.2.231 status=401 repeated=17 window=120s user_agent=python-requests</pre>
+    </article><article class="example">
+      <h3>sample-000078</h3>
+      <p><strong>Reasons:</strong> label_mismatch, severity_mismatch, is_suspicious_mismatch</p>
+      <p><strong>Expected:</strong> normal / low / suspicious False</p>
+      <p><strong>Predicted:</strong> failed_login_bruteforce / medium / suspicious True</p>
+      <pre>May 17 13:06:07 vpn-01 sshd[6242]: Failed password for admin from 192.0.2.173 port 33737 ssh2; failed_attempts=1</pre>
+    </article><article class="example">
+      <h3>sample-000218</h3>
+      <p><strong>Reasons:</strong> label_mismatch, severity_mismatch</p>
+      <p><strong>Expected:</strong> sql_injection_attempt / high / suspicious True</p>
+      <p><strong>Predicted:</strong> port_scan_or_recon / medium / suspicious True</p>
+      <pre>2026-05-17T13:12:16+07:00 api-gateway: GET /api/users?id=1 OR 1=1 src=203.0.113.137 status=400 upstream_ms=2740</pre>
+    </article></div></section>
+    <section class="panel" style="margin-top:16px;"><h2>Guardrail</h2><p>The fixed split result must not be used to tune v3.5. Any repair work after this report needs a new experiment name and must keep this Phase 7 result as historical evidence.</p></section>
+  </main>
+</body>
+</html>
