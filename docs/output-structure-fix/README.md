@@ -33,7 +33,7 @@
 | Phase 6 v3.2 probe | [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]] | Failed canary, improved | บันทึกผล v3.2 hard-contrast memorization probe และ next target สำหรับ v3.3 |
 | Phase 6 v3.3 probe | [[output-structure-fix/phase-6-v3-3-targeted-canary]] | Canary improved, still held | temp 0.3 runtime probe ขยับ hard-contrast label accuracy เป็น `0.64`, มี HTML infographic แล้ว แต่ SQLi ยัง `2/10` และยังไม่เปิด fixed test split |
 | Phase 6 v3.4 plan | [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]] | Temp 0 checked, still held | v3.4 temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68`; SQLi/invalid output/traversal/brute-force gravity ยัง block Phase 7 |
-| Phase 6 v3.5 plan | [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]] | Temp 0 checked, still held | v3.5 ขยับ hard-contrast label accuracy เป็น `0.84` และลด brute-force predictions เหลือ `12/50` แต่ JSON/schema ยัง `0.98`, invalid `1`, SQLi ยัง `4/10`; fixed test ยัง held |
+| Phase 6 v3.5 plan | [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]] | 2048 runtime improved, still held | 2048 temp 0.3 ขยับ hard-contrast label accuracy เป็น `0.88` และ JSON/schema เป็น `1.0` แต่ canonical temp 0 ยัง `0.84`/invalid `1` และ SQLi ยังต่ำกว่า gate; fixed test ยัง held |
 | Phase 7 | [[output-structure-fix/phase-7-fixed-split-comparison]] | Draft | รัน fixed split comparison หลังผ่าน prerequisites ทั้งหมด |
 
 ## Operating Rules
@@ -66,6 +66,7 @@
 | 2026-05-22 | Codex | Updated phase map after v3.4 temp 0 hard-contrast probe and HTML report | `reports/openai-compatible-vllm-structured-outputs-v3-4-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-4-temp-0-hard-contrast-memorization-probe-infographic.html` | `label_accuracy=0.68`, fixed test still held |
 | 2026-05-22 | Codex | Added v3.5 boundary repair plan, failure slice, dataset/config, and test coverage to the phase map | `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md`, `reports/phase-6-v3-5-boundary-failure-slice.json`, `data/splits/train-v3-5-boundary-repair.jsonl`, `ml/unsloth/config.v3-5.yaml`, `tests/test_v3_5_boundary_repair_workflow.py` | Dataset/config prepared, train pending |
 | 2026-05-22 | Codex | Updated phase map after v3.5 temp 0 and temp 0.3 hard-contrast probes and HTML reports | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-0-hard-contrast-memorization-probe-infographic.html`, `reports/phase-6-v3-5-temp-03-hard-contrast-memorization-probe-infographic.html` | Improved to `0.84`, fixed test still held |
+| 2026-05-22 | Codex | Updated phase map after v3.5 2048-token hard-contrast probes and HTML reports | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-03-2048-hard-contrast-memorization-probe-infographic.html` | Temp 0.3 improved to `0.88` with contract `1.0`, fixed test still held |
 
 ## Decision Log
 
@@ -77,6 +78,7 @@
 | 2026-05-20 | เพิ่ม Phase 6.1 สำหรับ evidence constraints | Phase 6 case 1 พบว่า JSON-constrained modes วนซ้ำใน `evidence` จนชน token cap | ก่อน retrain v3 ให้ลอง schema tightening และ sanitizer update |
 | 2026-05-22 | เพิ่ม v3.5 เป็น failure-driven repair ก่อน Phase 7 | v3.4 temp 0 ยังมี label accuracy `0.68`, invalid output `1`, SQLi `3/10`, traversal `5/10` และ predicted brute force `19/50` | ต้อง train/probe v3.5 บน hard-contrast และ mini semantic eval ก่อนเปิด fixed test split |
 | 2026-05-22 | Hold v3.5 before mini semantic eval | v3.5 temp 0 ผ่าน overall label gate แล้ว แต่ SQLi ยัง `4/10` และ output contract ยังไม่เต็ม | ทำ v3.5.1 SQLi/quote-output repair ก่อนรัน mini semantic หรือ fixed split |
+| 2026-05-22 | Hold fixed split after 2048 runtime probe | 2048 temp 0.3 ผ่าน output contract แล้ว แต่ canonical temp 0 ยังไม่ผ่าน และ SQLi ยัง `6/10` ต่ำกว่า gate เดิม | mini semantic ถ้ารันต่อควร mark เป็น runtime-only exploratory; fixed test ยังไม่เปิด |
 
 ## Related pages
 

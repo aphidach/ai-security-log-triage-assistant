@@ -71,7 +71,7 @@
 - [[output-structure-fix/phase-6-v3-2-hard-contrast-probe]]: ผล v3.2 hard-contrast memorization probe, HTML infographic, confusion matrix และ decision ให้ทำ v3.3 targeted canary ก่อน fixed split
 - [[output-structure-fix/phase-6-v3-3-targeted-canary]]: preparation, HTML infographic และผล hard-contrast runtime probe ของ v3.3 targeted weighted split; temp 0.3 ขยับ label accuracy เป็น `0.64` แต่ fixed test ยัง held
 - [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]]: แผนและสถานะ v3.4 boundary repair; temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68` พร้อม HTML infographic แล้ว และ fixed test ยัง held
-- [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]]: แผนและผล v3.5 จาก failure slice v3.4 temp 0; temp 0/temp 0.3 hard-contrast ได้ label accuracy `0.84` แต่ JSON/schema ยัง `0.98`, invalid `1`, SQLi `4/10` และ fixed test ยัง held
+- [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]]: แผนและผล v3.5 จาก failure slice v3.4 temp 0; 2048 temp 0.3 hard-contrast ได้ label accuracy `0.88`, JSON/schema `1.0`, invalid `0` แต่ canonical temp 0 และ SQLi gate ยัง held
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison stub หลัง prerequisites ครบ
 
 ## Documentation Maintenance
@@ -124,6 +124,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-22 | Codex | Updated v3.4 index entry after temp 0 hard-contrast probe and HTML infographic | `reports/openai-compatible-vllm-structured-outputs-v3-4-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-4-temp-0-hard-contrast-memorization-probe-infographic.html` | Canonical check held |
 | 2026-05-22 | Codex | Added v3.5 boundary repair page to the structured-output phase notes | `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md`, `reports/phase-6-v3-5-boundary-failure-slice.json`, `data/splits/train-v3-5-boundary-repair.jsonl`, `ml/unsloth/config.v3-5.yaml`, `tests/test_v3_5_boundary_repair_workflow.py` | Dataset/config prepared |
 | 2026-05-22 | Codex | Updated v3.5 index entry after hard-contrast temp 0 and temp 0.3 probes | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-0-hard-contrast-memorization-probe-infographic.html` | Improved but held |
+| 2026-05-22 | Codex | Updated v3.5 index entry after 2048-token hard-contrast probes | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-03-2048-hard-contrast-memorization-probe-infographic.html` | Runtime improved but held |
 
 ## Decision Log
 
