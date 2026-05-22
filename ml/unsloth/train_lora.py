@@ -39,6 +39,8 @@ V3_3_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-3-targeted-hard-contrast.
 V3_3_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-3-targeted-hard-contrast.jsonl"
 V3_4_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-4-boundary-repair.jsonl"
 V3_4_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-4-boundary-repair.jsonl"
+V3_5_TRAIN_PATH = ROOT / "data" / "splits" / "train-v3-5-boundary-repair.jsonl"
+V3_5_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v3-5-boundary-repair.jsonl"
 RESERVED_TEST_PATH = ROOT / "data" / "splits" / "test.jsonl"
 SPLITS_DIR = ROOT / "data" / "splits"
 
@@ -150,6 +152,7 @@ def validate_split_path(path: Path, *, expected_path: Path, field_name: str) -> 
             V3_1_TRAIN_PATH.resolve(),
             V3_3_TRAIN_PATH.resolve(),
             V3_4_TRAIN_PATH.resolve(),
+            V3_5_TRAIN_PATH.resolve(),
         },
         "data.validation_path": {
             EXPECTED_VALIDATION_PATH.resolve(),
@@ -157,6 +160,7 @@ def validate_split_path(path: Path, *, expected_path: Path, field_name: str) -> 
             V3_1_VALIDATION_PATH.resolve(),
             V3_3_VALIDATION_PATH.resolve(),
             V3_4_VALIDATION_PATH.resolve(),
+            V3_5_VALIDATION_PATH.resolve(),
         },
     }.get(field_name, {expected_path.resolve()})
     if path not in allowed_paths:
@@ -384,11 +388,19 @@ def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
         lora_config.get("target_modules", ["all-linear"]),
         field_name="lora.target_modules",
     )
-   
+    if target_modules != ["all-linear"]:
+        available_modules = module_leaf_names(model)
+        missing_modules = sorted(set(target_modules) - available_modules)
+        if missing_modules:
+            raise TrainingConfigError(
+                "lora.target_modules contains names not found in the loaded model: "
+                + ", ".join(missing_modules)
+            )
+
     model = FastLanguageModel.get_peft_model(
         model,
         r=int(lora_config.get("r", 16)),
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj",],
+        target_modules=target_modules,
         lora_alpha=int(lora_config.get("lora_alpha", 16)),
         lora_dropout=float(lora_config.get("lora_dropout", 0.0)),
         use_gradient_checkpointing=resolve_gradient_checkpointing(

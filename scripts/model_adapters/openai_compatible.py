@@ -95,6 +95,15 @@ REQUEST_OPTION_RANGES = {
     "frequency_penalty": (-2.0, 2.0),
     "presence_penalty": (-2.0, 2.0),
 }
+REQUEST_OPTION_ENV_SUFFIXES = {
+    "temperature": "TEMPERATURE",
+    "top_p": "TOP_P",
+    "frequency_penalty": "FREQUENCY_PENALTY",
+    "presence_penalty": "PRESENCE_PENALTY",
+    "seed": "SEED",
+    "stop": "STOP",
+}
+EXTRA_BODY_ENV_SUFFIX = "EXTRA_BODY"
 
 
 @dataclass(frozen=True, slots=True)
@@ -282,6 +291,13 @@ class _OpenAIAdapter:
                 "schema_path": self.env.schema_path,
                 "config_path": self.env.config_path,
                 "shared_config_path": SHARED_CONFIG_PATH_ENV,
+                "temperature": _request_option_env_name(self.env, "temperature"),
+                "top_p": _request_option_env_name(self.env, "top_p"),
+                "frequency_penalty": _request_option_env_name(self.env, "frequency_penalty"),
+                "presence_penalty": _request_option_env_name(self.env, "presence_penalty"),
+                "seed": _request_option_env_name(self.env, "seed"),
+                "stop": _request_option_env_name(self.env, "stop"),
+                "extra_body": _extra_body_env_name(self.env),
             },
         }
         if self._config is not None:
@@ -370,7 +386,7 @@ def _build_config(
             default=512,
             minimum=1,
         )
-        request_options, extra_body = _request_config(file_config)
+        request_options, extra_body = _request_config(file_config, env=env)
     except ValueError as exc:
         return None, str(exc)
 
@@ -580,7 +596,11 @@ def _resolve_repo_path(value: str | Path) -> Path:
     return candidate.resolve()
 
 
-def _request_config(config: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any] | None]:
+def _request_config(
+    config: dict[str, Any],
+    *,
+    env: OpenAIAdapterEnv | None = None,
+) -> tuple[dict[str, Any], dict[str, Any] | None]:
     request = _mapping_config(config.get("request"), field_name="request")
     request_options: dict[str, Any] = {"temperature": 0}
     extra_body = request.get("extra_body")
@@ -597,7 +617,68 @@ def _request_config(config: dict[str, Any]) -> tuple[dict[str, Any], dict[str, A
             continue
         request_options[key] = _validate_request_option(key, value)
 
+    if env is not None:
+        for key in sorted(REQUEST_OPTION_ENV_SUFFIXES):
+            env_name = _request_option_env_name(env, key)
+            env_value = os.getenv(env_name)
+            if env_value is None:
+                continue
+            request_options[key] = _validate_request_option(
+                key,
+                _parse_request_option_env_value(key, env_value, env_name=env_name),
+            )
+
+        extra_body_env = _extra_body_env_name(env)
+        extra_body_value = os.getenv(extra_body_env)
+        if extra_body_value is not None:
+            parsed_extra_body = _parse_extra_body_env_value(extra_body_value, env_name=extra_body_env)
+            extra_body = parsed_extra_body
+
     return request_options, dict(extra_body) if isinstance(extra_body, dict) and extra_body else None
+
+
+def _adapter_env_prefix(env: OpenAIAdapterEnv) -> str:
+    return env.model.removesuffix("_MODEL")
+
+
+def _request_option_env_name(env: OpenAIAdapterEnv, key: str) -> str:
+    return f"{_adapter_env_prefix(env)}_{REQUEST_OPTION_ENV_SUFFIXES[key]}"
+
+
+def _extra_body_env_name(env: OpenAIAdapterEnv) -> str:
+    return f"{_adapter_env_prefix(env)}_{EXTRA_BODY_ENV_SUFFIX}"
+
+
+def _parse_request_option_env_value(key: str, value: str, *, env_name: str) -> Any:
+    if key in REQUEST_OPTION_RANGES:
+        try:
+            return float(value)
+        except ValueError as exc:
+            raise ValueError(f"{env_name} must be a number") from exc
+    if key == "seed":
+        try:
+            return int(value)
+        except ValueError as exc:
+            raise ValueError(f"{env_name} must be an integer") from exc
+    if key == "stop":
+        stripped = value.strip()
+        if stripped.startswith("["):
+            try:
+                return json.loads(stripped)
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"{env_name} must be a string or JSON string array") from exc
+        return value
+    return value
+
+
+def _parse_extra_body_env_value(value: str, *, env_name: str) -> dict[str, Any]:
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{env_name} must be a JSON object") from exc
+    if not isinstance(parsed, dict):
+        raise ValueError(f"{env_name} must be a JSON object")
+    return parsed
 
 
 def _validate_request_option(key: str, value: Any) -> Any:

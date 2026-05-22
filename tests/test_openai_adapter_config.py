@@ -106,6 +106,50 @@ openai-compatible:
         self.assertEqual(config.model, "env-model")
         self.assertEqual(config.max_tokens, 456)
 
+    def test_environment_request_values_override_yaml_config(self) -> None:
+        config_path = self.write_config(
+            """
+openai-compatible:
+  base_url: http://yaml.example/v1
+  api_key: yaml-key
+  model: yaml-model
+  max_tokens: 123
+  response_format: structured_outputs
+  schema_path: data/schemas/triage-output.schema.json
+  request:
+    temperature: 0
+    top_p: 1
+    extra_body:
+      min_p: 0.05
+"""
+        )
+        env = {
+            "OPENAI_COMPATIBLE_TEMPERATURE": "0.3",
+            "OPENAI_COMPATIBLE_TOP_P": "0.9",
+            "OPENAI_COMPATIBLE_EXTRA_BODY": '{"min_p": 0.15, "repetition_penalty": 1.05}',
+        }
+
+        with patch.dict(os.environ, env, clear=True):
+            config, error = _build_config(
+                "openai-compatible",
+                OPENAI_COMPATIBLE_ENV,
+                base_url=None,
+                api_key=None,
+                model=None,
+                timeout_seconds=None,
+                max_retries=None,
+                max_tokens=None,
+                response_format=None,
+                schema_path=None,
+                config_path=config_path,
+            )
+
+        self.assertIsNone(error)
+        assert config is not None
+        self.assertEqual(config.request_options["temperature"], 0.3)
+        self.assertEqual(config.request_options["top_p"], 0.9)
+        self.assertEqual(config.extra_body, {"min_p": 0.15, "repetition_penalty": 1.05})
+
     def test_chat_completion_kwargs_include_request_options_and_extra_body(self) -> None:
         kwargs = _chat_completion_kwargs(
             request_mode=REQUEST_MODE_STRUCTURED_OUTPUTS,

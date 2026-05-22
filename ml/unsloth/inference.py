@@ -356,7 +356,10 @@ def main() -> int:
         config = load_config(config_path)
         adapter_path = resolve_adapter_path(config, args.adapter_path)
         schema = load_schema(schema_path)
-        log_line = read_log_line(args)
+        if args.preflight_only and not args.log_line and args.log_file is None and not args.stdin:
+            log_line = '127.0.0.1 - - [22/May/2026:00:00:00 +0700] "GET /health HTTP/1.1" 200'
+        else:
+            log_line = read_log_line(args)
         messages = build_inference_messages(log_line)
 
         if args.preflight_only:

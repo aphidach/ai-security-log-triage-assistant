@@ -1,0 +1,75 @@
+# Config for the Phase 6 v3.5 boundary repair run.
+# v3.5 starts from the base model and trains on the v3.4 repair split plus a
+# failure-driven supplement for SQLi, traversal, port/recon, and brute-force
+# anti-gravity cases. Keep fixed test evaluation out of this training config.
+
+model:
+  base_model: unsloth/LFM2-350M
+  model_family: LFM2
+  max_seq_length: 1024
+  load_in_4bit: false
+  use_gradient_checkpointing: unsloth
+  dtype: bfloat16
+
+data:
+  train_path: data/splits/train-v3-5-boundary-repair.jsonl
+  validation_path: data/splits/validation-v3-5-boundary-repair.jsonl
+  # test.jsonl is intentionally absent. Use it only after the hard-contrast canary
+  # and mini semantic eval are strong enough to enter Phase 7.
+  input_field: input
+  output_field: output
+
+format:
+  prompt_version: triage-json-v2.1
+  training_record_format: chat_messages
+  use_tokenizer_chat_template: true
+  strict_output_schema: true
+  assistant_output_keys:
+    - label
+    - severity
+    - is_suspicious
+    - evidence
+    - reason
+    - recommended_action
+
+lora:
+  r: 16
+  lora_alpha: 16
+  lora_dropout: 0.0
+  bias: none
+  task_type: CAUSAL_LM
+  random_state: 3407
+  use_rslora: false
+  loftq_config: null
+  # First-pass projection names. train_lora.py should verify these after loading LFM2.
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+training:
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 4
+  warmup_steps: 8
+  max_steps: 460
+  learning_rate: 0.0002
+  num_train_epochs: 1
+  optim: adamw_8bit
+  weight_decay: 0.001
+  lr_scheduler_type: linear
+  logging_steps: 1
+  eval_strategy: steps
+  eval_steps: 0.1
+  save_strategy: steps
+  save_steps: 30
+  seed: 3407
+  report_to: none
+
+output:
+  output_dir: ml/unsloth/outputs/lfm2-350m-v3-5-boundary-repair-security-triage-lora
+  adapter_name: lfm2-350m-v3-5-boundary-repair-security-triage-lora
