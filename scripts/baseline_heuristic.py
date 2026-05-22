@@ -292,7 +292,7 @@ def analyze_normal(log_line: str) -> TriageOutput:
         "normal",
         "low",
         False,
-        [],
+        [log_line[:160] or "empty log input"],
         "No known suspicious pattern was matched by the heuristic baseline.",
         "Continue monitoring and correlate with surrounding logs if this event appears unusual.",
     )

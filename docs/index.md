@@ -30,6 +30,7 @@
 - [[fine-tuning-notes]]: notes สำหรับ Unsloth fine-tuning path, Colab/GPU setup, limitation และ Day 6 handoff
 - [[lfm2-350m-model-card-notes]]: สรุปคำแนะนำจาก Hugging Face model card ของ `unsloth/LFM2-350M` และผลต่อ config v3.3, chat template, generation params และ runtime probe
 - [[openai-adapter-runtime-config]]: วิธีใช้ `config-adapter.yml` เพื่อปรับ OpenAI-compatible adapter runtime เช่น `temperature`, `top_p`, structured output mode และ backend `extra_body`
+- [[demo-script]]: talk track สำหรับ demo Day 7 แบบ 2-3 นาที พร้อม guardrails ไม่ overclaim และไม่เปิด fixed split โดยไม่ผ่าน gate
 - [[model-repetition-loop-diagnostics]]: runbook สำหรับแยกสาเหตุ model loop token ซ้ำ ๆ จาก decoding, EOS/chat template, structured outputs, runtime, quantization และ fine-tuning format
 - [[output-contract-hardening]]: สรุปรอบแก้ prompt `v2`, structured output adapter, schema sanitizer, smoke split ใหม่ และ decision ว่ายังไม่ retrain ทันที
 - [[structured-output-reliability-research-2026]]: สรุปข้อมูลปี 2026 เรื่อง structured output reliability, constrained decoding, validation/retry และแผนตัดสินใจต่อหลัง smoke ยังผ่าน JSON/schema เพียง 1/5
@@ -126,6 +127,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-22 | Codex | Updated v3.5 index entry after hard-contrast temp 0 and temp 0.3 probes | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-0-hard-contrast-memorization-probe-infographic.html` | Improved but held |
 | 2026-05-22 | Codex | Updated v3.5 index entry after 2048-token hard-contrast probes | `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json`, `reports/phase-6-v3-5-temp-03-2048-hard-contrast-memorization-probe-infographic.html` | Runtime improved but held |
 | 2026-05-22 | User/Codex | Marked Phase 6 and v3.5 closed in the docs index | `docs/Day6.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` | Closed with limitations |
+| 2026-05-22 | Codex | Added Day 7 demo script to the docs index | `docs/demo-script.md`, `docs/Day7.md`, `README.md` | Ready |
 
 ## Decision Log
 

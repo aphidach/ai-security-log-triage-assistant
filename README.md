@@ -91,49 +91,57 @@ nvidia-smi
 
 เริ่มจาก frontend ก่อนถ้าต้องการเปิด demo UI เร็วที่สุด:
 
-คำสั่งตรวจพื้นฐานของ Day 1 คือ:
+```bash
+cd frontend
+npm install
+npm run dev -- --port 3000
+```
+
+เปิดที่ `http://localhost:3000`
+
+คำสั่งตรวจ frontend:
 
 ```bash
 cd frontend
 npx tsc --noEmit
 npm run lint
+npm run build
 ```
 
-ตอนนี้ shared triage contract อยู่ที่:
+shared triage contract อยู่ที่:
 
 - `data/schemas/triage-output.schema.json` - JSON Schema กลางของ output
 - `frontend/lib/labels.ts` - label taxonomy ฝั่ง TypeScript
 - `frontend/lib/triage-schema.ts` - runtime validator และ type ของ triage output
+- `frontend/lib/heuristic-baseline.ts` - heuristic analyzer สำหรับ demo UI ที่รันได้โดยไม่ต้องใช้ model key
 
 ## สถานะ
 
-ตอนนี้ repo อยู่ช่วง foundation:
+ตอนนี้ repo ผ่าน foundation ถึง Phase 6 repair/evaluation investigation แล้ว และมี Day 7 demo UI ที่รัน local ได้:
 
-- มีแผน POC และแผนรายวันใน `docs/`
-- มี reference หลักใน `docs/References.md`
-- เลือกทิศทาง fine-tuning รอบแรกเป็น LFM2-350M
-- มี local skill สำหรับดูแลเอกสารแบบ mini LLM-Wiki ใน `.codex/skills/llm-docs/`
-- มี Next.js scaffold ใน `frontend/`
-- มี output schema, label constants และ runtime validator ฝั่ง frontend
+- มี deterministic synthetic dataset และ fixed `train/validation/test` splits
+- มี heuristic baseline ที่รัน local และ evaluator ที่เก็บ metrics ซ้ำได้
+- มี OpenAI-compatible adapter path และ structured-output runtime notes
+- มี Unsloth/LFM2-350M LoRA training path พร้อม v3.5 repair artifacts
+- มี Next.js demo UI สำหรับ paste log, sample picker, analyzer selector, structured result, evidence highlight, raw JSON และ comparison panel
 
-ยังต้องทำต่อ: dataset generator, baseline, evaluator, model adapters, fine-tuning script และ demo UI จริง
+ข้อจำกัดล่าสุด: Phase 6 ปิดแบบ `closed_with_limitations`; fixed `data/splits/test.jsonl` ยัง held สำหรับ Phase 7 fixed-split comparison เพราะ v3.5 ยังมี SQLi/quote-heavy weakness และ canonical temp 0 ยังไม่ผ่าน gate เดิมครบ
 
 ## Planned Workflow
 
-1. เพิ่ม output schema และ label taxonomy
-2. สร้าง synthetic JSONL dataset
-3. แบ่ง `train`, `validation`, `test`
-4. ทำ heuristic baseline ที่รันได้ local
-5. ทำ evaluation runner และ metrics
-6. เพิ่ม model adapters
-7. fine-tune LFM2-350M ด้วย Unsloth LoRA/QLoRA
-8. ทำ report เทียบ baseline กับ fine-tuned model
-9. ทำ demo UI สำหรับ paste log, analyze และ highlight evidence
+1. Output schema และ label taxonomy - done
+2. Synthetic JSONL dataset และ fixed splits - done
+3. Heuristic baseline และ evaluation runner - done
+4. Model adapters และ structured-output runtime probes - done
+5. LFM2-350M Unsloth LoRA/QLoRA path - done through v3.5 repair run
+6. Demo UI สำหรับ paste log, analyze และ highlight evidence - done for heuristic baseline
+7. Phase 7 fixed-split comparison - held until go/no-go gate clears
 
 ## Docs
 
 - `docs/poc-plan.md` - แผน POC หลัก
 - `docs/Day1.md` ถึง `docs/Day7.md` - แผนรายวันพร้อม Work Log และ Decision Log
+- `docs/demo-script.md` - talk track สำหรับ demo 2-3 นาที
 - `docs/References.md` - repo และเอกสารอ้างอิง
 - `docs/raw/What Small Language Model Is Best for Fine-Tuning.md` - clipping ที่ใช้เป็น rationale สำหรับ LFM2-350M
 - `AGENTS.md` - กติกาสำหรับ coding agents
