@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase 6 V3.5 Temp 0.3 Hard-Contrast Probe</title>
+  <style>
+    :root { color-scheme: light; --ink:#18202a; --muted:#596575; --line:#d9e0e8; --panel:#fff; --bg:#f5f7fa; --green:#1b7f5f; --green-soft:#dff5ec; --amber:#a36400; --amber-soft:#fff0ce; --red:#b23838; --red-soft:#ffe2df; --blue:#2f6fb3; --gray-soft:#eef2f6; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); letter-spacing:0; }
+    header { background:#17212f; color:white; padding:32px 28px 28px; border-bottom:5px solid var(--blue); }
+    main { max-width:1180px; margin:0 auto; padding:28px; }
+    h1,h2,h3,p { margin-top:0; } h1 { font-size:30px; line-height:1.15; margin-bottom:10px; letter-spacing:0; } h2 { font-size:20px; margin-bottom:14px; letter-spacing:0; } h3 { font-size:15px; margin-bottom:8px; letter-spacing:0; }
+    p { color:var(--muted); line-height:1.5; } code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.92em; }
+    .subtitle { max-width:940px; color:#cfd9e6; margin-bottom:0; }
+    .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; } .pill { border:1px solid rgba(255,255,255,.28); border-radius:999px; padding:6px 10px; font-size:13px; color:#e8eef7; }
+    .grid { display:grid; gap:14px; } .metrics { grid-template-columns:repeat(6,minmax(0,1fr)); margin-bottom:22px; } .two-col { grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); align-items:start; }
+    .panel,.card { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:0 1px 2px rgba(20,32,46,.05); } .panel { padding:20px; margin-bottom:18px; } .card { padding:16px; min-height:112px; }
+    .metric-value { font-size:28px; line-height:1; font-weight:750; margin-bottom:8px; } .metric-label { color:var(--muted); font-size:13px; line-height:1.35; }
+    .status { display:inline-flex; align-items:center; gap:8px; border-radius:999px; padding:7px 11px; font-weight:700; font-size:13px; color:var(--amber); background:var(--amber-soft); border:1px solid #f0cc83; margin-bottom:12px; } .status::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--amber); }
+    .callout { border-left:4px solid var(--amber); background:#fff8e8; padding:12px 14px; border-radius:6px; color:#5f4a1e; margin:0; }
+    .bar-row { display:grid; grid-template-columns:180px 1fr 50px; gap:10px; align-items:center; margin:10px 0; } .bar-label { color:var(--ink); font-size:13px; overflow-wrap:anywhere; } .bar-track { height:14px; background:var(--gray-soft); border-radius:999px; overflow:hidden; border:1px solid #dde4ed; } .bar-fill { height:100%; background:var(--blue); border-radius:999px; } .bar-fill.green { background:var(--green); } .bar-fill.amber { background:var(--amber); } .bar-count { text-align:right; color:var(--muted); font-variant-numeric:tabular-nums; font-size:13px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; } th,td { border-bottom:1px solid var(--line); padding:9px 8px; text-align:left; vertical-align:top; } th { color:#334155; background:#f8fafc; font-weight:700; } td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+    .ok { color:var(--green); font-weight:700; } .bad { color:var(--red); font-weight:700; } .warn { color:var(--amber); font-weight:700; }
+    .gate-pass { background:var(--green-soft); color:var(--green); border-radius:999px; padding:3px 8px; font-weight:700; white-space:nowrap; } .gate-fail { background:var(--red-soft); color:var(--red); border-radius:999px; padding:3px 8px; font-weight:700; white-space:nowrap; }
+    .sources { font-size:12px; color:var(--muted); line-height:1.55; }
+    @media (max-width:980px) { .metrics{grid-template-columns:repeat(2,minmax(0,1fr));} .two-col{grid-template-columns:1fr;} header,main{padding-left:18px;padding-right:18px;} .bar-row{grid-template-columns:135px 1fr 42px;} table{font-size:12px;} }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Phase 6 V3.5 Temp 0.3 Hard-Contrast Probe</h1>
+    <p class="subtitle">runtime temp 0.3 confirms the v3.5 repair improved hard-contrast label accuracy to 84% and reduced brute-force gravity to 12/50, but the run is still held because JSON/schema is 98%/98%, invalid outputs remain 1, and SQLi is only 4/10.</p>
+    <div class="pill-row">
+      <span class="pill">Model: <code>lfm2-security-triage-v3-5</code></span>
+      <span class="pill">Split: <code>data/generated/v3-hard-contrast-security-triage.jsonl</code></span>
+      <span class="pill">Mode: <code>structured_outputs</code></span>
+      <span class="pill">temperature=<code>0.3</code></span>
+      <span class="pill">Prompt: <code>triage-json-v2.1</code></span>
+    </div>
+  </header>
+  <main>
+    <section class="grid metrics">
+      <article class="card"><div class="metric-value">84%</div><h3>Label accuracy</h3><div class="metric-label">passes overall gate</div></article>
+      <article class="card"><div class="metric-value">98% / 98%</div><h3>JSON/schema</h3><div class="metric-label">1 invalid output</div></article>
+      <article class="card"><div class="metric-value">4/10</div><h3>SQLi accuracy</h3><div class="metric-label">main remaining blocker</div></article>
+      <article class="card"><div class="metric-value">10/10</div><h3>Traversal accuracy</h3><div class="metric-label">passes boundary target</div></article>
+      <article class="card"><div class="metric-value">12/50</div><h3>Brute-force predictions</h3><div class="metric-label">within gravity ceiling</div></article>
+      <article class="card"><div class="metric-value">629.2 ms</div><h3>Average latency</h3><div class="metric-label">runtime temp 0.3</div></article>
+    </section>
+
+    <section class="panel">
+      <span class="status">Still held before mini semantic and Phase 7</span>
+      <p class="callout">v3.5 is a real improvement over v3.4, but it still should not advance to fixed test comparison. The remaining work is narrow: fix quote-heavy SQLi structured output and raise SQLi canary accuracy from 4/10 to at least 7/10. This report describes triage behavior only and does not claim compromise.</p>
+    </section>
+
+    <section class="grid two-col">
+      <article class="panel">
+        <h2>Per-Label Canary</h2>
+        <table><thead><tr><th>Expected label</th><th class="num">Correct</th><th class="num">Accuracy</th><th>Predictions</th></tr></thead><tbody>
+          <tr><td>Normal</td><td class="num"><code>8/10</code></td><td class="num ok">80%</td><td>Brute force: 2, Normal: 8</td></tr>
+<tr><td>Brute force</td><td class="num"><code>10/10</code></td><td class="num ok">100%</td><td>Brute force: 10</td></tr>
+<tr><td>SQL injection</td><td class="num"><code>4/10</code></td><td class="num bad">40%</td><td>SQL injection: 4, Traversal: 3, Port/recon: 1, Normal: 1, Invalid: 1</td></tr>
+<tr><td>Traversal</td><td class="num"><code>10/10</code></td><td class="num ok">100%</td><td>Traversal: 10</td></tr>
+<tr><td>Port/recon</td><td class="num"><code>10/10</code></td><td class="num ok">100%</td><td>Port/recon: 10</td></tr>
+        </tbody></table>
+      </article>
+
+      <article class="panel">
+        <h2>Predicted Distribution</h2>
+        <div class="bar-row"><div class="bar-label">Normal</div><div class="bar-track"><div class="bar-fill green" style="width:69%"></div></div><div class="bar-count">9</div></div>
+<div class="bar-row"><div class="bar-label">Brute force</div><div class="bar-track"><div class="bar-fill amber" style="width:92%"></div></div><div class="bar-count">12</div></div>
+<div class="bar-row"><div class="bar-label">SQL injection</div><div class="bar-track"><div class="bar-fill green" style="width:31%"></div></div><div class="bar-count">4</div></div>
+<div class="bar-row"><div class="bar-label">Traversal</div><div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div><div class="bar-count">13</div></div>
+<div class="bar-row"><div class="bar-label">Port/recon</div><div class="bar-track"><div class="bar-fill green" style="width:85%"></div></div><div class="bar-count">11</div></div>
+<div class="bar-row"><div class="bar-label">Invalid</div><div class="bar-track"><div class="bar-fill amber" style="width:8%"></div></div><div class="bar-count">1</div></div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>Gate Check</h2>
+      <table><thead><tr><th>Gate</th><th>Observed</th><th>Requirement</th><th>Status</th></tr></thead><tbody>
+        <tr><td>Eval order</td><td><code>runtime probe</code></td><td>temp 0 should be checked first</td><td><span class="gate-fail">hold</span></td></tr>
+<tr><td>JSON parse</td><td><code>98%</code></td><td>required 100%</td><td><span class="gate-fail">hold</span></td></tr>
+<tr><td>Schema</td><td><code>98%</code></td><td>required 100%</td><td><span class="gate-fail">hold</span></td></tr>
+<tr><td>Invalid outputs</td><td><code>1</code></td><td>required 0</td><td><span class="gate-fail">hold</span></td></tr>
+<tr><td>Hard-contrast label accuracy</td><td><code>84%</code></td><td>target &gt;=80%</td><td><span class="gate-pass">pass</span></td></tr>
+<tr><td>SQLi canary</td><td><code>4/10</code></td><td>target &gt;=7/10</td><td><span class="gate-fail">hold</span></td></tr>
+<tr><td>Traversal canary</td><td><code>10/10</code></td><td>target &gt;=7/10</td><td><span class="gate-pass">pass</span></td></tr>
+<tr><td>Port/recon canary</td><td><code>10/10</code></td><td>target &gt;=8/10</td><td><span class="gate-pass">pass</span></td></tr>
+<tr><td>Normal hard negatives</td><td><code>8/10</code></td><td>target &gt;=8/10</td><td><span class="gate-pass">pass</span></td></tr>
+<tr><td>Brute-force gravity</td><td><code>12/50</code></td><td>target &lt;=14/50</td><td><span class="gate-pass">pass</span></td></tr>
+      </tbody></table>
+    </section>
+
+    <section class="panel">
+      <h2>Confusion Matrix</h2>
+      <table><thead><tr><th>Expected \ Predicted</th><th class="num">Normal</th><th class="num">Brute force</th><th class="num">SQL injection</th><th class="num">Traversal</th><th class="num">Port/recon</th><th class="num">Invalid</th></tr></thead><tbody>
+        <tr><th>Normal</th><td class="num"><code>8</code></td><td class="num"><code>2</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td></tr>
+<tr><th>Brute force</th><td class="num"><code>0</code></td><td class="num"><code>10</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td></tr>
+<tr><th>SQL injection</th><td class="num"><code>1</code></td><td class="num"><code>0</code></td><td class="num"><code>4</code></td><td class="num"><code>3</code></td><td class="num"><code>1</code></td><td class="num"><code>1</code></td></tr>
+<tr><th>Traversal</th><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>10</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td></tr>
+<tr><th>Port/recon</th><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>0</code></td><td class="num"><code>10</code></td><td class="num"><code>0</code></td></tr>
+      </tbody></table>
+    </section>
+
+    <section class="panel">
+      <h2>Label Mismatch Cases</h2>
+      <table><thead><tr><th>ID</th><th>Expected</th><th>Predicted</th><th>Failure reasons</th></tr></thead><tbody>
+        <tr><td><code>v3-hard-000001</code></td><td>Normal</td><td>Brute force</td><td>label, severity, suspicious</td></tr>
+<tr><td><code>v3-hard-000003</code></td><td>Normal</td><td>Brute force</td><td>label, severity, suspicious</td></tr>
+<tr><td><code>v3-hard-000023</code></td><td>SQL injection</td><td>Traversal</td><td>label</td></tr>
+<tr><td><code>v3-hard-000024</code></td><td>SQL injection</td><td>Port/recon</td><td>label, severity</td></tr>
+<tr><td><code>v3-hard-000025</code></td><td>SQL injection</td><td>Normal</td><td>label, severity, suspicious</td></tr>
+<tr><td><code>v3-hard-000026</code></td><td>SQL injection</td><td>Traversal</td><td>label</td></tr>
+<tr><td><code>v3-hard-000029</code></td><td>SQL injection</td><td>Traversal</td><td>label</td></tr>
+<tr><td><code>v3-hard-000030</code></td><td>SQL injection</td><td>Invalid</td><td>label, severity, suspicious, evidence, json, schema</td></tr>
+      </tbody></table>
+    </section>
+
+    <section class="panel">
+      <h2>Invalid Output</h2>
+      <table><thead><tr><th>ID</th><th>Expected</th><th>JSON parse</th><th>Schema</th><th>Raw output prefix</th></tr></thead><tbody>
+        <tr><td><code>v3-hard-000030</code></td><td>SQL injection</td><td>false</td><td>false</td><td><code>{&quot;label&quot;:&quot;sql_injection_attempt&quot;,&quot;severity&quot;:&quot;high&quot;,&quot;is_suspicious&quot;:true,&quot;evidence&quot;:[&quot;OR &quot;                                                                                           </code></td></tr>
+      </tbody></table>
+    </section>
+
+    <section class="panel">
+      <h2>Run Metadata</h2>
+      <table><tbody>
+        <tr><th>Adapter</th><td><code>openai-compatible</code></td></tr>
+        <tr><th>Base URL</th><td><code>http://192.168.8.141:8080/v1</code></td></tr>
+        <tr><th>Prompt version</th><td><code>triage-json-v2.1</code></td></tr>
+        <tr><th>Runtime extras</th><td><code>{&quot;min_p&quot;:0.15,&quot;repetition_penalty&quot;:1.05}</code></td></tr>
+        <tr><th>JSON report</th><td><code>reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.json</code></td></tr>
+        <tr><th>Markdown report</th><td><code>reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.md</code></td></tr>
+      </tbody></table>
+    </section>
+
+    <p class="sources">Generated on 2026-05-22 from <code>reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-hard-contrast-memorization-probe.json</code>. Fixed split status: still held; this report uses the hard-contrast canary split, not <code>data/splits/test.jsonl</code>.</p>
+  </main>
+</body>
+</html>
