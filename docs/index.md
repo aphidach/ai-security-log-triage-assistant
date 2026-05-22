@@ -74,7 +74,8 @@
 - [[output-structure-fix/phase-6-v3-4-boundary-repair-plan]]: แผนและสถานะ v3.4 boundary repair; temp 0.3 ขยับ label accuracy เป็น `0.72` แต่ temp 0 ได้ `0.68` พร้อม HTML infographic แล้ว และ fixed test ยัง held
 - [[output-structure-fix/phase-6-v3-5-boundary-repair-plan]]: แผนและผล v3.5 จาก failure slice v3.4 temp 0; ปิดเป็น final Phase 6 repair run หลัง 2048 temp 0.3 ได้ label accuracy `0.88`, JSON/schema `1.0`, invalid `0` แต่ไม่ใช่ Phase 7 clearance
 - [[output-structure-fix/phase-7-fixed-split-comparison]]: Phase 7 fixed split comparison result; heuristic label accuracy `1.0`, v3.5 as-is label accuracy `0.84`, JSON/schema `1.0`, final decision `hold`
-- [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]]: Phase 8 v4 SQLi-first repair preparation; failure slice, 160-record supplement, train split `1070`, config, and tests are ready while fixed test stays out of tuning
+- [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]]: Phase 8 v4 SQLi-first repair trained and probed; hard-contrast JSON/schema `1.0`, invalid `0`, but label accuracy `0.84` and SQLi `4/10` keep mini semantic and fixed comparison held
+- [[output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan]]: Phase 8 v4.1 narrow SQLi-boundary repair prepared with 150-record supplement, 1220-record train split, config `ml/unsloth/config.v4-1.yaml`, and fixed test still held
 
 ## Documentation Maintenance
 
@@ -132,6 +133,8 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-22 | Codex | Added Day 7 demo script to the docs index | `docs/demo-script.md`, `docs/Day7.md`, `README.md` | Ready |
 | 2026-05-22 | Codex | Updated index after Phase 7 fixed split evaluation | `docs/output-structure-fix/phase-7-fixed-split-comparison.md`, `reports/comparison.md`, `reports/phase-7-fixed-split-summary.html` | Decision `hold` |
 | 2026-05-22 | Codex | Added Phase 8 v4 SQLi-first repair page to the docs index | `docs/output-structure-fix/phase-8-v4-sqli-boundary-repair-plan.md`, `data/splits/train-v4-sqli-boundary-repair.jsonl`, `ml/unsloth/config.v4.yaml` | Prepared |
+| 2026-05-22 | User/Codex | Updated Phase 8 index entry after v4 training and hard-contrast probes | `reports/phase-8-v4-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
+| 2026-05-22 | Codex | Added Phase 8 v4.1 SQLi-boundary repair page to the docs index | `docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md`, `data/splits/train-v4-1-sqli-boundary-repair.jsonl`, `ml/unsloth/config.v4-1.yaml` | Prepared |
 
 ## Decision Log
 
