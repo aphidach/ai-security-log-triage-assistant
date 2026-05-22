@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "data-formats-for-llm-training.md",
+                "file": "output-structure-fix/phase-6-v3-4-boundary-repair-plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "data-formats-for-llm-training"
+              "title": "phase-6-v3-4-boundary-repair-plan"
             }
           }
         ],
@@ -200,6 +200,7 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "data-formats-for-llm-training.md",
     "output-structure-fix/phase-6-v3-4-boundary-repair-plan.md",
     "openai-adapter-runtime-config.md",
     "lfm2-350m-model-card-notes.md",
@@ -207,7 +208,6 @@
     "output-structure-fix/phase-6-v3-2-hard-contrast-probe.md",
     "output-structure-fix/phase-6-v3-1-mini-semantic-eval.md",
     "scripts.md",
-    "data-formats-for-llm-training.md",
     "output-structure-fix/phase-6-1-evidence-constraints.md",
     "output-structure-fix/phase-6-v3-hard-contrast-dataset.md",
     "label-imbalance-and-prediction-collapse.md",
