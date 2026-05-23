@@ -9,15 +9,16 @@ v4.3 เป็น capacity/architecture diagnostic ต่อจาก v4.2 held 
 - v4.1 hard-contrast reports สำหรับ LFM2 control behavior (source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
 - v4.2 prompt diagnostic result สำหรับเหตุผลที่ต้องไป capacity/architecture แทน prompt wording เพิ่ม (source: docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md, source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json)
 - hard-contrast probe split สำหรับ diagnostic input เท่านั้น (source: data/generated/v3-hard-contrast-security-triage.jsonl)
+- downloaded Hugging Face model card สำหรับ first candidate `unsloth/Qwen3.5-0.8B` (source: docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md, source: https://huggingface.co/unsloth/Qwen3.5-0.8B)
 - runtime prompt/config support ที่คง default prompt เป็น `triage-json-v2.1` (source: scripts/model_adapters/prompt_contract.py, source: scripts/model_adapters/openai_compatible.py)
 
 **Last updated**
 
-2026-05-22
+2026-05-23
 
 ## Status
 
-Planned. No new synthetic data, train split, validation split, LoRA config, or train allowlist entry should be created for v4.3. This diagnostic compares served model behavior under the default prompt profile `triage-json-v2.1` on the existing hard-contrast probe only.
+Planned. First candidate intake selected `unsloth/Qwen3.5-0.8B` and downloaded its model card to `docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md`. No new synthetic data, train split, validation split, LoRA config, or train allowlist entry should be created for v4.3. This diagnostic compares served model behavior under the default prompt profile `triage-json-v2.1` on the existing hard-contrast probe only.
 
 ## Why This Exists
 
@@ -46,6 +47,29 @@ Do not add labels, schema fields, evaluator metrics, frontend API changes, or a 
 | LFM2 control | Preserve the v4.1 reference behavior | Use existing v4.1 hard-contrast reports, or rerun only if serving/runtime changed | If candidate improves while control remains held, suspect LFM2-350M capacity or adapter ceiling |
 | Larger instruction model, no fine-tune | Test semantic boundary capacity with the same prompt/schema | Serve one stronger OpenAI-compatible model alias and run hard-contrast only | If it passes, run a small pilot fine-tune or adapter strategy next |
 | Alternative architecture pilot | Test whether another small/medium architecture separates SQLi/traversal/recon better | Use the same runtime adapter and report naming, no fixed split | If it also fails, inspect label definitions, hard-contrast ambiguity, or evaluator assumptions |
+
+## Candidate Intake
+
+`unsloth/Qwen3.5-0.8B` is the first v4.3 candidate. The local source snapshot is:
+
+```text
+docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md
+```
+
+Why it fits this diagnostic:
+
+- It is still a sub-1B model, so it tests whether a newer small architecture can beat the current `LFM2-350M` adapter without jumping directly to a 4B/7B model.
+- The model card describes it as intended for prototyping, task-specific fine-tuning, and research/development purposes, which matches a diagnostic POC rather than production detection.
+- Hugging Face metadata reports `qwen3_5`, `apache-2.0`, `image-text-to-text`, base model `Qwen/Qwen3.5-0.8B`, and about `873M` safetensors parameters, so the run should be documented as a Qwen3.5 capacity/architecture candidate, not as an LFM2 repair run.
+
+Caveat: the model card identifies the model as a causal language model with a vision encoder and an `image-text-to-text` pipeline. The v4.3 probe must use text-only security log prompts through the same OpenAI-compatible adapter and structured-output schema before treating it as useful for this project.
+
+Suggested local naming:
+
+```text
+CANDIDATE_MODEL_ALIAS=qwen3-5-0-8b-security-triage
+CANDIDATE_MODEL_SLUG=qwen3-5-0-8b
+```
 
 ## Commands
 
@@ -109,6 +133,7 @@ If a stronger candidate passes while v4.1 remains held, plan a capacity pilot. I
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-22 | Codex | Added v4.3 capacity/architecture diagnostic plan after v4.2 held | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `tests/test_v4_3_capacity_diagnostic_plan.py` | Planned |
+| 2026-05-23 | Codex | Added `unsloth/Qwen3.5-0.8B` as the first v4.3 candidate intake and downloaded the model card | `docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md` | Candidate selected; probe not run |
 
 ## Decision Log
 
@@ -117,6 +142,7 @@ If a stronger candidate passes while v4.1 remains held, plan a capacity pilot. I
 | 2026-05-22 | Make v4.3 a capacity/architecture diagnostic | v4.1 data repair and v4.2 prompt priority both failed hard-contrast SQLi gates in different ways | Next evidence should compare model/runtime capacity with the same prompt/schema, not add more synthetic data by default |
 | 2026-05-22 | Keep default prompt at `triage-json-v2.1` | v2.2 damaged broad label boundaries and temp 0.3 output contract | v4.3 command examples set v2.1 explicitly and leave v2.2 as historical diagnostic only |
 | 2026-05-22 | Keep fixed split out of Phase 8 gates | The user-run fixed split sanity result is useful context but historically exposed | v4.3 uses hard-contrast probes or a future newly frozen holdout, not `data/splits/test.jsonl` |
+| 2026-05-23 | Use `unsloth/Qwen3.5-0.8B` as the first candidate intake | The user selected it as the next small-model architecture to test, and the Hugging Face card positions it for prototyping and task-specific fine-tuning | v4.3 can proceed to serving and hard-contrast probes under prompt `triage-json-v2.1`; no v4.3 training artifacts are created |
 
 ## Related pages
 
@@ -125,3 +151,4 @@ If a stronger candidate passes while v4.1 remains held, plan a capacity pilot. I
 - [[openai-adapter-runtime-config]]
 - [[fine-tuning-notes]]
 - [[structured-output-reliability-research-2026]]
+- [[model-candidates/unsloth-qwen3.5-0.8b/model-card]]

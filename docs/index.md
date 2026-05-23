@@ -12,7 +12,7 @@
 
 **Last updated**
 
-2026-05-22
+2026-05-23
 
 ## Core Pages
 
@@ -29,6 +29,7 @@
 - [[label-imbalance-and-prediction-collapse]]: แนวทางแยก data imbalance ออกจาก prediction collapse ใน Phase 6 พร้อม research-backed mitigation เช่น balanced sampling, focal/class-balanced loss, hard contrast examples และ macro metrics
 - [[fine-tuning-notes]]: notes สำหรับ Unsloth fine-tuning path, Colab/GPU setup, limitation และ Day 6 handoff
 - [[lfm2-350m-model-card-notes]]: สรุปคำแนะนำจาก Hugging Face model card ของ `unsloth/LFM2-350M` และผลต่อ config v3.3, chat template, generation params และ runtime probe
+- [[model-candidates/unsloth-qwen3.5-0.8b/model-card]]: downloaded Hugging Face model card ของ `unsloth/Qwen3.5-0.8B` สำหรับ Phase 8 v4.3 capacity/architecture diagnostic
 - [[openai-adapter-runtime-config]]: วิธีใช้ `config-adapter.yml` เพื่อปรับ OpenAI-compatible adapter runtime เช่น `temperature`, `top_p`, structured output mode และ backend `extra_body`
 - [[demo-script]]: talk track สำหรับ demo Day 7 แบบ 2-3 นาที พร้อม guardrails ไม่ overclaim และไม่เปิด fixed split โดยไม่ผ่าน gate
 - [[model-repetition-loop-diagnostics]]: runbook สำหรับแยกสาเหตุ model loop token ซ้ำ ๆ จาก decoding, EOS/chat template, structured outputs, runtime, quantization และ fine-tuning format
@@ -77,7 +78,7 @@
 - [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]]: Phase 8 v4 SQLi-first repair trained and probed; hard-contrast JSON/schema `1.0`, invalid `0`, but label accuracy `0.84` and SQLi `4/10` keep mini semantic and fixed comparison held
 - [[output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan]]: Phase 8 v4.1 narrow SQLi-boundary repair trained/probed; JSON/schema `1.0`, invalid `0`, but temp 0 SQLi `6/10` and temp 0.3 SQLi `7/10` keep mini semantic and fixed comparison held
 - [[output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan]]: Phase 8 v4.2 SQLi-priority prompt diagnostic probed/held; prompt v2.2 reduced SQLi-to-traversal to `0/10` but temp 0 label accuracy fell to `0.64`, SQLi stayed `4/10`, and temp 0.3 lost JSON/schema `1.0`
-- [[output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan]]: Phase 8 v4.3 capacity/architecture diagnostic plan; keeps default prompt `triage-json-v2.1`, creates no new train artifacts, and uses hard-contrast probes instead of the historical fixed test split
+- [[output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan]]: Phase 8 v4.3 capacity/architecture diagnostic plan; first candidate intake is `unsloth/Qwen3.5-0.8B`, keeps default prompt `triage-json-v2.1`, creates no new train artifacts, and uses hard-contrast probes instead of the historical fixed test split
 
 ## Documentation Maintenance
 
@@ -141,6 +142,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-22 | Codex | Added Phase 8 v4.2 SQLi-priority prompt diagnostic page to the docs index | `docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md`, `reports/phase-8-v4-2-sqli-priority-diagnostic-slice.json`, `scripts/model_adapters/prompt_contract.py` | Prepared |
 | 2026-05-22 | Codex | Updated Phase 8 v4.2 index entry after hard-contrast prompt probes | `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json` | Held |
 | 2026-05-22 | Codex | Added Phase 8 v4.3 capacity/architecture diagnostic plan to the docs index | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `tests/test_v4_3_capacity_diagnostic_plan.py` | Planned |
+| 2026-05-23 | Codex | Added the `unsloth/Qwen3.5-0.8B` downloaded model card and linked it to Phase 8 v4.3 | `docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md`, `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `docs/References.md` | Candidate intake |
 
 ## Decision Log
 

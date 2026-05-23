@@ -21,6 +21,7 @@ from scripts.model_adapters.prompt_contract import TRIAGE_PROMPT_VERSION  # noqa
 
 V42_DOC = ROOT / "docs" / "output-structure-fix" / "phase-8-v4-2-sqli-priority-diagnostic-plan.md"
 V43_DOC = ROOT / "docs" / "output-structure-fix" / "phase-8-v4-3-capacity-architecture-diagnostic-plan.md"
+QWEN35_MODEL_CARD = ROOT / "docs" / "model-candidates" / "unsloth-qwen3.5-0.8b" / "model-card.md"
 
 
 class V43CapacityDiagnosticPlanTest(unittest.TestCase):
@@ -74,6 +75,16 @@ openai-compatible:
         self.assertIn("data/generated/v3-hard-contrast-security-triage.jsonl", content)
         self.assertIn("OPENAI_COMPATIBLE_PROMPT_VERSION=triage-json-v2.1", content)
         self.assertIn("capacity/architecture diagnostic", content)
+
+    def test_v4_3_qwen35_candidate_intake_is_documented(self) -> None:
+        content = V43_DOC.read_text(encoding="utf-8")
+        model_card = QWEN35_MODEL_CARD.read_text(encoding="utf-8")
+
+        self.assertIn("unsloth/Qwen3.5-0.8B", content)
+        self.assertIn("docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md", content)
+        self.assertIn("Candidate Intake", content)
+        self.assertIn("# Qwen3.5-0.8B", model_card)
+        self.assertIn("license: apache-2.0", model_card)
 
     def test_v4_3_plan_does_not_include_fixed_split_eval_command(self) -> None:
         content = V43_DOC.read_text(encoding="utf-8")

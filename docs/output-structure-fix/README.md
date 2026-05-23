@@ -2,7 +2,7 @@
 
 **Summary**
 
-โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 7 fixed split comparison ปิดด้วย decision `hold`, Phase 8/v4 train/probe แล้วแต่ยัง held เพราะ SQLi hard-contrast ยัง `4/10`, v4.1 train/probe แล้วแต่ยัง held เพราะ canonical temp 0 SQLi ยัง `6/10`, v4.2 prompt-priority diagnostic ก็ held เพราะ prompt v2.2 ทำให้ broader label boundary เสีย และ v4.3 ถูกวางเป็น capacity/architecture diagnostic ถัดไปโดยไม่เพิ่ม synthetic data เพิ่มทันที
+โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 7 fixed split comparison ปิดด้วย decision `hold`, Phase 8/v4 train/probe แล้วแต่ยัง held เพราะ SQLi hard-contrast ยัง `4/10`, v4.1 train/probe แล้วแต่ยัง held เพราะ canonical temp 0 SQLi ยัง `6/10`, v4.2 prompt-priority diagnostic ก็ held เพราะ prompt v2.2 ทำให้ broader label boundary เสีย และ v4.3 ถูกวางเป็น capacity/architecture diagnostic ถัดไปโดยเริ่ม candidate intake จาก `unsloth/Qwen3.5-0.8B` แต่ยังไม่เพิ่ม synthetic data เพิ่มทันที
 
 หน้า `docs/structured-output-fix-plan.md` ยังเป็น master plan ส่วนโฟลเดอร์นี้ใช้เก็บรายละเอียดการทำงาน คำสั่งที่ต้องรัน หลักฐานที่ต้องเก็บ และ pass/fail condition ของแต่ละ phase ตั้งแต่ Phase 1 เป็นต้นไป
 
@@ -14,7 +14,7 @@
 
 **Last updated**
 
-2026-05-22
+2026-05-23
 
 ## File Map
 
@@ -38,7 +38,7 @@
 | Phase 8 v4 | [[output-structure-fix/phase-8-v4-sqli-boundary-repair-plan]] | Trained/probed; held | v4 SQLi-first repair train แล้วและ hard-contrast temp 0/temp 0.3 ได้ label accuracy `0.84`, JSON/schema `1.0`, invalid `0`, SQLi `4/10`; ยังไม่เปิด mini semantic หรือ fixed split |
 | Phase 8 v4.1 | [[output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan]] | Trained/probed; held | v4.1 train แล้วและ hard-contrast temp 0 ได้ label accuracy `0.88`, SQLi `6/10`; temp 0.3 ได้ `0.90`, SQLi `7/10`; JSON/schema `1.0`, invalid `0`, fixed test ยัง held |
 | Phase 8 v4.2 | [[output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan]] | Probed; held | prompt/architecture diagnostic บน v4.1 adapter เพิ่ม `triage-json-v2.2-sqli-priority` แบบ opt-in; temp 0 ได้ label accuracy `0.64`, SQLi `4/10`, traversal `4/10`; temp 0.3 ได้ JSON/schema `0.98` และ invalid `1` |
-| Phase 8 v4.3 | [[output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan]] | Planned | capacity/architecture diagnostic ด้วย hard-contrast probe และ default prompt `triage-json-v2.1`; ไม่สร้าง v4.3 split/config และไม่ใช้ fixed test เป็น gate |
+| Phase 8 v4.3 | [[output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan]] | Candidate intake | capacity/architecture diagnostic ด้วย hard-contrast probe และ default prompt `triage-json-v2.1`; first candidate คือ `unsloth/Qwen3.5-0.8B`; ไม่สร้าง v4.3 split/config และไม่ใช้ fixed test เป็น gate |
 
 ## Operating Rules
 
@@ -81,6 +81,7 @@
 | 2026-05-22 | Codex | Added Phase 8 v4.2 SQLi-priority prompt diagnostic page to the phase map | `docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md`, `reports/phase-8-v4-2-sqli-priority-diagnostic-slice.json`, `scripts/model_adapters/prompt_contract.py` | Prepared |
 | 2026-05-22 | Codex | Updated phase map after v4.2 hard-contrast prompt probes | `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json` | Held |
 | 2026-05-22 | Codex | Added v4.3 capacity/architecture diagnostic plan to the phase map | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `tests/test_v4_3_capacity_diagnostic_plan.py` | Planned |
+| 2026-05-23 | Codex | Updated v4.3 phase map after selecting `unsloth/Qwen3.5-0.8B` as first candidate intake | `docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md`, `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` | Candidate intake |
 
 ## Decision Log
 
@@ -102,6 +103,7 @@
 | 2026-05-22 | Make v4.2 a prompt-priority diagnostic | v4.1 reached the data-only repair stop condition, so another broad supplement would make the cause harder to read | v4.2 adds an opt-in prompt profile and runs hard-contrast probes before any mini semantic eval |
 | 2026-05-22 | Hold v4.2 after hard-contrast probes | SQLi-to-traversal went to `0/10`, but SQLi stayed `4/10`, traversal fell to `4/10`, and temp 0.3 lost JSON/schema `1.0` | Do not promote prompt v2.2; next work should be capacity pilot or deeper architecture diagnostic |
 | 2026-05-22 | Plan v4.3 capacity/architecture diagnostic | v4.1 data repair and v4.2 prompt repair both failed the SQLi hard-contrast gate | Compare model/runtime capacity under prompt v2.1 before adding more SQLi synthetic data |
+| 2026-05-23 | Start v4.3 with `unsloth/Qwen3.5-0.8B` candidate intake | The model card is now downloaded locally and the user wants this small Qwen3.5 candidate tested next | Proceed to serving/probe planning without creating v4.3 train data or config |
 
 ## Related pages
 
