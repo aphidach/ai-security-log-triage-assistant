@@ -69,12 +69,16 @@ openai-compatible:
         content = V43_DOC.read_text(encoding="utf-8")
 
         self.assertIn("Status", content)
-        self.assertIn("Planned", content)
+        self.assertIn("Probed; held", content)
         self.assertIn("No new synthetic data", content)
         self.assertIn("Do not run `data/splits/test.jsonl`", content)
         self.assertIn("data/generated/v3-hard-contrast-security-triage.jsonl", content)
         self.assertIn("OPENAI_COMPATIBLE_PROMPT_VERSION=triage-json-v2.1", content)
         self.assertIn("capacity/architecture diagnostic", content)
+        self.assertIn("Qwen3.5-0.8B Result Summary", content)
+        self.assertIn("`0.50`", content)
+        self.assertIn("`0.48`", content)
+        self.assertIn("SQLi เหลือ `3/10` และ `2/10`", content)
 
     def test_v4_3_qwen35_candidate_intake_is_documented(self) -> None:
         content = V43_DOC.read_text(encoding="utf-8")

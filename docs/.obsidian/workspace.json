@@ -200,6 +200,7 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md",
     "output-structure-fix/phase-7-fixed-split-comparison.md",
     "model-candidates/unsloth-qwen3.5-0.8b/model-card.md",
     "model-candidates/unsloth-qwen3.5-0.8b/README.md",
@@ -227,7 +228,6 @@
     "output-structure-fix/phase-6-v3-or-runtime-decision.md",
     "model-repetition-loop-diagnostics.md",
     "output-structure-fix/phase-5-mini-semantic-eval.md",
-    "structured-output-fix-plan.md",
     "output-structure-fix",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",

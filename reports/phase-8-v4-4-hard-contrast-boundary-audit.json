@@ -1,0 +1,2529 @@
+{
+  "boundary_decision": "Do not train from this result yet. The next useful evidence is either a candidate with stronger security-log semantics or a deliberately scoped prompt/data boundary repair based on the suspicious-to-normal buckets.",
+  "created_date": "2026-05-23",
+  "diagnostic_type": "hard_contrast_boundary_audit",
+  "fixed_test_split_used": false,
+  "persistent_failure_ids": [
+    "v3-hard-000001",
+    "v3-hard-000002",
+    "v3-hard-000013",
+    "v3-hard-000021",
+    "v3-hard-000023",
+    "v3-hard-000025",
+    "v3-hard-000026",
+    "v3-hard-000027",
+    "v3-hard-000028",
+    "v3-hard-000030",
+    "v3-hard-000031",
+    "v3-hard-000032",
+    "v3-hard-000033",
+    "v3-hard-000034",
+    "v3-hard-000037",
+    "v3-hard-000038",
+    "v3-hard-000039",
+    "v3-hard-000040",
+    "v3-hard-000041",
+    "v3-hard-000042",
+    "v3-hard-000045",
+    "v3-hard-000046",
+    "v3-hard-000048",
+    "v3-hard-000049",
+    "v3-hard-000050"
+  ],
+  "persistent_label_failure_count": 25,
+  "probe_summaries": {
+    "temp_0": {
+      "bucket_summary": [
+        {
+          "boundary_read": "This is secondary because failed_login_bruteforce recall remains 9/10.",
+          "bucket": "bruteforce_to_normal",
+          "count": 1,
+          "diagnosis": "A failed-login positive without enough repeated-attempt framing can be undercalled.",
+          "ids": [
+            "v3-hard-000013"
+          ],
+          "next_action": "Review the one missed brute-force case after suspicious-to-normal collapse is handled.",
+          "title": "Brute force -> normal"
+        },
+        {
+          "boundary_read": "This is a small guardrail issue, not the main v4.4 blocker.",
+          "bucket": "normal_auth_negative_to_bruteforce",
+          "count": 2,
+          "diagnosis": "Single failed-auth negatives are still close to brute-force wording.",
+          "ids": [
+            "v3-hard-000001",
+            "v3-hard-000002"
+          ],
+          "next_action": "Keep the single-attempt threshold wording in future prompt/data audits.",
+          "title": "Normal auth negative -> brute force"
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "bucket": "recon_to_normal",
+          "count": 7,
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "ids": [
+            "v3-hard-000041",
+            "v3-hard-000042",
+            "v3-hard-000045",
+            "v3-hard-000046",
+            "v3-hard-000048",
+            "v3-hard-000049",
+            "v3-hard-000050"
+          ],
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "title": "Recon -> normal"
+        },
+        {
+          "boundary_read": "This is older Phase 8 gravity in a smaller form; route context is overpowering payload semantics.",
+          "bucket": "sqli_login_payload_to_bruteforce",
+          "count": 2,
+          "diagnosis": "Login-form SQLi payloads drift into failed-login brute-force because the route/status dominates the payload.",
+          "ids": [
+            "v3-hard-000026",
+            "v3-hard-000028"
+          ],
+          "next_action": "Teach that SQL payload syntax inside username/email fields owns the label over generic login failure wording.",
+          "title": "SQLi login payload -> brute force"
+        },
+        {
+          "boundary_read": "The label boundary needs to say schema names in request/query fields are suspicious.",
+          "bucket": "sqli_schema_to_normal",
+          "count": 1,
+          "diagnosis": "information_schema-style schema discovery is interpreted as benign database/search activity.",
+          "ids": [
+            "v3-hard-000025"
+          ],
+          "next_action": "Pair benign SQL documentation searches against malicious request-field schema discovery.",
+          "title": "SQLi schema discovery -> normal"
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "bucket": "sqli_tautology_to_normal",
+          "count": 4,
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "ids": [
+            "v3-hard-000021",
+            "v3-hard-000023",
+            "v3-hard-000027",
+            "v3-hard-000030"
+          ],
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "title": "SQLi tautology -> normal"
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "bucket": "traversal_to_normal",
+          "count": 8,
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "ids": [
+            "v3-hard-000031",
+            "v3-hard-000032",
+            "v3-hard-000033",
+            "v3-hard-000034",
+            "v3-hard-000037",
+            "v3-hard-000038",
+            "v3-hard-000039",
+            "v3-hard-000040"
+          ],
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "title": "Traversal -> normal"
+        }
+      ],
+      "expected_label_distribution": {
+        "directory_traversal_attempt": 10,
+        "failed_login_bruteforce": 10,
+        "normal": 10,
+        "port_scan_or_recon": 10,
+        "sql_injection_attempt": 10
+      },
+      "failure_cases": [
+        {
+          "boundary_read": "This is a small guardrail issue, not the main v4.4 blocker.",
+          "diagnosis": "Single failed-auth negatives are still close to brute-force wording.",
+          "expected_evidence": [
+            "Failed password",
+            "failed_attempts=1"
+          ],
+          "expected_is_suspicious": false,
+          "expected_label": "normal",
+          "expected_severity": "low",
+          "failure_bucket": "normal_auth_negative_to_bruteforce",
+          "failure_bucket_title": "Normal auth negative -> brute force",
+          "id": "v3-hard-000001",
+          "input_log": "May 18 09:00:01 auth-01 sshd[2011]: Failed password for webapp from 192.0.2.44 port 51422 ssh2; failed_attempts=1",
+          "json_parse_success": true,
+          "next_action": "Keep the single-attempt threshold wording in future prompt/data audits.",
+          "predicted_evidence": [
+            "Failed password",
+            "port 51422",
+            "failed_attempts=1"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_reason": "Repeated failed authentication attempts with a single failed attempt volume suggest potential brute force activity or credential guessing.",
+          "predicted_severity": "medium",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a small guardrail issue, not the main v4.4 blocker.",
+          "diagnosis": "Single failed-auth negatives are still close to brute-force wording.",
+          "expected_evidence": [
+            "event=login_failed",
+            "failures=1",
+            "outcome=allowed_retry"
+          ],
+          "expected_is_suspicious": false,
+          "expected_label": "normal",
+          "expected_severity": "low",
+          "failure_bucket": "normal_auth_negative_to_bruteforce",
+          "failure_bucket_title": "Normal auth negative -> brute force",
+          "id": "v3-hard-000002",
+          "input_log": "2026-05-18T09:02:10+07:00 app=auth event=login_failed user=svc_backup src_ip=198.51.100.24 failures=1 window=10m outcome=allowed_retry",
+          "json_parse_success": true,
+          "next_action": "Keep the single-attempt threshold wording in future prompt/data audits.",
+          "predicted_evidence": [
+            "198.51.100.24",
+            "10m",
+            "allowed_retry"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_reason": "Repeated failed login attempts with a window duration of 10 minutes and a retry outcome of allowed_retry indicate a brute force attack pattern.",
+          "predicted_severity": "medium",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is secondary because failed_login_bruteforce recall remains 9/10.",
+          "diagnosis": "A failed-login positive without enough repeated-attempt framing can be undercalled.",
+          "expected_evidence": [
+            "event_id=4625",
+            "count=16",
+            "status=failed_logon"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "failed_login_bruteforce",
+          "expected_severity": "high",
+          "failure_bucket": "bruteforce_to_normal",
+          "failure_bucket_title": "Brute force -> normal",
+          "id": "v3-hard-000013",
+          "input_log": "2026-05-18T09:04:35+07:00 winlog event_id=4625 host=ws-07 target_user=jdoe src_ip=203.0.113.74 count=16 status=failed_logon",
+          "json_parse_success": true,
+          "next_action": "Review the one missed brute-force case after suspicious-to-normal collapse is handled.",
+          "predicted_evidence": [
+            "winlog event_id=4625",
+            "host=ws-07",
+            "target_user=jdoe"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a single failed login attempt for a specific user on a specific host, which is a standard authentication event. There are no indicators of brute force, SQL injection, directory traversal, or port scanning.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "username=' OR '1'='1",
+            "status=403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000021",
+          "input_log": "2026-05-18T10:00:01+07:00 app=web route=/login method=POST src_ip=198.51.100.121 username=' OR '1'='1 status=403",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "2026-05-18T10:00:01+07:00",
+            "app=web",
+            "route=/login"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a standard web login attempt with a 403 Forbidden status code, which is a common response for unauthorized access attempts. The specific input string ' OR '1'='1' is a common SQL injection pattern, but the log entry itself does not contain the malicious payload or the specific injection mechanism itself. It is a routine authentication attempt.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "id=1 OR 1=1",
+            "status=400"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000023",
+          "input_log": "2026-05-18T10:04:17+07:00 api-gateway: GET /api/users?id=1 OR 1=1 src=192.0.2.132 status=400 upstream_ms=1200",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "GET",
+            "/api/users?id=1 OR 1=1",
+            "src=192.0.2.132"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request contains a SQL injection attempt (OR 1=1) but is a standard GET request to a user endpoint with a valid source IP, indicating routine or expected activity.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The label boundary needs to say schema names in request/query fields are suspicious.",
+          "diagnosis": "information_schema-style schema discovery is interpreted as benign database/search activity.",
+          "expected_evidence": [
+            "information_schema.tables",
+            "403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_schema_to_normal",
+          "failure_bucket_title": "SQLi schema discovery -> normal",
+          "id": "v3-hard-000025",
+          "input_log": "192.0.2.111 - - [18/May/2026:10:08:22 +0700] \"GET /search?q=information_schema.tables HTTP/1.1\" 403 640 \"-\" \"Mozilla/5.0\"",
+          "json_parse_success": true,
+          "next_action": "Pair benign SQL documentation searches against malicious request-field schema discovery.",
+          "predicted_evidence": [
+            "192.0.2.111",
+            "GET",
+            "/search?q=information_schema.tables"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request is a standard HTTP GET request to a database schema table, which is a common and expected system activity.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is older Phase 8 gravity in a smaller form; route context is overpowering payload semantics.",
+          "diagnosis": "Login-form SQLi payloads drift into failed-login brute-force because the route/status dominates the payload.",
+          "expected_evidence": [
+            "username=admin'--",
+            "status=401"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_login_payload_to_bruteforce",
+          "failure_bucket_title": "SQLi login payload -> brute force",
+          "id": "v3-hard-000026",
+          "input_log": "2026-05-18T10:10:15+07:00 app=web route=/login method=POST src_ip=203.0.113.155 username=admin'-- status=401",
+          "json_parse_success": true,
+          "next_action": "Teach that SQL payload syntax inside username/email fields owns the label over generic login failure wording.",
+          "predicted_evidence": [
+            "2026-05-18T10:10:15+07:00",
+            "app=web",
+            "route=/login"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_reason": "Repeated failed login attempts with a username containing a SQL injection payload (admin'--) suggest a brute force attack or credential guessing attempt.",
+          "predicted_severity": "high",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "name%27%20OR%20%271%27%3D%271",
+            "400"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000027",
+          "input_log": "198.51.100.141 - - [18/May/2026:10:12:20 +0700] \"GET /products?sort=name%27%20OR%20%271%27%3D%271 HTTP/1.1\" 400 455 \"-\" \"Mozilla/5.0\"",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "198.51.100.141",
+            "GET",
+            "/products"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry represents a standard HTTP GET request to a product listing endpoint with a malformed query string containing SQL injection syntax (%27%20OR%20%271%27%3D%271). This is a routine error response indicating a syntax error in the URL, not an attack attempt.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is older Phase 8 gravity in a smaller form; route context is overpowering payload semantics.",
+          "diagnosis": "Login-form SQLi payloads drift into failed-login brute-force because the route/status dominates the payload.",
+          "expected_evidence": [
+            "email=test@example.com' OR 'a'='a",
+            "status=403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_login_payload_to_bruteforce",
+          "failure_bucket_title": "SQLi login payload -> brute force",
+          "id": "v3-hard-000028",
+          "input_log": "2026-05-18T10:14:39+07:00 app=web route=/reset-password method=POST src_ip=192.0.2.56 email=test@example.com' OR 'a'='a status=403",
+          "json_parse_success": true,
+          "next_action": "Teach that SQL payload syntax inside username/email fields owns the label over generic login failure wording.",
+          "predicted_evidence": [
+            "2026-05-18T10:14:39+07:00",
+            "POST",
+            "src_ip=192.0.2.56"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_reason": "Repeated failed login attempts with a specific pattern (OR 'a'='a') suggest automated brute force activity targeting the test@example.com account.",
+          "predicted_severity": "high",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "q=\\\" OR \\\"1\\\"=\\\"1",
+            "400"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000030",
+          "input_log": "203.0.113.77 - - [18/May/2026:10:18:25 +0700] \"GET /search?q=\\\" OR \\\"1\\\"=\\\"1 HTTP/1.1\" 400 530 \"-\" \"Mozilla/5.0\"",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "GET",
+            "/search?q=OR%201%3D1",
+            "HTTP/1.1"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request is a standard GET request to a search endpoint with a simple query string containing a literal OR condition. This is a common, expected pattern for web search queries and does not indicate any attack vectors such as injection attempts, directory traversal, or reconnaissance.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "../config.yml",
+            "403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000031",
+          "input_log": "198.51.100.72 - - [18/May/2026:11:00:05 +0700] \"GET /download?file=../config.yml HTTP/1.1\" 403 210 \"-\" \"curl/8.1\"",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "198.51.100.72",
+            "GET",
+            "/download?file=../config.yml"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request is a standard HTTP GET request to a file download endpoint with a relative path traversal attempt. The path traversal pattern (../) is common in legitimate file system access attempts, not indicative of a security compromise.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "../../../etc/shadow",
+            "404"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000032",
+          "input_log": "203.0.113.18 - - [18/May/2026:11:02:19 +0700] \"GET /download?file=../../../etc/shadow HTTP/1.1\" 404 1874 \"-\" \"curl/8.1\"",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "GET",
+            "/download",
+            "file=../../../etc/shadow"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request is a standard HTTP GET request to a file download endpoint with a path traversal attempt. The path traversal pattern (../) is common in web applications and does not indicate a security compromise or attack.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "/static/..%2f..%2fapp%2fsettings.py",
+            "status=404"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000033",
+          "input_log": "2026-05-18T11:04:21+07:00 app=web route=/static/..%2f..%2fapp%2fsettings.py src_ip=192.0.2.133 status=404 bytes=109",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "2026-05-18T11:04:21+07:00",
+            "app=web",
+            "route=/static/..%2f..%2fapp%2fsettings.py"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a 404 status code for a static file path, which is a standard HTTP response for missing files. This is a common expected behavior in web applications and does not indicate any attack activity.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "/files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini",
+            "403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000034",
+          "input_log": "192.0.2.172 - - [18/May/2026:11:06:33 +0700] \"GET /files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini HTTP/1.1\" 403 700 \"-\" \"curl/8.1\"",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "192.0.2.172",
+            "GET",
+            "/files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry represents a standard HTTP request to a file path that is not explicitly defined in the context of a potential attack. The request is to a file named 'win.ini' which is a common configuration file for Windows applications, and the 403 status code indicates the server is refusing access to a legitimate file, not attempting to bypass security controls or execute malicious code.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "/static/../../.env",
+            "status=403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000037",
+          "input_log": "2026-05-18T11:12:56+07:00 app=web route=/static/../../.env src_ip=203.0.113.72 status=403 bytes=892",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "2026-05-18T11:12:56+07:00",
+            "app=web",
+            "route=/static/../../.env"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a 403 Forbidden response from a web application, which is a standard security response for unauthorized access attempts. The IP address 203.0.113.72 is a known internal or restricted network segment, and the path '/static/../../.env' represents a directory traversal attempt. However, the presence of a 403 response without a subsequent error code (like 401 or 403) and the specific path structure suggest this is a legitimate attempt to access a restricted file system, not an active attack. The repeated nature of the path traversal is consistent with a known exploit pattern, but the immediate response is a denial of service, not an active attack. The log does not contain indicators of SQL injection, port scanning, or brute force attempts.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "../../../../var/log/auth.log",
+            "403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000038",
+          "input_log": "203.0.113.201 - - [18/May/2026:11:14:29 +0700] \"GET /download?file=../../../../var/log/auth.log HTTP/1.1\" 403 122 \"-\" \"curl/8.1\"",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "203.0.113.201",
+            "GET",
+            "/download?file=../../../../var/log/auth.log HTTP/1.1"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request is a standard HTTP GET request to a file download endpoint with a relative path traversal attempt. The path contains a backslash followed by a directory component, which is a common technique for directory traversal. However, the request is blocked by a 403 Forbidden response, indicating the system is configured to restrict access to this path. This is a known and expected behavior for security controls, not an active attack.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "path=..%2f..%2f..%2fetc%2fpasswd",
+            "result=denied"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000039",
+          "input_log": "2026-05-18T11:16:02+07:00 api=files action=open path=..%2f..%2f..%2fetc%2fpasswd src_ip=192.0.2.39 result=denied",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "2026-05-18T11:16:02+07:00",
+            "api=files",
+            "action=open"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a successful file access attempt (action=open) to a specific path within the filesystem, which is a standard administrative operation. There are no indicators of brute force, SQL injection, directory traversal, or port scanning.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "/backup/../../secrets.yml",
+            "status=403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000040",
+          "input_log": "2026-05-18T11:18:40+07:00 app=web route=/backup/../../secrets.yml src_ip=198.51.100.116 status=403 bytes=0",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "2026-05-18T11:18:40+07:00",
+            "app=web",
+            "route=/backup/../../secrets.yml"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a successful web request to a backup endpoint (/backup/../../secrets.yml) with a 403 status code. This is a standard, expected behavior for a web application returning restricted access to sensitive files.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "sequential connection attempts",
+            "unique_ports=4"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000041",
+          "input_log": "2026-05-18T12:00:11+07:00 netflow: sequential connection attempts src=192.0.2.205 dst=203.0.113.10 dst_ports=22,80,443,3389 unique_ports=4 window=45s",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "sequential connection attempts",
+            "unique_ports=4",
+            "window=45s"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log indicates a single sequential connection attempt with a small number of unique ports and a short window duration, which is consistent with normal network traffic patterns.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "nmap fingerprint",
+            "probed_ports=80,443,8080,8443"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "high",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000042",
+          "input_log": "2026-05-18T12:02:18+07:00 ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224; probed_ports=80,443,8080,8443; packets=92",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224",
+            "probed_ports=80,443,8080,8443",
+            "packets=92"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log indicates a standard Nmap reconnaissance scan with a specific fingerprint and port enumeration results, which is a routine security activity.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "probe burst",
+            "unique_ports=6"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000045",
+          "input_log": "2026-05-18T12:08:53+07:00 netflow: probe burst src=192.0.2.61 dst=198.51.100.17 dst_ports=21,22,23,25,80,443 unique_ports=6 window=30s",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "netflow: probe burst",
+            "src=192.0.2.61",
+            "dst=198.51.100.17"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log indicates a netflow probe burst with a unique port count of 6, which is a standard reconnaissance activity. This is not indicative of a security compromise or attack.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "nmap fingerprint",
+            "probed_ports=135,139,445,3389"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "high",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000046",
+          "input_log": "2026-05-18T12:10:40+07:00 ids: nmap fingerprint from 203.0.113.120 to 198.51.100.77; probed_ports=135,139,445,3389; packets=140",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "2026-05-18T12:10:40+07:00",
+            "nmap fingerprint from 203.0.113.120 to 198.51.100.77",
+            "probed_ports=135,139,445,3389"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log indicates a standard Nmap reconnaissance scan targeting specific ports (135, 139, 445, 3389) on a specific IP address. This is a routine diagnostic activity used to map network topology and identify services, not an attack or anomaly.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "sequential connection attempts",
+            "unique_ports=4"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000048",
+          "input_log": "2026-05-18T12:14:24+07:00 netflow: sequential connection attempts src=203.0.113.188 dst=192.0.2.51 dst_ports=80,443,8080,8443 unique_ports=4 window=20s",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "sequential connection attempts",
+            "unique_ports=4",
+            "window=20s"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log indicates a single sequential connection attempt with a small number of unique ports and a short window duration, which is consistent with normal network traffic patterns.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "service enumeration",
+            "unique_ports=7",
+            "banners_requested=true"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000049",
+          "input_log": "2026-05-18T12:16:55+07:00 ids: service enumeration src=198.51.100.200 dst=203.0.113.11 unique_ports=7 banners_requested=true",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "ids: service enumeration",
+            "src=198.51.100.200",
+            "dst=203.0.113.11"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a service enumeration activity where the source IP (198.51.100.200) is being scanned for unique ports and banners. This is a standard reconnaissance action used to map network topology and identify services, which is expected behavior in security monitoring. There are no indicators of compromise, brute force, or malicious intent.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "blocked recon",
+            "tcp_flags=SYN",
+            "unique_ports=5"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000050",
+          "input_log": "2026-05-18T12:18:16+07:00 firewall: blocked recon src=192.0.2.199 dst=198.51.100.42 tcp_flags=SYN dst_ports=22,80,443,3306,5432 unique_ports=5",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "2026-05-18T12:18:16+07:00",
+            "firewall: blocked",
+            "src=192.0.2.199"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a firewall block of a specific source IP address with associated TCP ports, which is a standard operational event for network traffic filtering.",
+          "predicted_severity": "low",
+          "probe": "temp_0",
+          "schema_success": true
+        }
+      ],
+      "key_case_counts": {
+        "sqli_traversal_recon_to_normal_count": 20,
+        "sqli_traversal_recon_to_normal_ids": [
+          "v3-hard-000021",
+          "v3-hard-000023",
+          "v3-hard-000025",
+          "v3-hard-000027",
+          "v3-hard-000030",
+          "v3-hard-000031",
+          "v3-hard-000032",
+          "v3-hard-000033",
+          "v3-hard-000034",
+          "v3-hard-000037",
+          "v3-hard-000038",
+          "v3-hard-000039",
+          "v3-hard-000040",
+          "v3-hard-000041",
+          "v3-hard-000042",
+          "v3-hard-000045",
+          "v3-hard-000046",
+          "v3-hard-000048",
+          "v3-hard-000049",
+          "v3-hard-000050"
+        ]
+      },
+      "label_failure_count": 25,
+      "metrics": {
+        "average_latency_ms": 5845.253222,
+        "evidence_partial_match": 0.82,
+        "invalid_output_count": 0,
+        "is_suspicious_accuracy": 0.54,
+        "json_parse_success_rate": 1.0,
+        "label_accuracy": 0.5,
+        "schema_success_rate": 1.0,
+        "severity_accuracy": 0.42
+      },
+      "predicted_label_distribution": {
+        "directory_traversal_attempt": 2,
+        "failed_login_bruteforce": 13,
+        "normal": 29,
+        "port_scan_or_recon": 3,
+        "sql_injection_attempt": 3
+      },
+      "runtime_context": {
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "extra_body": null,
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs"
+      },
+      "sample_count": 50,
+      "source_report_path": "reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json"
+    },
+    "temp_0_3": {
+      "bucket_summary": [
+        {
+          "boundary_read": "This is secondary because failed_login_bruteforce recall remains 9/10.",
+          "bucket": "bruteforce_to_normal",
+          "count": 1,
+          "diagnosis": "A failed-login positive without enough repeated-attempt framing can be undercalled.",
+          "ids": [
+            "v3-hard-000013"
+          ],
+          "next_action": "Review the one missed brute-force case after suspicious-to-normal collapse is handled.",
+          "title": "Brute force -> normal"
+        },
+        {
+          "boundary_read": "This is a small guardrail issue, not the main v4.4 blocker.",
+          "bucket": "normal_auth_negative_to_bruteforce",
+          "count": 2,
+          "diagnosis": "Single failed-auth negatives are still close to brute-force wording.",
+          "ids": [
+            "v3-hard-000001",
+            "v3-hard-000002"
+          ],
+          "next_action": "Keep the single-attempt threshold wording in future prompt/data audits.",
+          "title": "Normal auth negative -> brute force"
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "bucket": "recon_to_normal",
+          "count": 7,
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "ids": [
+            "v3-hard-000041",
+            "v3-hard-000042",
+            "v3-hard-000045",
+            "v3-hard-000046",
+            "v3-hard-000048",
+            "v3-hard-000049",
+            "v3-hard-000050"
+          ],
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "title": "Recon -> normal"
+        },
+        {
+          "boundary_read": "This is older Phase 8 gravity in a smaller form; route context is overpowering payload semantics.",
+          "bucket": "sqli_login_payload_to_bruteforce",
+          "count": 1,
+          "diagnosis": "Login-form SQLi payloads drift into failed-login brute-force because the route/status dominates the payload.",
+          "ids": [
+            "v3-hard-000026"
+          ],
+          "next_action": "Teach that SQL payload syntax inside username/email fields owns the label over generic login failure wording.",
+          "title": "SQLi login payload -> brute force"
+        },
+        {
+          "boundary_read": "The label boundary needs to say schema names in request/query fields are suspicious.",
+          "bucket": "sqli_schema_to_normal",
+          "count": 1,
+          "diagnosis": "information_schema-style schema discovery is interpreted as benign database/search activity.",
+          "ids": [
+            "v3-hard-000025"
+          ],
+          "next_action": "Pair benign SQL documentation searches against malicious request-field schema discovery.",
+          "title": "SQLi schema discovery -> normal"
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "bucket": "sqli_tautology_to_normal",
+          "count": 5,
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "ids": [
+            "v3-hard-000021",
+            "v3-hard-000023",
+            "v3-hard-000027",
+            "v3-hard-000028",
+            "v3-hard-000030"
+          ],
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "title": "SQLi tautology -> normal"
+        },
+        {
+          "boundary_read": "The model needs an explicit security mapping from timing functions to SQLi.",
+          "bucket": "sqli_timing_to_normal",
+          "count": 1,
+          "diagnosis": "SLEEP/latency cues are interpreted as backend processing rather than timing SQLi.",
+          "ids": [
+            "v3-hard-000024"
+          ],
+          "next_action": "Use SLEEP/pg_sleep/WAITFOR cases only as SQLi positives unless host/port scan evidence is present.",
+          "title": "SQLi timing -> normal"
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "bucket": "traversal_to_normal",
+          "count": 8,
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "ids": [
+            "v3-hard-000031",
+            "v3-hard-000032",
+            "v3-hard-000033",
+            "v3-hard-000034",
+            "v3-hard-000037",
+            "v3-hard-000038",
+            "v3-hard-000039",
+            "v3-hard-000040"
+          ],
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "title": "Traversal -> normal"
+        }
+      ],
+      "expected_label_distribution": {
+        "directory_traversal_attempt": 10,
+        "failed_login_bruteforce": 10,
+        "normal": 10,
+        "port_scan_or_recon": 10,
+        "sql_injection_attempt": 10
+      },
+      "failure_cases": [
+        {
+          "boundary_read": "This is a small guardrail issue, not the main v4.4 blocker.",
+          "diagnosis": "Single failed-auth negatives are still close to brute-force wording.",
+          "expected_evidence": [
+            "Failed password",
+            "failed_attempts=1"
+          ],
+          "expected_is_suspicious": false,
+          "expected_label": "normal",
+          "expected_severity": "low",
+          "failure_bucket": "normal_auth_negative_to_bruteforce",
+          "failure_bucket_title": "Normal auth negative -> brute force",
+          "id": "v3-hard-000001",
+          "input_log": "May 18 09:00:01 auth-01 sshd[2011]: Failed password for webapp from 192.0.2.44 port 51422 ssh2; failed_attempts=1",
+          "json_parse_success": true,
+          "next_action": "Keep the single-attempt threshold wording in future prompt/data audits.",
+          "predicted_evidence": [
+            "Failed password",
+            "port 51422",
+            "sshd"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_reason": "Repeated failed authentication attempts with a specific port number (51422) indicate a potential brute force attack on the SSH service.",
+          "predicted_severity": "high",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a small guardrail issue, not the main v4.4 blocker.",
+          "diagnosis": "Single failed-auth negatives are still close to brute-force wording.",
+          "expected_evidence": [
+            "event=login_failed",
+            "failures=1",
+            "outcome=allowed_retry"
+          ],
+          "expected_is_suspicious": false,
+          "expected_label": "normal",
+          "expected_severity": "low",
+          "failure_bucket": "normal_auth_negative_to_bruteforce",
+          "failure_bucket_title": "Normal auth negative -> brute force",
+          "id": "v3-hard-000002",
+          "input_log": "2026-05-18T09:02:10+07:00 app=auth event=login_failed user=svc_backup src_ip=198.51.100.24 failures=1 window=10m outcome=allowed_retry",
+          "json_parse_success": true,
+          "next_action": "Keep the single-attempt threshold wording in future prompt/data audits.",
+          "predicted_evidence": [
+            "198.51.100.24",
+            "10m",
+            "allowed_retry"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_reason": "Repeated failed login attempts with a specific IP address and a duration of 10 minutes indicate potential brute force activity.",
+          "predicted_severity": "medium",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is secondary because failed_login_bruteforce recall remains 9/10.",
+          "diagnosis": "A failed-login positive without enough repeated-attempt framing can be undercalled.",
+          "expected_evidence": [
+            "event_id=4625",
+            "count=16",
+            "status=failed_logon"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "failed_login_bruteforce",
+          "expected_severity": "high",
+          "failure_bucket": "bruteforce_to_normal",
+          "failure_bucket_title": "Brute force -> normal",
+          "id": "v3-hard-000013",
+          "input_log": "2026-05-18T09:04:35+07:00 winlog event_id=4625 host=ws-07 target_user=jdoe src_ip=203.0.113.74 count=16 status=failed_logon",
+          "json_parse_success": true,
+          "next_action": "Review the one missed brute-force case after suspicious-to-normal collapse is handled.",
+          "predicted_evidence": [
+            "winlog event_id=4625",
+            "host=ws-07",
+            "target_user=jdoe"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This is a standard Windows login event indicating a failed attempt to authenticate against a specific user account on a specific host. The event ID and timestamp suggest a routine system operation rather than an attack.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "username=' OR '1'='1",
+            "status=403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000021",
+          "input_log": "2026-05-18T10:00:01+07:00 app=web route=/login method=POST src_ip=198.51.100.121 username=' OR '1'='1 status=403",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "2026-05-18T10:00:01+07:00",
+            "app=web",
+            "route=/login"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This is a standard login attempt with a POST method and a specific status code (403), indicating a legitimate user action.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "id=1 OR 1=1",
+            "status=400"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000023",
+          "input_log": "2026-05-18T10:04:17+07:00 api-gateway: GET /api/users?id=1 OR 1=1 src=192.0.2.132 status=400 upstream_ms=1200",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "GET",
+            "/api/users?id=1",
+            "OR 1=1"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a standard API request to an endpoint without any malicious indicators such as SQL injection patterns, directory traversal attempts, or port scanning behavior.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model needs an explicit security mapping from timing functions to SQLi.",
+          "diagnosis": "SLEEP/latency cues are interpreted as backend processing rather than timing SQLi.",
+          "expected_evidence": [
+            "id=9 AND SLEEP(5)",
+            "upstream_ms=6100"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_timing_to_normal",
+          "failure_bucket_title": "SQLi timing -> normal",
+          "id": "v3-hard-000024",
+          "input_log": "2026-05-18T10:06:44+07:00 api-gateway: GET /api/orders?id=9 AND SLEEP(5) src=198.51.100.88 status=500 upstream_ms=6100",
+          "json_parse_success": true,
+          "next_action": "Use SLEEP/pg_sleep/WAITFOR cases only as SQLi positives unless host/port scan evidence is present.",
+          "predicted_evidence": [
+            "GET",
+            "/api/orders?id=9",
+            "SLEEP(5)"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a standard API call to an endpoint with a specific query parameter value (id=9), followed by a sleep operation. This is consistent with typical backend processing patterns and does not exhibit signs of intrusion or attack.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The label boundary needs to say schema names in request/query fields are suspicious.",
+          "diagnosis": "information_schema-style schema discovery is interpreted as benign database/search activity.",
+          "expected_evidence": [
+            "information_schema.tables",
+            "403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_schema_to_normal",
+          "failure_bucket_title": "SQLi schema discovery -> normal",
+          "id": "v3-hard-000025",
+          "input_log": "192.0.2.111 - - [18/May/2026:10:08:22 +0700] \"GET /search?q=information_schema.tables HTTP/1.1\" 403 640 \"-\" \"Mozilla/5.0\"",
+          "json_parse_success": true,
+          "next_action": "Pair benign SQL documentation searches against malicious request-field schema discovery.",
+          "predicted_evidence": [
+            "192.0.2.111",
+            "GET",
+            "/search?q=information_schema.tables"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request is a standard GET request to a database schema table using a common search query, which is a typical expected behavior for web applications.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is older Phase 8 gravity in a smaller form; route context is overpowering payload semantics.",
+          "diagnosis": "Login-form SQLi payloads drift into failed-login brute-force because the route/status dominates the payload.",
+          "expected_evidence": [
+            "username=admin'--",
+            "status=401"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_login_payload_to_bruteforce",
+          "failure_bucket_title": "SQLi login payload -> brute force",
+          "id": "v3-hard-000026",
+          "input_log": "2026-05-18T10:10:15+07:00 app=web route=/login method=POST src_ip=203.0.113.155 username=admin'-- status=401",
+          "json_parse_success": true,
+          "next_action": "Teach that SQL payload syntax inside username/email fields owns the label over generic login failure wording.",
+          "predicted_evidence": [
+            "admin'",
+            "--",
+            "status=401"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_reason": "Repeated failed login attempt with username containing SQL injection syntax (tautology) and status code indicating unauthorized access.",
+          "predicted_severity": "medium",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "name%27%20OR%20%271%27%3D%271",
+            "400"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000027",
+          "input_log": "198.51.100.141 - - [18/May/2026:10:12:20 +0700] \"GET /products?sort=name%27%20OR%20%271%27%3D%271 HTTP/1.1\" 400 455 \"-\" \"Mozilla/5.0\"",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "GET",
+            "/products",
+            "sort=name%27%20OR%20%271%27%3D%271"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request uses standard HTTP query parameters without any SQL injection indicators, directory traversal attempts, or port scanning patterns.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "email=test@example.com' OR 'a'='a",
+            "status=403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000028",
+          "input_log": "2026-05-18T10:14:39+07:00 app=web route=/reset-password method=POST src_ip=192.0.2.56 email=test@example.com' OR 'a'='a status=403",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "2026-05-18T10:14:39+07:00",
+            "' OR 'a'='a",
+            "status=403"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This is a standard HTTP POST request with a redirect status code (403) after a login attempt, which is a common and expected behavior in web applications.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model notices text fragments but does not attach the security meaning strongly enough.",
+          "diagnosis": "Classic OR/quote tautology cues are seen but treated as ordinary login/search traffic.",
+          "expected_evidence": [
+            "q=\\\" OR \\\"1\\\"=\\\"1",
+            "400"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "sql_injection_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "sqli_tautology_to_normal",
+          "failure_bucket_title": "SQLi tautology -> normal",
+          "id": "v3-hard-000030",
+          "input_log": "203.0.113.77 - - [18/May/2026:10:18:25 +0700] \"GET /search?q=\\\" OR \\\"1\\\"=\\\"1 HTTP/1.1\" 400 530 \"-\" \"Mozilla/5.0\"",
+          "json_parse_success": true,
+          "next_action": "If using prompt/data repair later, make SQL tautology cues explicit positives even inside normal-looking routes.",
+          "predicted_evidence": [
+            "GET",
+            "/search?q=OR%201%3D1",
+            "HTTP/1.1"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The request is a standard GET request to search a URL with a simple parameter substitution. No attack indicators like SQL injection patterns, path traversal, or unusual HTTP methods are present.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "../config.yml",
+            "403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000031",
+          "input_log": "198.51.100.72 - - [18/May/2026:11:00:05 +0700] \"GET /download?file=../config.yml HTTP/1.1\" 403 210 \"-\" \"curl/8.1\"",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "198.51.100.72",
+            "/download",
+            "HTTP/1.1"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry represents a standard HTTP GET request to a file download endpoint without any indicators of intrusion, unauthorized access, or malicious intent.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "../../../etc/shadow",
+            "404"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000032",
+          "input_log": "203.0.113.18 - - [18/May/2026:11:02:19 +0700] \"GET /download?file=../../../etc/shadow HTTP/1.1\" 404 1874 \"-\" \"curl/8.1\"",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "18/May/2026:11:02:19",
+            "/download",
+            "../../../etc/shadow"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "normal",
+          "predicted_reason": "The request path contains a directory traversal attempt (../), which is a common attack vector but does not indicate an active compromise or a clear pattern of intrusion.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "/static/..%2f..%2fapp%2fsettings.py",
+            "status=404"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000033",
+          "input_log": "2026-05-18T11:04:21+07:00 app=web route=/static/..%2f..%2fapp%2fsettings.py src_ip=192.0.2.133 status=404 bytes=109",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "2026-05-18T11:04:21+07:00",
+            "app=web",
+            "route=/static/..%2f..%2fapp%2fsettings.py"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a 404 error on a static file path (/static/..%2f..%2fapp%2fsettings.py) with no attempt to execute malicious code or perform reconnaissance. This is a standard HTTP response for an invalid resource.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "/files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini",
+            "403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000034",
+          "input_log": "192.0.2.172 - - [18/May/2026:11:06:33 +0700] \"GET /files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini HTTP/1.1\" 403 700 \"-\" \"curl/8.1\"",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "192.0.2.172",
+            "GET",
+            "/files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a successful HTTP GET request to a file path containing Windows registry keys (e.g., %2e%2e%2f%2e%2e%2fwindows%2fwin.ini). This is a standard administrative operation and does not exhibit any signs of intrusion, unauthorized access, or malicious intent.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "/static/../../.env",
+            "status=403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000037",
+          "input_log": "2026-05-18T11:12:56+07:00 app=web route=/static/../../.env src_ip=203.0.113.72 status=403 bytes=892",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "2026-05-18T11:12:56+07:00",
+            "app=web",
+            "route=/static/../../.env"
+          ],
+          "predicted_is_suspicious": true,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a successful web application request to a static file path (/static/../../.env) which is a common legitimate routing pattern for accessing environment configuration files.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "../../../../var/log/auth.log",
+            "403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000038",
+          "input_log": "203.0.113.201 - - [18/May/2026:11:14:29 +0700] \"GET /download?file=../../../../var/log/auth.log HTTP/1.1\" 403 122 \"-\" \"curl/8.1\"",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "203.0.113.201",
+            "18/May/2026",
+            "11:14:29"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry represents standard HTTP GET requests with a 403 status code, which is a common response for unauthorized access attempts. The specific path '/download' combined with 'var/log/auth.log' indicates a legitimate download operation rather than an attack vector.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "path=..%2f..%2f..%2fetc%2fpasswd",
+            "result=denied"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000039",
+          "input_log": "2026-05-18T11:16:02+07:00 api=files action=open path=..%2f..%2f..%2fetc%2fpasswd src_ip=192.0.2.39 result=denied",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "2026-05-18T11:16:02+07:00",
+            "api=files",
+            "action=open"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This is a standard API call to open a file in the filesystem. The path '..%2f..%2f..%2fetc%2fpasswd' represents a relative path within the current working directory, which is a common and expected behavior for file operations.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "This is a security-semantics miss, not an evidence extraction miss.",
+          "diagnosis": "Traversal tokens are recognized but reframed as common or legitimate file access behavior.",
+          "expected_evidence": [
+            "/backup/../../secrets.yml",
+            "status=403"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "directory_traversal_attempt",
+          "expected_severity": "high",
+          "failure_bucket": "traversal_to_normal",
+          "failure_bucket_title": "Traversal -> normal",
+          "id": "v3-hard-000040",
+          "input_log": "2026-05-18T11:18:40+07:00 app=web route=/backup/../../secrets.yml src_ip=198.51.100.116 status=403 bytes=0",
+          "json_parse_success": true,
+          "next_action": "Keep traversal cues as suspicious even when the HTTP status is 403/404 or the route is a normal file endpoint.",
+          "predicted_evidence": [
+            "2026-05-18T11:18:40+07:00",
+            "app=web",
+            "route=/backup/../../secrets.yml"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log entry indicates a successful web application request with a 403 Forbidden status code, which is a standard response for unauthorized access attempts. The path '/backup/../../secrets.yml' represents a directory traversal attempt, but the presence of a 403 response typically resolves to an internal server error rather than a direct file access attempt, making it a routine authentication failure rather than an active attack vector.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "sequential connection attempts",
+            "unique_ports=4"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000041",
+          "input_log": "2026-05-18T12:00:11+07:00 netflow: sequential connection attempts src=192.0.2.205 dst=203.0.113.10 dst_ports=22,80,443,3389 unique_ports=4 window=45s",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "sequential connection attempts",
+            "unique_ports=4"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "Sequential connection attempts with a limited number of unique ports (4) indicate a legitimate network traffic pattern rather than an attack.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "nmap fingerprint",
+            "probed_ports=80,443,8080,8443"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "high",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000042",
+          "input_log": "2026-05-18T12:02:18+07:00 ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224; probed_ports=80,443,8080,8443; packets=92",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224",
+            "probed_ports=80,443,8080,8443",
+            "packets=92"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This log indicates a standard network scan activity where an Nmap tool is probing specific ports (80, 443, 8080, 8443) on a target host. The presence of packet counts and IP addresses confirms legitimate reconnaissance behavior rather than an attack.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "probe burst",
+            "unique_ports=6"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000045",
+          "input_log": "2026-05-18T12:08:53+07:00 netflow: probe burst src=192.0.2.61 dst=198.51.100.17 dst_ports=21,22,23,25,80,443 unique_ports=6 window=30s",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "netflow: probe burst",
+            "src=192.0.2.61",
+            "dst=198.51.100.17"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This log entry represents a standard network traffic flow where a source IP (192.0.2.61) sends a probe packet to a destination (198.51.100.17) on ports 21, 22, 23, 25, 80, and 443. This is a common reconnaissance technique used by attackers to discover target services, but it does not indicate any compromise, unauthorized access, or malicious intent. It is a legitimate operational activity.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "nmap fingerprint",
+            "probed_ports=135,139,445,3389"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "high",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000046",
+          "input_log": "2026-05-18T12:10:40+07:00 ids: nmap fingerprint from 203.0.113.120 to 198.51.100.77; probed_ports=135,139,445,3389; packets=140",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "ids: nmap fingerprint from 203.0.113.120 to 198.51.100.77",
+            "probed_ports=135,139,445,3389"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This log indicates a standard Nmap reconnaissance scan targeting specific ports (135, 139, 445, 3389), which is a common and expected activity during initial network discovery phases.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "sequential connection attempts",
+            "unique_ports=4"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000048",
+          "input_log": "2026-05-18T12:14:24+07:00 netflow: sequential connection attempts src=203.0.113.188 dst=192.0.2.51 dst_ports=80,443,8080,8443 unique_ports=4 window=20s",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "sequential connection attempts",
+            "unique_ports=4"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "The log indicates a single sequential connection attempt with a limited number of unique ports (4), which is consistent with standard network traffic patterns without any signs of intrusion.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "service enumeration",
+            "unique_ports=7",
+            "banners_requested=true"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000049",
+          "input_log": "2026-05-18T12:16:55+07:00 ids: service enumeration src=198.51.100.200 dst=203.0.113.11 unique_ports=7 banners_requested=true",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "ids: service enumeration",
+            "src=198.51.100.200",
+            "dst=203.0.113.11"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This is a standard service enumeration log entry indicating the system discovered services on specific ports and received banner requests from an external source.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        },
+        {
+          "boundary_read": "The model treats SOC/security-tool vocabulary as benign admin activity by default.",
+          "diagnosis": "Nmap, service enumeration, sequential connection attempts, and unique_ports are called routine operations.",
+          "expected_evidence": [
+            "blocked recon",
+            "tcp_flags=SYN",
+            "unique_ports=5"
+          ],
+          "expected_is_suspicious": true,
+          "expected_label": "port_scan_or_recon",
+          "expected_severity": "medium",
+          "failure_bucket": "recon_to_normal",
+          "failure_bucket_title": "Recon -> normal",
+          "id": "v3-hard-000050",
+          "input_log": "2026-05-18T12:18:16+07:00 firewall: blocked recon src=192.0.2.199 dst=198.51.100.42 tcp_flags=SYN dst_ports=22,80,443,3306,5432 unique_ports=5",
+          "json_parse_success": true,
+          "next_action": "Require recon labels for explicit scan/probe/enumeration tokens unless the log states approved/internal testing.",
+          "predicted_evidence": [
+            "firewall: blocked recon",
+            "src=192.0.2.199",
+            "dst=198.51.100.42"
+          ],
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_reason": "This is a standard firewall block action indicating an attempt to block a known external IP address during network reconnaissance. It does not show signs of brute force, SQL injection, directory traversal, or port scanning.",
+          "predicted_severity": "low",
+          "probe": "temp_0_3",
+          "schema_success": true
+        }
+      ],
+      "key_case_counts": {
+        "sqli_traversal_recon_to_normal_count": 22,
+        "sqli_traversal_recon_to_normal_ids": [
+          "v3-hard-000021",
+          "v3-hard-000023",
+          "v3-hard-000024",
+          "v3-hard-000025",
+          "v3-hard-000027",
+          "v3-hard-000028",
+          "v3-hard-000030",
+          "v3-hard-000031",
+          "v3-hard-000032",
+          "v3-hard-000033",
+          "v3-hard-000034",
+          "v3-hard-000037",
+          "v3-hard-000038",
+          "v3-hard-000039",
+          "v3-hard-000040",
+          "v3-hard-000041",
+          "v3-hard-000042",
+          "v3-hard-000045",
+          "v3-hard-000046",
+          "v3-hard-000048",
+          "v3-hard-000049",
+          "v3-hard-000050"
+        ]
+      },
+      "label_failure_count": 26,
+      "metrics": {
+        "average_latency_ms": 5569.326359,
+        "evidence_partial_match": 0.86,
+        "invalid_output_count": 0,
+        "is_suspicious_accuracy": 0.58,
+        "json_parse_success_rate": 1.0,
+        "label_accuracy": 0.48,
+        "schema_success_rate": 1.0,
+        "severity_accuracy": 0.36
+      },
+      "predicted_label_distribution": {
+        "directory_traversal_attempt": 2,
+        "failed_login_bruteforce": 12,
+        "normal": 31,
+        "port_scan_or_recon": 3,
+        "sql_injection_attempt": 2
+      },
+      "runtime_context": {
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "extra_body": {
+          "min_p": 0.15,
+          "repetition_penalty": 1.05
+        },
+        "max_retries": 0,
+        "max_tokens": 512,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.3,
+          "top_p": 0.9
+        },
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs"
+      },
+      "sample_count": 50,
+      "source_report_path": "reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json"
+    }
+  },
+  "recommended_next_step": "Keep fixed test closed, keep Qwen3.5-0.8B held, and choose between another capacity candidate and a small boundary-repair prompt/data experiment.",
+  "source_split_path": "data/generated/v3-hard-contrast-security-triage.jsonl",
+  "summary": "v4.4 audits the v4.3 Qwen3.5 hard-contrast failures. The model keeps JSON/schema reliability but collapses many suspicious SQLi, traversal, and recon records into normal.",
+  "training_artifacts_created": false,
+  "union_failure_cases": [
+    {
+      "expected_evidence": [
+        "Failed password",
+        "failed_attempts=1"
+      ],
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "v3-hard-000001",
+      "input_log": "May 18 09:00:01 auth-01 sshd[2011]: Failed password for webapp from 192.0.2.44 port 51422 ssh2; failed_attempts=1",
+      "primary_failure_bucket": "normal_auth_negative_to_bruteforce",
+      "primary_failure_bucket_title": "Normal auth negative -> brute force",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "normal_auth_negative_to_bruteforce",
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium"
+        },
+        "temp_0_3": {
+          "failure_bucket": "normal_auth_negative_to_bruteforce",
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "event=login_failed",
+        "failures=1",
+        "outcome=allowed_retry"
+      ],
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "v3-hard-000002",
+      "input_log": "2026-05-18T09:02:10+07:00 app=auth event=login_failed user=svc_backup src_ip=198.51.100.24 failures=1 window=10m outcome=allowed_retry",
+      "primary_failure_bucket": "normal_auth_negative_to_bruteforce",
+      "primary_failure_bucket_title": "Normal auth negative -> brute force",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "normal_auth_negative_to_bruteforce",
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium"
+        },
+        "temp_0_3": {
+          "failure_bucket": "normal_auth_negative_to_bruteforce",
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "event_id=4625",
+        "count=16",
+        "status=failed_logon"
+      ],
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "high",
+      "id": "v3-hard-000013",
+      "input_log": "2026-05-18T09:04:35+07:00 winlog event_id=4625 host=ws-07 target_user=jdoe src_ip=203.0.113.74 count=16 status=failed_logon",
+      "primary_failure_bucket": "bruteforce_to_normal",
+      "primary_failure_bucket_title": "Brute force -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "bruteforce_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "bruteforce_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "username=' OR '1'='1",
+        "status=403"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000021",
+      "input_log": "2026-05-18T10:00:01+07:00 app=web route=/login method=POST src_ip=198.51.100.121 username=' OR '1'='1 status=403",
+      "primary_failure_bucket": "sqli_tautology_to_normal",
+      "primary_failure_bucket_title": "SQLi tautology -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "id=1 OR 1=1",
+        "status=400"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000023",
+      "input_log": "2026-05-18T10:04:17+07:00 api-gateway: GET /api/users?id=1 OR 1=1 src=192.0.2.132 status=400 upstream_ms=1200",
+      "primary_failure_bucket": "sqli_tautology_to_normal",
+      "primary_failure_bucket_title": "SQLi tautology -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "id=9 AND SLEEP(5)",
+        "upstream_ms=6100"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000024",
+      "input_log": "2026-05-18T10:06:44+07:00 api-gateway: GET /api/orders?id=9 AND SLEEP(5) src=198.51.100.88 status=500 upstream_ms=6100",
+      "primary_failure_bucket": "sqli_timing_to_normal",
+      "primary_failure_bucket_title": "SQLi timing -> normal",
+      "probe_predictions": {
+        "temp_0_3": {
+          "failure_bucket": "sqli_timing_to_normal",
+          "predicted_is_suspicious": true,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "information_schema.tables",
+        "403"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000025",
+      "input_log": "192.0.2.111 - - [18/May/2026:10:08:22 +0700] \"GET /search?q=information_schema.tables HTTP/1.1\" 403 640 \"-\" \"Mozilla/5.0\"",
+      "primary_failure_bucket": "sqli_schema_to_normal",
+      "primary_failure_bucket_title": "SQLi schema discovery -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "sqli_schema_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "sqli_schema_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "username=admin'--",
+        "status=401"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000026",
+      "input_log": "2026-05-18T10:10:15+07:00 app=web route=/login method=POST src_ip=203.0.113.155 username=admin'-- status=401",
+      "primary_failure_bucket": "sqli_login_payload_to_bruteforce",
+      "primary_failure_bucket_title": "SQLi login payload -> brute force",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "sqli_login_payload_to_bruteforce",
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high"
+        },
+        "temp_0_3": {
+          "failure_bucket": "sqli_login_payload_to_bruteforce",
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "name%27%20OR%20%271%27%3D%271",
+        "400"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000027",
+      "input_log": "198.51.100.141 - - [18/May/2026:10:12:20 +0700] \"GET /products?sort=name%27%20OR%20%271%27%3D%271 HTTP/1.1\" 400 455 \"-\" \"Mozilla/5.0\"",
+      "primary_failure_bucket": "sqli_tautology_to_normal",
+      "primary_failure_bucket_title": "SQLi tautology -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "email=test@example.com' OR 'a'='a",
+        "status=403"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000028",
+      "input_log": "2026-05-18T10:14:39+07:00 app=web route=/reset-password method=POST src_ip=192.0.2.56 email=test@example.com' OR 'a'='a status=403",
+      "primary_failure_bucket": "sqli_login_payload_to_bruteforce",
+      "primary_failure_bucket_title": "SQLi login payload -> brute force",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "sqli_login_payload_to_bruteforce",
+          "predicted_is_suspicious": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high"
+        },
+        "temp_0_3": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "q=\\\" OR \\\"1\\\"=\\\"1",
+        "400"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000030",
+      "input_log": "203.0.113.77 - - [18/May/2026:10:18:25 +0700] \"GET /search?q=\\\" OR \\\"1\\\"=\\\"1 HTTP/1.1\" 400 530 \"-\" \"Mozilla/5.0\"",
+      "primary_failure_bucket": "sqli_tautology_to_normal",
+      "primary_failure_bucket_title": "SQLi tautology -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "sqli_tautology_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "../config.yml",
+        "403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000031",
+      "input_log": "198.51.100.72 - - [18/May/2026:11:00:05 +0700] \"GET /download?file=../config.yml HTTP/1.1\" 403 210 \"-\" \"curl/8.1\"",
+      "primary_failure_bucket": "traversal_to_normal",
+      "primary_failure_bucket_title": "Traversal -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": true,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "../../../etc/shadow",
+        "404"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000032",
+      "input_log": "203.0.113.18 - - [18/May/2026:11:02:19 +0700] \"GET /download?file=../../../etc/shadow HTTP/1.1\" 404 1874 \"-\" \"curl/8.1\"",
+      "primary_failure_bucket": "traversal_to_normal",
+      "primary_failure_bucket_title": "Traversal -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": true,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "/static/..%2f..%2fapp%2fsettings.py",
+        "status=404"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000033",
+      "input_log": "2026-05-18T11:04:21+07:00 app=web route=/static/..%2f..%2fapp%2fsettings.py src_ip=192.0.2.133 status=404 bytes=109",
+      "primary_failure_bucket": "traversal_to_normal",
+      "primary_failure_bucket_title": "Traversal -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "/files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini",
+        "403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000034",
+      "input_log": "192.0.2.172 - - [18/May/2026:11:06:33 +0700] \"GET /files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini HTTP/1.1\" 403 700 \"-\" \"curl/8.1\"",
+      "primary_failure_bucket": "traversal_to_normal",
+      "primary_failure_bucket_title": "Traversal -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "/static/../../.env",
+        "status=403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000037",
+      "input_log": "2026-05-18T11:12:56+07:00 app=web route=/static/../../.env src_ip=203.0.113.72 status=403 bytes=892",
+      "primary_failure_bucket": "traversal_to_normal",
+      "primary_failure_bucket_title": "Traversal -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": true,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "../../../../var/log/auth.log",
+        "403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000038",
+      "input_log": "203.0.113.201 - - [18/May/2026:11:14:29 +0700] \"GET /download?file=../../../../var/log/auth.log HTTP/1.1\" 403 122 \"-\" \"curl/8.1\"",
+      "primary_failure_bucket": "traversal_to_normal",
+      "primary_failure_bucket_title": "Traversal -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "path=..%2f..%2f..%2fetc%2fpasswd",
+        "result=denied"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000039",
+      "input_log": "2026-05-18T11:16:02+07:00 api=files action=open path=..%2f..%2f..%2fetc%2fpasswd src_ip=192.0.2.39 result=denied",
+      "primary_failure_bucket": "traversal_to_normal",
+      "primary_failure_bucket_title": "Traversal -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "/backup/../../secrets.yml",
+        "status=403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "v3-hard-000040",
+      "input_log": "2026-05-18T11:18:40+07:00 app=web route=/backup/../../secrets.yml src_ip=198.51.100.116 status=403 bytes=0",
+      "primary_failure_bucket": "traversal_to_normal",
+      "primary_failure_bucket_title": "Traversal -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "traversal_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "sequential connection attempts",
+        "unique_ports=4"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "v3-hard-000041",
+      "input_log": "2026-05-18T12:00:11+07:00 netflow: sequential connection attempts src=192.0.2.205 dst=203.0.113.10 dst_ports=22,80,443,3389 unique_ports=4 window=45s",
+      "primary_failure_bucket": "recon_to_normal",
+      "primary_failure_bucket_title": "Recon -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "nmap fingerprint",
+        "probed_ports=80,443,8080,8443"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "v3-hard-000042",
+      "input_log": "2026-05-18T12:02:18+07:00 ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224; probed_ports=80,443,8080,8443; packets=92",
+      "primary_failure_bucket": "recon_to_normal",
+      "primary_failure_bucket_title": "Recon -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "probe burst",
+        "unique_ports=6"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "v3-hard-000045",
+      "input_log": "2026-05-18T12:08:53+07:00 netflow: probe burst src=192.0.2.61 dst=198.51.100.17 dst_ports=21,22,23,25,80,443 unique_ports=6 window=30s",
+      "primary_failure_bucket": "recon_to_normal",
+      "primary_failure_bucket_title": "Recon -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "nmap fingerprint",
+        "probed_ports=135,139,445,3389"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "v3-hard-000046",
+      "input_log": "2026-05-18T12:10:40+07:00 ids: nmap fingerprint from 203.0.113.120 to 198.51.100.77; probed_ports=135,139,445,3389; packets=140",
+      "primary_failure_bucket": "recon_to_normal",
+      "primary_failure_bucket_title": "Recon -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "sequential connection attempts",
+        "unique_ports=4"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "v3-hard-000048",
+      "input_log": "2026-05-18T12:14:24+07:00 netflow: sequential connection attempts src=203.0.113.188 dst=192.0.2.51 dst_ports=80,443,8080,8443 unique_ports=4 window=20s",
+      "primary_failure_bucket": "recon_to_normal",
+      "primary_failure_bucket_title": "Recon -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "service enumeration",
+        "unique_ports=7",
+        "banners_requested=true"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "v3-hard-000049",
+      "input_log": "2026-05-18T12:16:55+07:00 ids: service enumeration src=198.51.100.200 dst=203.0.113.11 unique_ports=7 banners_requested=true",
+      "primary_failure_bucket": "recon_to_normal",
+      "primary_failure_bucket_title": "Recon -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    },
+    {
+      "expected_evidence": [
+        "blocked recon",
+        "tcp_flags=SYN",
+        "unique_ports=5"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "id": "v3-hard-000050",
+      "input_log": "2026-05-18T12:18:16+07:00 firewall: blocked recon src=192.0.2.199 dst=198.51.100.42 tcp_flags=SYN dst_ports=22,80,443,3306,5432 unique_ports=5",
+      "primary_failure_bucket": "recon_to_normal",
+      "primary_failure_bucket_title": "Recon -> normal",
+      "probe_predictions": {
+        "temp_0": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        },
+        "temp_0_3": {
+          "failure_bucket": "recon_to_normal",
+          "predicted_is_suspicious": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low"
+        }
+      }
+    }
+  ],
+  "union_failure_ids": [
+    "v3-hard-000001",
+    "v3-hard-000002",
+    "v3-hard-000013",
+    "v3-hard-000021",
+    "v3-hard-000023",
+    "v3-hard-000024",
+    "v3-hard-000025",
+    "v3-hard-000026",
+    "v3-hard-000027",
+    "v3-hard-000028",
+    "v3-hard-000030",
+    "v3-hard-000031",
+    "v3-hard-000032",
+    "v3-hard-000033",
+    "v3-hard-000034",
+    "v3-hard-000037",
+    "v3-hard-000038",
+    "v3-hard-000039",
+    "v3-hard-000040",
+    "v3-hard-000041",
+    "v3-hard-000042",
+    "v3-hard-000045",
+    "v3-hard-000046",
+    "v3-hard-000048",
+    "v3-hard-000049",
+    "v3-hard-000050"
+  ],
+  "union_label_failure_count": 26
+}

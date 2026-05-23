@@ -2,7 +2,7 @@
 
 **Summary**
 
-v4.3 เป็น capacity/architecture diagnostic ต่อจาก v4.2 held decision เป้าหมายคือแยกว่า SQLi boundary failure ที่เหลือเป็นเพดานของ `LFM2-350M`, ผลจาก adapter/training mixture, หรือความกำกวมของ prompt/eval boundary รอบนี้ไม่เพิ่ม dataset, ไม่ train LoRA ใหม่, ไม่เปลี่ยน schema/taxonomy/evaluator/UI API, และไม่ใช้ `data/splits/test.jsonl` เป็น tuning หรือ gate
+v4.3 เป็น capacity/architecture diagnostic ต่อจาก v4.2 held decision รอบ `unsloth/Qwen3.5-0.8B` ทดสอบครบ 3 แบบแล้ว: smoke, hard-contrast temp 0, และ hard-contrast temp 0.3 ผลคือ output contract ผ่านทุก run แต่ semantic boundary ยังไม่ผ่าน gate โดย hard-contrast ได้ label accuracy `0.50` และ `0.48`, SQLi เหลือ `3/10` และ `2/10` ตามลำดับ ดังนั้น candidate นี้ถูก hold และยังไม่ควรเปิด fixed split หรือถือเป็นเหตุผลให้สร้าง v4.3 training artifact
 
 **Sources**
 
@@ -11,6 +11,9 @@ v4.3 เป็น capacity/architecture diagnostic ต่อจาก v4.2 held 
 - hard-contrast probe split สำหรับ diagnostic input เท่านั้น (source: data/generated/v3-hard-contrast-security-triage.jsonl)
 - downloaded Hugging Face model card สำหรับ first candidate `unsloth/Qwen3.5-0.8B` (source: docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md, source: https://huggingface.co/unsloth/Qwen3.5-0.8B)
 - runtime prompt/config support ที่คง default prompt เป็น `triage-json-v2.1` (source: scripts/model_adapters/prompt_contract.py, source: scripts/model_adapters/openai_compatible.py)
+- v4.3 Qwen3.5 smoke report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json, source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.md)
+- v4.3 Qwen3.5 hard-contrast temp 0 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json, source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.md)
+- v4.3 Qwen3.5 hard-contrast temp 0.3 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json, source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.md)
 
 **Last updated**
 
@@ -18,7 +21,7 @@ v4.3 เป็น capacity/architecture diagnostic ต่อจาก v4.2 held 
 
 ## Status
 
-Planned. First candidate intake selected `unsloth/Qwen3.5-0.8B` and downloaded its model card to `docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md`. No new synthetic data, train split, validation split, LoRA config, or train allowlist entry should be created for v4.3. This diagnostic compares served model behavior under the default prompt profile `triage-json-v2.1` on the existing hard-contrast probe only.
+Probed; held. First candidate `unsloth/Qwen3.5-0.8B` was served through the OpenAI-compatible vLLM structured-output path on port `8080` and tested with smoke plus both hard-contrast probes. No new synthetic data, train split, validation split, LoRA config, or train allowlist entry should be created for v4.3. This result compares served base/candidate behavior under default prompt profile `triage-json-v2.1` on the existing smoke and hard-contrast probe only.
 
 ## Why This Exists
 
@@ -70,6 +73,39 @@ Suggested local naming:
 CANDIDATE_MODEL_ALIAS=qwen3-5-0-8b-security-triage
 CANDIDATE_MODEL_SLUG=qwen3-5-0-8b
 ```
+
+## Qwen3.5-0.8B Result Summary
+
+The user-run v4.3 candidate probe now has 3 completed report pairs under `reports/`. All three runs preserve JSON/schema reliability, so the immediate blocker is not output parsing. The blocker is semantic triage quality on hard-contrast labels.
+
+| Run | Split | Runtime setting | Label accuracy | JSON/schema | Invalid | Severity | Suspicious | Evidence | Avg latency |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Smoke | `data/splits/smoke-output-contract.jsonl` | temp `0` | `0.60` | `1.0 / 1.0` | `0` | `0.40` | `0.60` | `1.00` | `6422.59 ms` |
+| Hard-contrast | `data/generated/v3-hard-contrast-security-triage.jsonl` | temp `0` | `0.50` | `1.0 / 1.0` | `0` | `0.42` | `0.54` | `0.82` | `5845.25 ms` |
+| Hard-contrast | `data/generated/v3-hard-contrast-security-triage.jsonl` | temp `0.3`, top_p `0.9`, min_p `0.15`, repetition penalty `1.05` | `0.48` | `1.0 / 1.0` | `0` | `0.36` | `0.58` | `0.86` | `5569.33 ms` |
+
+Hard-contrast label view:
+
+| Slice | Gate | Temp 0 result | Temp 0.3 result | Read |
+| --- | ---: | ---: | ---: | --- |
+| Overall label accuracy | `>=0.90` | `0.50` | `0.48` | fails both |
+| `normal` | `>=8/10` | `8/10` | `8/10` | passes, but suspicious classes collapse into normal |
+| `failed_login_bruteforce` | diagnostic | `9/10` | `9/10` | stable |
+| `sql_injection_attempt` | `>=8/10` | `3/10` | `2/10` | fails; mostly predicted `normal`, then some `failed_login_bruteforce` |
+| `directory_traversal_attempt` | `>=9/10` | `2/10` | `2/10` | fails; `8/10` predicted `normal` in both runs |
+| `port_scan_or_recon` | `>=9/10` | `3/10` | `3/10` | fails; `7/10` predicted `normal` in both runs |
+| Predicted `failed_login_bruteforce` total | `<=14/50` | `13/50` | `12/50` | passes the overprediction guard |
+
+Prediction distribution confirms the main failure mode:
+
+| Run | `normal` | `failed_login_bruteforce` | `sql_injection_attempt` | `directory_traversal_attempt` | `port_scan_or_recon` |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Temp 0 | `29/50` | `13/50` | `3/50` | `2/50` | `3/50` |
+| Temp 0.3 | `31/50` | `12/50` | `2/50` | `2/50` | `3/50` |
+
+Interpretation: Qwen3.5-0.8B handles the structured-output contract, but under the current `triage-json-v2.1` prompt and hard-contrast split it under-detects suspicious security patterns. The failure is not the same as v4.2 SQLi-to-traversal drift; here many SQLi, traversal, and recon cases become `normal`. Temp `0.3` does not rescue the candidate: evidence match rises slightly, but label accuracy and SQLi recall fall.
+
+Decision: hold this `unsloth/Qwen3.5-0.8B` candidate for v4.3. Do not run `data/splits/test.jsonl`, do not promote it as a replacement for the v4.1/v4 path, and do not treat a Qwen LoRA smoke train as the v4.3 gate. A Qwen LoRA pilot can still be a separate exploratory training run if explicitly opened, but the current capacity diagnostic does not justify it as the next gate by itself.
 
 ## Command Runbook
 
@@ -184,6 +220,22 @@ rtk .venv/bin/python scripts/evaluate.py \
   --comparison-out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-smoke.md"
 ```
 
+```text
+adapter: openai-compatible
+split: data/splits/smoke-output-contract.jsonl
+samples: 5
+label_accuracy: 0.6
+json_parse_success_rate: 1.0
+schema_success_rate: 1.0
+severity_accuracy: 0.4
+is_suspicious_accuracy: 0.6
+evidence_partial_match: 1.0
+average_latency_ms: 6422.592034
+invalid_output_count: 0
+json_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json
+markdown_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.md
+
+```
 ### 7. Candidate Hard-Contrast Temp 0
 
 This is the first v4.3 gate run. Keep thinking mode off; `Qwen3.5-0.8B` defaults to non-thinking mode and the model card warns that thinking mode can loop.
@@ -205,6 +257,22 @@ rtk .venv/bin/python scripts/evaluate.py \
   --comparison-out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-2048-capacity-diagnostic-hard-contrast.md"
 ```
 
+```text
+adapter: openai-compatible
+split: data/generated/v3-hard-contrast-security-triage.jsonl
+samples: 50
+label_accuracy: 0.5
+json_parse_success_rate: 1.0
+schema_success_rate: 1.0
+severity_accuracy: 0.42
+is_suspicious_accuracy: 0.54
+evidence_partial_match: 0.82
+average_latency_ms: 5845.253222
+invalid_output_count: 0
+json_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json
+markdown_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.md
+
+```
 ### 8. Candidate Hard-Contrast Temp 0.3
 
 This mirrors the runtime probe style used for v4.1. If the backend rejects `min_p` or `repetition_penalty`, rerun without the unsupported field and record the rejection in the report notes.
@@ -228,26 +296,44 @@ rtk .venv/bin/python scripts/evaluate.py \
   --comparison-out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-03-2048-capacity-diagnostic-hard-contrast.md"
 ```
 
+```text
+adapter: openai-compatible
+split: data/generated/v3-hard-contrast-security-triage.jsonl
+samples: 50
+label_accuracy: 0.48
+json_parse_success_rate: 1.0
+schema_success_rate: 1.0
+severity_accuracy: 0.36
+is_suspicious_accuracy: 0.58
+evidence_partial_match: 0.86
+average_latency_ms: 5569.326359
+invalid_output_count: 0
+json_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json
+markdown_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.md
+```
 ### 9. Metric Extraction
 
 ```bash
 rtk .venv/bin/python - <<'PY'
 import json
+from collections import Counter, defaultdict
 from pathlib import Path
 
 for path in sorted(Path("reports").glob("openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-*-capacity-diagnostic-hard-contrast.json")):
     report = json.loads(path.read_text())
     metrics = report["metrics"]
-    predictions = report.get("prediction_distribution", {})
-    per_label = report.get("per_label", {})
+    predictions = report.get("predicted_label_distribution", {})
+    confusion = defaultdict(Counter)
+    for sample in report.get("samples", []):
+        confusion[sample.get("expected_label")][sample.get("predicted_label")] += 1
     print(path)
     print("  label_accuracy:", metrics.get("label_accuracy"))
     print("  json/schema:", metrics.get("json_parse_success_rate"), metrics.get("schema_success_rate"))
     print("  invalid_output_count:", metrics.get("invalid_output_count"))
-    print("  sql_injection_attempt:", per_label.get("sql_injection_attempt", {}))
-    print("  normal:", per_label.get("normal", {}))
-    print("  directory_traversal_attempt:", per_label.get("directory_traversal_attempt", {}))
-    print("  port_scan_or_recon:", per_label.get("port_scan_or_recon", {}))
+    print("  sql_injection_attempt:", dict(confusion.get("sql_injection_attempt", {})))
+    print("  normal:", dict(confusion.get("normal", {})))
+    print("  directory_traversal_attempt:", dict(confusion.get("directory_traversal_attempt", {})))
+    print("  port_scan_or_recon:", dict(confusion.get("port_scan_or_recon", {})))
     print("  predicted failed_login_bruteforce:", predictions.get("failed_login_bruteforce"))
 PY
 ```
@@ -361,6 +447,8 @@ If a stronger candidate passes while v4.1 remains held, plan a capacity pilot. I
 | 2026-05-23 | Codex | Added `unsloth/Qwen3.5-0.8B` as the first v4.3 candidate intake and downloaded the model card | `docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md` | Candidate selected; probe not run |
 | 2026-05-23 | Codex | Expanded v4.3 into a copyable command runbook for preflight, server launch, endpoint smoke, hard-contrast probes, metric extraction, and post-gate train pilot smoke | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` | Runbook prepared |
 | 2026-05-23 | Codex | Changed v4.3 Qwen3.5 server and adapter commands to local port `8080` | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` | Runbook updated |
+| 2026-05-23 | User/Codex | Recorded all 3 v4.3 Qwen3.5 probe results and summarized the candidate decision | `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json`, `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json` | Probed; held |
+| 2026-05-23 | Codex | Branched the held Qwen3.5 result into a v4.4 hard-contrast boundary audit | `docs/output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.json` | Follow-up audit complete |
 
 ## Decision Log
 
@@ -370,11 +458,13 @@ If a stronger candidate passes while v4.1 remains held, plan a capacity pilot. I
 | 2026-05-22 | Keep default prompt at `triage-json-v2.1` | v2.2 damaged broad label boundaries and temp 0.3 output contract | v4.3 command examples set v2.1 explicitly and leave v2.2 as historical diagnostic only |
 | 2026-05-22 | Keep fixed split out of Phase 8 gates | The user-run fixed split sanity result is useful context but historically exposed | v4.3 uses hard-contrast probes or a future newly frozen holdout, not `data/splits/test.jsonl` |
 | 2026-05-23 | Use `unsloth/Qwen3.5-0.8B` as the first candidate intake | The user selected it as the next small-model architecture to test, and the Hugging Face card positions it for prototyping and task-specific fine-tuning | v4.3 can proceed to serving and hard-contrast probes under prompt `triage-json-v2.1`; no v4.3 training artifacts are created |
+| 2026-05-23 | Hold the Qwen3.5-0.8B v4.3 candidate after smoke and hard-contrast probes | The candidate preserves JSON/schema reliability but hard-contrast label accuracy is only `0.50` at temp 0 and `0.48` at temp 0.3, with SQLi at `3/10` and `2/10` | Do not open fixed split or promote a Qwen LoRA pilot as the v4.3 gate; next evidence should be another capacity candidate or a hard-contrast boundary audit |
 
 ## Related pages
 
 - [[output-structure-fix/README]]
 - [[output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan]]
+- [[output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan]]
 - [[openai-adapter-runtime-config]]
 - [[fine-tuning-notes]]
 - [[structured-output-reliability-research-2026]]

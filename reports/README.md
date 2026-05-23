@@ -55,6 +55,13 @@ reports/phase-{n}-{model-version}-boundary-failure-slice.json
 reports/phase-{n}-{model-version}-boundary-failure-slice.md
 ```
 
+Boundary audits:
+
+```text
+reports/phase-{n}-{model-version}-boundary-audit.json
+reports/phase-{n}-{model-version}-boundary-audit.md
+```
+
 Canonical fixed split format:
 
 ```text

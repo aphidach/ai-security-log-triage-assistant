@@ -11,7 +11,7 @@ append-only log สำหรับบันทึกการเปลี่ย�
 
 **Last updated**
 
-2026-05-22
+2026-05-23
 
 ## Log
 
@@ -140,6 +140,8 @@ append-only log สำหรับบันทึกการเปลี่ย�
 | 2026-05-23 | User/Codex | Downloaded `unsloth/Qwen3.5-0.8B` model card and selected it as the first Phase 8 v4.3 candidate intake | `docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md`, `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `docs/output-structure-fix/README.md`, `docs/index.md`, `docs/References.md` | Candidate intake only; no v4.3 train data, validation split, LoRA config, or fixed test run created |
 | 2026-05-23 | User/Codex | Expanded Phase 8 v4.3 commands for Qwen3.5 server, endpoint smoke, hard-contrast evaluation, metric extraction, and post-gate train pilot smoke | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `tests/test_v4_3_capacity_diagnostic_plan.py` | Runbook prepared; train pilot is explicitly outside the v4.3 gate and uses no fixed test split |
 | 2026-05-23 | User/Codex | Changed Phase 8 v4.3 Qwen3.5 local server commands to port `8080` | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `tests/test_v4_3_capacity_diagnostic_plan.py` | Runbook now uses `http://localhost:8080/v1` for server smoke and OpenAI-compatible evaluation |
+| 2026-05-23 | User/Codex | Summarized all 3 Phase 8 v4.3 `unsloth/Qwen3.5-0.8B` candidate probes | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md`, `docs/output-structure-fix/README.md`, `docs/fine-tuning-notes.md`, `docs/index.md`, `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json`, `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json` | Smoke and hard-contrast runs preserve JSON/schema `1.0` with invalid `0`, but hard-contrast label accuracy `0.50`/`0.48` and SQLi `3/10`/`2/10` hold the candidate |
+| 2026-05-23 | Codex | Created Phase 8 v4.4 hard-contrast boundary audit from the v4.3 Qwen3.5 hard-contrast reports | `scripts/create_v4_4_hard_contrast_boundary_audit.py`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.json`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.md`, `docs/output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md`, `docs/output-structure-fix/README.md`, `docs/index.md` | Audit found `26` union label failures, `25` persistent failures, and SQLi/traversal/recon -> `normal` as the main failure family; fixed split and v4.4 training artifacts remain closed |
 
 ## Related pages
 

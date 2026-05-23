@@ -1,0 +1,759 @@
+{
+  "adapter": "openai-compatible",
+  "adapter_metadata": {
+    "adapter": "openai-compatible",
+    "base_url": "http://192.168.8.141:8080/v1",
+    "config_path": "config-adapter.yml",
+    "env": {
+      "api_key": "OPENAI_COMPATIBLE_API_KEY",
+      "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+      "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+      "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+      "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+      "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+      "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+      "model": "OPENAI_COMPATIBLE_MODEL",
+      "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+      "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+      "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+      "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+      "seed": "OPENAI_COMPATIBLE_SEED",
+      "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+      "stop": "OPENAI_COMPATIBLE_STOP",
+      "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+      "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+      "top_p": "OPENAI_COMPATIBLE_TOP_P"
+    },
+    "extra_body": null,
+    "finish_reason": "stop",
+    "max_retries": 0,
+    "max_tokens": 1024,
+    "model": "qwen3-5-0-8b-security-triage",
+    "prompt_version": "triage-json-v2.1",
+    "request_options": {
+      "temperature": 0.0
+    },
+    "requested_model": "qwen3-5-0-8b-security-triage",
+    "response_format_attempted_modes": [
+      "structured_outputs_json"
+    ],
+    "response_format_mode": "structured_outputs_json",
+    "response_format_requested": "structured_outputs",
+    "response_id": "chatcmpl-8d951ba25b59bc4f",
+    "response_model": "qwen3-5-0-8b-security-triage",
+    "schema_path": "data/schemas/triage-output.schema.json",
+    "timeout_seconds": 120.0,
+    "usage": {
+      "completion_tokens": 107,
+      "completion_tokens_details": null,
+      "prompt_tokens": 544,
+      "prompt_tokens_details": null,
+      "total_tokens": 651
+    }
+  },
+  "counts": {
+    "evidence_partial_match": 5,
+    "failure": 3,
+    "invalid_output": 0,
+    "is_suspicious_correct": 3,
+    "json_parse_success": 5,
+    "label_correct": 3,
+    "schema_success": 5,
+    "severity_correct": 2
+  },
+  "expected_label_distribution": {
+    "directory_traversal_attempt": 1,
+    "failed_login_bruteforce": 1,
+    "normal": 1,
+    "port_scan_or_recon": 1,
+    "sql_injection_attempt": 1
+  },
+  "failures": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": null,
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 1024,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "requested_model": "qwen3-5-0-8b-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-baa983dbed889d28",
+        "response_model": "qwen3-5-0-8b-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 143,
+          "completion_tokens_details": null,
+          "prompt_tokens": 542,
+          "prompt_tokens_details": null,
+          "total_tokens": 685
+        }
+      },
+      "expected": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log shows repeated failed SSH authentication attempts in a short window.",
+        "recommended_action": "Review authentication logs for the source IP and consider blocking or rate-limiting it.",
+        "severity": "medium"
+      },
+      "failure_reasons": [
+        "severity_mismatch"
+      ],
+      "id": "sample-000137",
+      "input": "May 17 08:24:39 auth-01 sshd[3146]: Failed password for admin from 192.0.2.105 port 34263 ssh2; repeated 11 times in 5 minutes",
+      "latency_ms": 6159.077959,
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times",
+          "5 minutes"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log indicates a repeated failed authentication attempt with a volume of 11 attempts within a short timeframe, which is a classic indicator of brute force or password guessing activity.",
+        "recommended_action": "Review the authentication logs for the user 'admin' and investigate the source IP address 192.0.2.105 for potential brute force attempts or account compromise.",
+        "severity": "high"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": null,
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 1024,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "requested_model": "qwen3-5-0-8b-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-897c862547c28529",
+        "response_model": "qwen3-5-0-8b-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 125,
+          "completion_tokens_details": null,
+          "prompt_tokens": 557,
+          "prompt_tokens_details": null,
+          "total_tokens": 682
+        }
+      },
+      "expected": {
+        "evidence": [
+          "..\\\\..\\\\windows\\\\win.ini",
+          "GET /download?file=..\\\\..\\\\windows\\\\win.ini"
+        ],
+        "is_suspicious": true,
+        "label": "directory_traversal_attempt",
+        "reason": "The requested file path contains parent-directory traversal sequences.",
+        "recommended_action": "Review web server logs and verify that sensitive files were not returned.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "severity_mismatch",
+        "is_suspicious_mismatch"
+      ],
+      "id": "sample-000331",
+      "input": "203.0.113.50 - - [17/May/2026:14:56:44 +0700] \"GET /download?file=..\\\\..\\\\windows\\\\win.ini HTTP/1.1\" 403 305 \"-\" \"curl/8.1\"",
+      "latency_ms": 5043.405208,
+      "prediction": {
+        "evidence": [
+          "203.0.113.50",
+          "GET",
+          "/download?file=.."
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a standard HTTP GET request to a file download endpoint with a valid file path, resulting in a 403 Forbidden response. This is a routine system behavior.",
+        "recommended_action": "Monitor for similar requests from other IPs to detect potential lateral movement or unauthorized access.",
+        "severity": "low"
+      },
+      "schema_errors": []
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": null,
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 1024,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "requested_model": "qwen3-5-0-8b-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b3c96d4fff85d788",
+        "response_model": "qwen3-5-0-8b-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 173,
+          "completion_tokens_details": null,
+          "prompt_tokens": 571,
+          "prompt_tokens_details": null,
+          "total_tokens": 744
+        }
+      },
+      "expected": {
+        "evidence": [
+          "nmap fingerprint",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": true,
+        "label": "port_scan_or_recon",
+        "reason": "The IDS identified an Nmap-like fingerprint and multiple probed ports.",
+        "recommended_action": "Investigate the source IP and check whether it touched other hosts.",
+        "severity": "high"
+      },
+      "failure_reasons": [
+        "label_mismatch",
+        "severity_mismatch",
+        "is_suspicious_mismatch"
+      ],
+      "id": "sample-000474",
+      "input": "2026-05-17T09:27:34+07:00 ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205; probed_ports=21,22,23,25,80,443; packets=106",
+      "latency_ms": 6846.880584,
+      "prediction": {
+        "evidence": [
+          "2026-05-17T09:27:34+07:00",
+          "ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log indicates a standard Nmap reconnaissance scan with specific ports being probed, which is a routine security activity.",
+        "recommended_action": "Continue monitoring for further activity or alerts related to this scan.",
+        "severity": "low"
+      },
+      "schema_errors": []
+    }
+  ],
+  "metrics": {
+    "average_latency_ms": 6422.592034,
+    "evidence_partial_match": 1.0,
+    "invalid_output_count": 0,
+    "is_suspicious_accuracy": 0.6,
+    "json_parse_success_rate": 1.0,
+    "label_accuracy": 0.6,
+    "schema_success_rate": 1.0,
+    "severity_accuracy": 0.4
+  },
+  "predicted_label_distribution": {
+    "failed_login_bruteforce": 1,
+    "normal": 3,
+    "sql_injection_attempt": 1
+  },
+  "sample_count": 5,
+  "samples": [
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": null,
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 1024,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "requested_model": "qwen3-5-0-8b-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-8d951ba25b59bc4f",
+        "response_model": "qwen3-5-0-8b-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 107,
+          "completion_tokens_details": null,
+          "prompt_tokens": 544,
+          "prompt_tokens_details": null,
+          "total_tokens": 651
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": false,
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "id": "sample-000035",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 8443.503834,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "allowed",
+          "tcp",
+          "connection"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log entry indicates a successful firewall connection from an external IP to an internal IP on port 443, which is a standard expected activity for a web server or HTTPS service.",
+        "recommended_action": "Continue monitoring for additional failed login attempts or unusual traffic patterns.",
+        "severity": "low"
+      },
+      "raw_prediction": "{\n  \"label\": \"normal\",\n  \"severity\": \"low\",\n  \"is_suspicious\": false,\n  \"evidence\": [\"allowed\", \"tcp\", \"connection\"],\n  \"reason\": \"The log entry indicates a successful firewall connection from an external IP to an internal IP on port 443, which is a standard expected activity for a web server or HTTPS service.\",\n  \"recommended_action\": \"Continue monitoring for additional failed login attempts or unusual traffic patterns.\"\n}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": null,
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 1024,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "requested_model": "qwen3-5-0-8b-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-baa983dbed889d28",
+        "response_model": "qwen3-5-0-8b-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 143,
+          "completion_tokens_details": null,
+          "prompt_tokens": 542,
+          "prompt_tokens_details": null,
+          "total_tokens": 685
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "id": "sample-000137",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 6159.077959,
+      "predicted_is_suspicious": true,
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "Failed password",
+          "repeated 11 times",
+          "5 minutes"
+        ],
+        "is_suspicious": true,
+        "label": "failed_login_bruteforce",
+        "reason": "The log indicates a repeated failed authentication attempt with a volume of 11 attempts within a short timeframe, which is a classic indicator of brute force or password guessing activity.",
+        "recommended_action": "Review the authentication logs for the user 'admin' and investigate the source IP address 192.0.2.105 for potential brute force attempts or account compromise.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\n  \"label\": \"failed_login_bruteforce\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\"Failed password\", \"repeated 11 times\", \"5 minutes\"],\n  \"reason\": \"The log indicates a repeated failed authentication attempt with a volume of 11 attempts within a short timeframe, which is a classic indicator of brute force or password guessing activity.\"\n,\n  \"recommended_action\": \"Review the authentication logs for the user 'admin' and investigate the source IP address 192.0.2.105 for potential brute force attempts or account compromise.\"\n}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": null,
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 1024,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "requested_model": "qwen3-5-0-8b-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-98f5a17de7b3e01f",
+        "response_model": "qwen3-5-0-8b-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 134,
+          "completion_tokens_details": null,
+          "prompt_tokens": 551,
+          "prompt_tokens_details": null,
+          "total_tokens": 685
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "id": "sample-000248",
+      "is_suspicious_correct": true,
+      "json_parse_success": true,
+      "label_correct": true,
+      "latency_ms": 5620.092583,
+      "predicted_is_suspicious": true,
+      "predicted_label": "sql_injection_attempt",
+      "predicted_severity": "high",
+      "prediction": {
+        "evidence": [
+          "GET",
+          "/api/users?id=9",
+          "AND SLEEP(5)"
+        ],
+        "is_suspicious": true,
+        "label": "sql_injection_attempt",
+        "reason": "The input parameter 'id=9' contains a SQL injection indicator (AND SLEEP(5)) which is a classic payload attempting to execute a stored procedure or manipulate the database.",
+        "recommended_action": "Block the source IP 198.51.100.169 and investigate the application for SQL injection vulnerabilities.",
+        "severity": "high"
+      },
+      "raw_prediction": "{\n  \"label\": \"sql_injection_attempt\",\n  \"severity\": \"high\",\n  \"is_suspicious\": true,\n  \"evidence\": [\"GET\", \"/api/users?id=9\", \"AND SLEEP(5)\"],\n  \"reason\": \"The input parameter 'id=9' contains a SQL injection indicator (AND SLEEP(5)) which is a classic payload attempting to execute a stored procedure or manipulate the database.\",\n  \"recommended_action\": \"Block the source IP 198.51.100.169 and investigate the application for SQL injection vulnerabilities.\"\n}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": true
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": null,
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 1024,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "requested_model": "qwen3-5-0-8b-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-897c862547c28529",
+        "response_model": "qwen3-5-0-8b-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 125,
+          "completion_tokens_details": null,
+          "prompt_tokens": 557,
+          "prompt_tokens_details": null,
+          "total_tokens": 682
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "id": "sample-000331",
+      "is_suspicious_correct": false,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 5043.405208,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "203.0.113.50",
+          "GET",
+          "/download?file=.."
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The request is a standard HTTP GET request to a file download endpoint with a valid file path, resulting in a 403 Forbidden response. This is a routine system behavior.",
+        "recommended_action": "Monitor for similar requests from other IPs to detect potential lateral movement or unauthorized access.",
+        "severity": "low"
+      },
+      "raw_prediction": "{\n  \"label\": \"normal\",\n  \"severity\": \"low\",\n  \"is_suspicious\": false,\n  \"evidence\": [\"203.0.113.50\", \"GET\", \"/download?file=..\"],\n  \"reason\": \"The request is a standard HTTP GET request to a file download endpoint with a valid file path, resulting in a 403 Forbidden response. This is a routine system behavior.\",\n  \"recommended_action\": \"Monitor for similar requests from other IPs to detect potential lateral movement or unauthorized access.\"\n}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    },
+    {
+      "adapter_error": null,
+      "adapter_metadata": {
+        "adapter": "openai-compatible",
+        "base_url": "http://192.168.8.141:8080/v1",
+        "config_path": "config-adapter.yml",
+        "env": {
+          "api_key": "OPENAI_COMPATIBLE_API_KEY",
+          "base_url": "OPENAI_COMPATIBLE_BASE_URL",
+          "config_path": "OPENAI_COMPATIBLE_CONFIG_PATH",
+          "extra_body": "OPENAI_COMPATIBLE_EXTRA_BODY",
+          "frequency_penalty": "OPENAI_COMPATIBLE_FREQUENCY_PENALTY",
+          "max_retries": "OPENAI_COMPATIBLE_MAX_RETRIES",
+          "max_tokens": "OPENAI_COMPATIBLE_MAX_TOKENS",
+          "model": "OPENAI_COMPATIBLE_MODEL",
+          "presence_penalty": "OPENAI_COMPATIBLE_PRESENCE_PENALTY",
+          "prompt_version": "OPENAI_COMPATIBLE_PROMPT_VERSION",
+          "response_format": "OPENAI_COMPATIBLE_RESPONSE_FORMAT",
+          "schema_path": "OPENAI_COMPATIBLE_SCHEMA_PATH",
+          "seed": "OPENAI_COMPATIBLE_SEED",
+          "shared_config_path": "OPENAI_ADAPTER_CONFIG_PATH",
+          "stop": "OPENAI_COMPATIBLE_STOP",
+          "temperature": "OPENAI_COMPATIBLE_TEMPERATURE",
+          "timeout_seconds": "OPENAI_COMPATIBLE_TIMEOUT_SECONDS",
+          "top_p": "OPENAI_COMPATIBLE_TOP_P"
+        },
+        "extra_body": null,
+        "finish_reason": "stop",
+        "max_retries": 0,
+        "max_tokens": 1024,
+        "model": "qwen3-5-0-8b-security-triage",
+        "prompt_version": "triage-json-v2.1",
+        "request_options": {
+          "temperature": 0.0
+        },
+        "requested_model": "qwen3-5-0-8b-security-triage",
+        "response_format_attempted_modes": [
+          "structured_outputs_json"
+        ],
+        "response_format_mode": "structured_outputs_json",
+        "response_format_requested": "structured_outputs",
+        "response_id": "chatcmpl-b3c96d4fff85d788",
+        "response_model": "qwen3-5-0-8b-security-triage",
+        "schema_path": "data/schemas/triage-output.schema.json",
+        "timeout_seconds": 120.0,
+        "usage": {
+          "completion_tokens": 173,
+          "completion_tokens_details": null,
+          "prompt_tokens": 571,
+          "prompt_tokens_details": null,
+          "total_tokens": 744
+        }
+      },
+      "evidence_partial_match": true,
+      "expected_is_suspicious": true,
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "id": "sample-000474",
+      "is_suspicious_correct": false,
+      "json_parse_success": true,
+      "label_correct": false,
+      "latency_ms": 6846.880584,
+      "predicted_is_suspicious": false,
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "prediction": {
+        "evidence": [
+          "2026-05-17T09:27:34+07:00",
+          "ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205",
+          "probed_ports=21,22,23,25,80,443"
+        ],
+        "is_suspicious": false,
+        "label": "normal",
+        "reason": "The log indicates a standard Nmap reconnaissance scan with specific ports being probed, which is a routine security activity.",
+        "recommended_action": "Continue monitoring for further activity or alerts related to this scan.",
+        "severity": "low"
+      },
+      "raw_prediction": "{\n  \"label\": \"normal\",\n  \"severity\": \"low\",\n  \"is_suspicious\": false,\n  \"evidence\": [\"2026-05-17T09:27:34+07:00\", \"ids: nmap fingerprint from 198.51.100.117 to 203.0.113.205\", \"probed_ports=21,22,23,25,80,443\"],\n  \"reason\": \"The log indicates a standard Nmap reconnaissance scan with specific ports being probed, which is a routine security activity.\",\n  \"recommended_action\": \"Continue monitoring for further activity or alerts related to this scan.\"\n}",
+      "schema_errors": [],
+      "schema_success": true,
+      "severity_correct": false
+    }
+  ],
+  "schema": "data/schemas/triage-output.schema.json",
+  "split": "data/splits/smoke-output-contract.jsonl"
+}
