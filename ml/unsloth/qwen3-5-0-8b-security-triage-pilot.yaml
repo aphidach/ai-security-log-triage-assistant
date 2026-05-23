@@ -52,7 +52,7 @@ training:
   per_device_eval_batch_size: 1
   gradient_accumulation_steps: 8
   warmup_steps: 2
-  max_steps: 5
+  max_steps: 120
   learning_rate: 0.0001
   num_train_epochs: 1
   optim: adamw_8bit
@@ -60,9 +60,9 @@ training:
   lr_scheduler_type: linear
   logging_steps: 1
   eval_strategy: steps
-  eval_steps: 5
+  eval_steps: 10
   save_strategy: steps
-  save_steps: 5
+  save_steps: 30
   seed: 3407
   report_to: none
 
