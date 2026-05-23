@@ -48,6 +48,8 @@ V4_1_TRAIN_PATH = ROOT / "data" / "splits" / "train-v4-1-sqli-boundary-repair.js
 V4_1_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v4-1-sqli-boundary-repair.jsonl"
 V4_6_TRAIN_PATH = ROOT / "data" / "splits" / "train-v4-6-qwen35-normal-severity-calibration.jsonl"
 V4_6_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v4-6-qwen35-normal-severity-calibration.jsonl"
+V4_7_TRAIN_PATH = ROOT / "data" / "splits" / "train-v4-7-qwen35-auth-sqli-severity-calibration.jsonl"
+V4_7_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v4-7-qwen35-auth-sqli-severity-calibration.jsonl"
 RESERVED_TEST_PATH = ROOT / "data" / "splits" / "test.jsonl"
 SPLITS_DIR = ROOT / "data" / "splits"
 FAST_LANGUAGE_MODEL_LOADER = "fast_language_model"
@@ -166,6 +168,7 @@ def validate_split_path(path: Path, *, expected_path: Path, field_name: str) -> 
             V4_TRAIN_PATH.resolve(),
             V4_1_TRAIN_PATH.resolve(),
             V4_6_TRAIN_PATH.resolve(),
+            V4_7_TRAIN_PATH.resolve(),
         },
         "data.validation_path": {
             EXPECTED_VALIDATION_PATH.resolve(),
@@ -177,6 +180,7 @@ def validate_split_path(path: Path, *, expected_path: Path, field_name: str) -> 
             V4_VALIDATION_PATH.resolve(),
             V4_1_VALIDATION_PATH.resolve(),
             V4_6_VALIDATION_PATH.resolve(),
+            V4_7_VALIDATION_PATH.resolve(),
         },
     }.get(field_name, {expected_path.resolve()})
     if path not in allowed_paths:

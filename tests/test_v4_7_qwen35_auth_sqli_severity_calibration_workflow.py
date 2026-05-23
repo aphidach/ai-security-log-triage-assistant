@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression checks for the Phase 8 v4.6 Qwen3.5 calibration workflow."""
+"""Regression checks for the Phase 8 v4.7 Qwen3.5 calibration workflow."""
 
 from __future__ import annotations
 
@@ -50,13 +50,13 @@ def assert_evidence_in_input(test_case: unittest.TestCase, records: list[dict]) 
             test_case.assertIn(evidence, log_line, record["id"])
 
 
-class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
-    def test_v4_6_failure_slice_contract(self) -> None:
-        from scripts.create_v4_6_qwen35_normal_calibration_slice import (
+class V47Qwen35AuthSqliSeverityCalibrationWorkflowTest(unittest.TestCase):
+    def test_v4_7_failure_slice_contract(self) -> None:
+        from scripts.create_v4_7_qwen35_auth_sqli_severity_calibration_slice import (
             OUTPUT_JSON_PATH,
             OUTPUT_MD_PATH,
             build_report,
-            main as create_v4_6_slice,
+            main as create_v4_7_slice,
         )
 
         expected_report = build_report()
@@ -65,45 +65,38 @@ class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
         self.assertEqual(checked_report, expected_report)
         self.assertTrue(OUTPUT_MD_PATH.exists())
         self.assertEqual(checked_report["fixed_test_split_used"], False)
-        self.assertEqual(checked_report["label_failure_count"], 6)
-        self.assertEqual(checked_report["severity_failure_count"], 14)
-        self.assertEqual(checked_report["severity_only_failure_count"], 8)
-        self.assertEqual(checked_report["evidence_failure_count"], 1)
-
-        bucket_counts = {
-            bucket["bucket"]: bucket["count"]
-            for bucket in checked_report["bucket_summary"]
-        }
+        self.assertEqual(checked_report["case_count"], 18)
         self.assertEqual(
-            bucket_counts,
+            checked_report["bucket_counts"],
             {
-                "bruteforce_severity_high": 3,
-                "evidence_miss": 1,
-                "normal_to_bruteforce": 3,
-                "normal_to_sqli": 2,
-                "normal_to_traversal": 1,
-                "port_recon_severity_medium": 5,
+                "normal_to_bruteforce": 7,
+                "sqli_to_bruteforce": 2,
+                "bruteforce_medium_to_high": 7,
+                "port_recon_medium_to_high": 1,
+                "traversal_evidence_miss": 1,
             },
         )
-
         self.assertEqual(
             [case["id"] for case in checked_report["cases"]],
             [
                 "v3-hard-000001",
                 "v3-hard-000002",
                 "v3-hard-000003",
-                "v3-hard-000005",
-                "v3-hard-000007",
-                "v3-hard-000009",
                 "v3-hard-000015",
                 "v3-hard-000016",
                 "v3-hard-000018",
+                "v3-hard-000021",
+                "v3-hard-000025",
                 "v3-hard-000035",
-                "v3-hard-000042",
-                "v3-hard-000043",
-                "v3-hard-000044",
-                "v3-hard-000046",
-                "v3-hard-000047",
+                "v3-hard-000050",
+                "v4-6-qwen35-cal-000121",
+                "v4-6-qwen35-cal-000122",
+                "v4-6-qwen35-cal-000123",
+                "v4-6-qwen35-cal-000124",
+                "v4-6-qwen35-cal-000136",
+                "v4-6-qwen35-cal-000137",
+                "v4-6-qwen35-cal-000138",
+                "v4-6-qwen35-cal-000139",
             ],
         )
 
@@ -114,7 +107,7 @@ class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
             OUTPUT_MD_PATH: file_sha256(OUTPUT_MD_PATH),
         }
 
-        self.assertEqual(create_v4_6_slice(), 0)
+        self.assertEqual(create_v4_7_slice(), 0)
 
         self.assertEqual(file_sha256(test_path), before_test_hash)
         self.assertEqual(
@@ -122,25 +115,25 @@ class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
             before_report_hashes,
         )
 
-    def test_v4_6_dataset_contract(self) -> None:
-        from scripts.create_v4_6_qwen35_normal_calibration_dataset import (
+    def test_v4_7_dataset_contract(self) -> None:
+        from scripts.create_v4_7_qwen35_auth_sqli_severity_calibration_dataset import (
             SUPPLEMENT_PATH,
             TRAIN_PLUS_PATH,
-            V4_6_PROBE_PATH,
-            V4_6_TRAIN_PATH,
-            V4_6_VALIDATION_PATH,
-            build_v4_6_split_records,
-            main as create_v4_6_dataset,
+            V4_7_PROBE_PATH,
+            V4_7_TRAIN_PATH,
+            V4_7_VALIDATION_PATH,
+            build_v4_7_split_records,
+            main as create_v4_7_dataset,
         )
 
         expected_train_records, expected_validation_records, expected_supplement_records, expected_probe_records = (
-            build_v4_6_split_records()
+            build_v4_7_split_records()
         )
-        checked_train_records = load_jsonl(V4_6_TRAIN_PATH)
+        checked_train_records = load_jsonl(V4_7_TRAIN_PATH)
         checked_train_plus_records = load_jsonl(TRAIN_PLUS_PATH)
-        checked_validation_records = load_jsonl(V4_6_VALIDATION_PATH)
+        checked_validation_records = load_jsonl(V4_7_VALIDATION_PATH)
         checked_supplement_records = load_jsonl(SUPPLEMENT_PATH)
-        checked_probe_records = load_jsonl(V4_6_PROBE_PATH)
+        checked_probe_records = load_jsonl(V4_7_PROBE_PATH)
 
         expected_clean_supplement = [
             {key: value for key, value in record.items() if key != "metadata"}
@@ -159,12 +152,12 @@ class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
         before_artifact_hashes = {
             SUPPLEMENT_PATH: file_sha256(SUPPLEMENT_PATH),
             TRAIN_PLUS_PATH: file_sha256(TRAIN_PLUS_PATH),
-            V4_6_TRAIN_PATH: file_sha256(V4_6_TRAIN_PATH),
-            V4_6_VALIDATION_PATH: file_sha256(V4_6_VALIDATION_PATH),
-            V4_6_PROBE_PATH: file_sha256(V4_6_PROBE_PATH),
+            V4_7_TRAIN_PATH: file_sha256(V4_7_TRAIN_PATH),
+            V4_7_VALIDATION_PATH: file_sha256(V4_7_VALIDATION_PATH),
+            V4_7_PROBE_PATH: file_sha256(V4_7_PROBE_PATH),
         }
 
-        self.assertEqual(create_v4_6_dataset(), 0)
+        self.assertEqual(create_v4_7_dataset(), 0)
 
         self.assertEqual(file_sha256(test_path), before_test_hash)
         self.assertEqual(
@@ -172,48 +165,48 @@ class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
             before_artifact_hashes,
         )
 
-        self.assertEqual(len(checked_supplement_records), 145)
+        self.assertEqual(len(checked_supplement_records), 150)
         self.assertEqual(
             label_counts(checked_supplement_records),
             {
-                "normal": 87,
-                "failed_login_bruteforce": 22,
-                "sql_injection_attempt": 7,
-                "directory_traversal_attempt": 7,
-                "port_scan_or_recon": 22,
+                "normal": 69,
+                "failed_login_bruteforce": 39,
+                "sql_injection_attempt": 23,
+                "directory_traversal_attempt": 9,
+                "port_scan_or_recon": 10,
             },
         )
-        self.assertEqual(len(checked_probe_records), 25)
+        self.assertEqual(len(checked_probe_records), 30)
         self.assertEqual(
             label_counts(checked_probe_records),
             {
                 "normal": 15,
-                "failed_login_bruteforce": 4,
-                "sql_injection_attempt": 1,
+                "failed_login_bruteforce": 7,
+                "sql_injection_attempt": 5,
                 "directory_traversal_attempt": 1,
-                "port_scan_or_recon": 4,
+                "port_scan_or_recon": 2,
             },
         )
-        self.assertEqual(len(checked_train_records), 1340)
+        self.assertEqual(len(checked_train_records), 1460)
         self.assertEqual(
             label_counts(checked_train_records),
             {
-                "normal": 351,
-                "failed_login_bruteforce": 154,
-                "sql_injection_attempt": 421,
-                "directory_traversal_attempt": 197,
-                "port_scan_or_recon": 217,
+                "normal": 405,
+                "failed_login_bruteforce": 186,
+                "sql_injection_attempt": 439,
+                "directory_traversal_attempt": 205,
+                "port_scan_or_recon": 225,
             },
         )
-        self.assertEqual(len(checked_validation_records), 100)
+        self.assertEqual(len(checked_validation_records), 130)
         self.assertEqual(
             label_counts(checked_validation_records),
             {
-                "normal": 30,
-                "failed_login_bruteforce": 19,
-                "sql_injection_attempt": 16,
-                "directory_traversal_attempt": 16,
-                "port_scan_or_recon": 19,
+                "normal": 45,
+                "failed_login_bruteforce": 26,
+                "sql_injection_attempt": 21,
+                "directory_traversal_attempt": 17,
+                "port_scan_or_recon": 21,
             },
         )
 
@@ -224,8 +217,9 @@ class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
         self.assertEqual(len(validation_ids), len(checked_validation_records))
         self.assertEqual(train_ids & validation_ids, set())
         self.assertTrue(probe_ids <= validation_ids)
+        self.assertEqual(train_ids & probe_ids, set())
         self.assertEqual(
-            sum(1 for record in checked_train_records if record["id"].startswith("v4-6-qwen35-cal-")),
+            sum(1 for record in checked_train_records if record["id"].startswith("v4-7-qwen35-cal-")),
             120,
         )
 
@@ -241,8 +235,8 @@ class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
         format_split(checked_validation_records)
         format_split(checked_probe_records)
 
-    def test_v4_6_qwen35_config_preflight_contract(self) -> None:
-        config_path = ROOT / "ml" / "unsloth" / "qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml"
+    def test_v4_7_qwen35_config_preflight_contract(self) -> None:
+        config_path = ROOT / "ml" / "unsloth" / "qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration.yaml"
         config = load_config(config_path)
 
         self.assertEqual(config["model"]["base_model"], "unsloth/Qwen3.5-0.8B")
@@ -251,30 +245,30 @@ class V46Qwen35NormalCalibrationWorkflowTest(unittest.TestCase):
         self.assertEqual(config["format"]["prompt_version"], TRIAGE_PROMPT_VERSION)
         self.assertEqual(
             config["data"]["train_path"],
-            "data/splits/train-v4-6-qwen35-normal-severity-calibration.jsonl",
+            "data/splits/train-v4-7-qwen35-auth-sqli-severity-calibration.jsonl",
         )
         self.assertEqual(
             config["data"]["validation_path"],
-            "data/splits/validation-v4-6-qwen35-normal-severity-calibration.jsonl",
+            "data/splits/validation-v4-7-qwen35-auth-sqli-severity-calibration.jsonl",
         )
-        self.assertEqual(config["training"]["max_steps"], 260)
+        self.assertEqual(config["training"]["max_steps"], 275)
         self.assertEqual(config["training"]["learning_rate"], 0.00008)
-        self.assertIn("v4-6-normal-severity-calibration", config["output"]["output_dir"])
+        self.assertIn("v4-7-auth-sqli-severity-calibration", config["output"]["output_dir"])
 
         report = build_vision_preflight_report(config_path, config)
         self.assertEqual(report["model"]["loader"], FAST_VISION_MODEL_LOADER)
         self.assertEqual(report["prompt"]["config_prompt_version"], TRIAGE_PROMPT_VERSION)
         self.assertEqual(report["prompt"]["formatter_prompt_version"], TRIAGE_PROMPT_VERSION)
-        self.assertEqual(report["splits"]["train_records"], 1340)
-        self.assertEqual(report["splits"]["validation_records"], 100)
+        self.assertEqual(report["splits"]["train_records"], 1460)
+        self.assertEqual(report["splits"]["validation_records"], 130)
         self.assertEqual(
             report["splits"]["train_labels"],
             {
-                "directory_traversal_attempt": 197,
-                "failed_login_bruteforce": 154,
-                "normal": 351,
-                "port_scan_or_recon": 217,
-                "sql_injection_attempt": 421,
+                "directory_traversal_attempt": 205,
+                "failed_login_bruteforce": 186,
+                "normal": 405,
+                "port_scan_or_recon": 225,
+                "sql_injection_attempt": 439,
             },
         )
 

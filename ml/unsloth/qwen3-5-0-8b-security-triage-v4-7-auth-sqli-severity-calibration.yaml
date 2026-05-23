@@ -1,0 +1,71 @@
+model:
+  base_model: unsloth/Qwen3.5-0.8B
+  loader: fast_vision_model
+  model_family: Qwen3.5
+  max_seq_length: 1024
+  load_in_4bit: true
+  use_gradient_checkpointing: unsloth
+
+data:
+  train_path: data/splits/train-v4-7-qwen35-auth-sqli-severity-calibration.jsonl
+  validation_path: data/splits/validation-v4-7-qwen35-auth-sqli-severity-calibration.jsonl
+  input_field: input
+  output_field: output
+
+format:
+  prompt_version: triage-json-v2.1
+  training_record_format: chat_messages
+  use_tokenizer_chat_template: true
+  strict_output_schema: true
+  assistant_output_keys:
+    - label
+    - severity
+    - is_suspicious
+    - evidence
+    - reason
+    - recommended_action
+
+lora:
+  r: 16
+  lora_alpha: 16
+  lora_dropout: 0.0
+  bias: none
+  task_type: CAUSAL_LM
+  random_state: 3407
+  use_rslora: false
+  loftq_config: null
+  finetune_vision_layers: false
+  finetune_language_layers: true
+  finetune_attention_modules: true
+  finetune_mlp_modules: true
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+training:
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 8
+  warmup_steps: 3
+  max_steps: 275
+  learning_rate: 0.00008
+  num_train_epochs: 1
+  optim: adamw_8bit
+  weight_decay: 0.001
+  lr_scheduler_type: linear
+  logging_steps: 1
+  eval_strategy: steps
+  eval_steps: 10
+  save_strategy: steps
+  save_steps: 35
+  seed: 3407
+  report_to: none
+
+output:
+  output_dir: ml/unsloth/outputs/qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration-lora
+  adapter_name: qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration-lora

@@ -200,6 +200,7 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "output-structure-fix/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-plan.md",
     "raw/What Small Language Model Is Best for Fine-Tuning.md",
     "output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md",
     "output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe.md",
@@ -228,7 +229,6 @@
     "lfm2-350m-model-card-notes.md",
     "output-structure-fix/phase-6-v3-3-targeted-canary.md",
     "output-structure-fix/phase-6-v3-2-hard-contrast-probe.md",
-    "output-structure-fix/phase-6-v3-1-mini-semantic-eval.md",
     "output-structure-fix",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",
