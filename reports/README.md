@@ -73,6 +73,7 @@ Calibration result summary:
 
 ```text
 reports/phase-{n}-{model-version}-normal-severity-calibration-report.html
+reports/phase-{n}-{model-version}-auth-sqli-severity-calibration-report.html
 ```
 
 Training result captures:

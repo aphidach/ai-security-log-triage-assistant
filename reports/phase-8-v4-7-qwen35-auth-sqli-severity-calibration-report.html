@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phase 8 v4.7 Qwen3.5 Auth SQLi Severity Calibration Report</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5f6b7a;
+      --line: #d8e0ea;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --navy: #132238;
+      --green: #14715f;
+      --green-soft: #e4f4ee;
+      --amber: #a76000;
+      --amber-soft: #fff2d8;
+      --red: #b53b36;
+      --red-soft: #ffe4df;
+      --blue: #286fb4;
+      --blue-soft: #e7f0fb;
+      --slate-soft: #eef3f8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    header {
+      background: var(--navy);
+      color: #ffffff;
+      padding: 34px 28px 30px;
+      border-bottom: 5px solid var(--red);
+    }
+
+    main {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 32px;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.56;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .92em;
+    }
+
+    .subtitle {
+      max-width: 980px;
+      margin-bottom: 0;
+      color: #d8e2ef;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      border: 1px solid rgba(255, 255, 255, .28);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #ecf2f8;
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .metrics {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 22px;
+    }
+
+    .two-col {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .panel,
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(20, 32, 46, .05);
+    }
+
+    .panel {
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      min-height: 132px;
+      padding: 16px;
+    }
+
+    .metric-value {
+      margin-bottom: 8px;
+      font-size: 29px;
+      font-weight: 760;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 13px;
+      font-weight: 730;
+      white-space: nowrap;
+    }
+
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status.hold {
+      border: 1px solid #efaea8;
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .status.pass {
+      border: 1px solid #9ad3c0;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .status.mixed {
+      border: 1px solid #efc77d;
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .callout {
+      margin: 14px 0 0;
+      border-left: 4px solid var(--red);
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: #fff3f0;
+      color: #6c2b27;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 730;
+    }
+
+    td.num,
+    th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: var(--slate-soft);
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.pass {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .tag.hold {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .tag.mixed {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .delta {
+      display: inline-block;
+      border-radius: 6px;
+      padding: 2px 6px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 730;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 230px 1fr 84px;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .bar-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e6edf5;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .bar-fill.good {
+      background: var(--green);
+    }
+
+    .bar-fill.warn {
+      background: var(--amber);
+    }
+
+    .bar-fill.bad {
+      background: var(--red);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .file-list {
+      display: grid;
+      gap: 8px;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .file-list li {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 9px 10px;
+      background: #fbfdff;
+    }
+
+    @media (max-width: 880px) {
+      header {
+        padding: 26px 18px 24px;
+      }
+
+      main {
+        padding: 18px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .metrics,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Phase 8 v4.7 Qwen3.5 Auth SQLi Severity Calibration</h1>
+    <p class="subtitle">v4.7 improves the broad hard-contrast checkpoint, but the targeted calibration probe fails the exact auth, SQLi, and medium-severity cases it was built to repair. Fixed split remains closed.</p>
+    <div class="pill-row">
+      <span class="pill">Decision: hold</span>
+      <span class="pill">Fixed split: closed</span>
+      <span class="pill">Temperature: 0.0</span>
+      <span class="pill">Mode: structured_outputs_json</span>
+      <span class="pill">Alias: qwen3.6-8B-triage-v3</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid metrics" aria-label="Key metrics">
+      <div class="card">
+        <div class="metric-value">0.92</div>
+        <div class="metric-label">Hard-contrast label accuracy<br /><span class="delta">+0.02 vs v4.6</span></div>
+      </div>
+      <div class="card">
+        <div class="metric-value">0.92</div>
+        <div class="metric-label">Hard-contrast severity accuracy<br /><span class="delta">+0.02 vs v4.6</span></div>
+      </div>
+      <div class="card">
+        <div class="metric-value">0.366667</div>
+        <div class="metric-label">v4.7 calibration label accuracy<br /><span class="tag hold">gate failed</span></div>
+      </div>
+      <div class="card">
+        <div class="metric-value">0</div>
+        <div class="metric-label">Invalid outputs across both probes<br /><span class="tag pass">contract passed</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Decision</h2>
+      <span class="status hold">Held before fixed split</span>
+      <p class="callout">Do not run mini semantic or fixed split comparison from this checkpoint. The hard-contrast headline passed its overall label and severity thresholds, but the new calibration probe fell to <code>0.366667</code> label accuracy and <code>0.60</code> severity accuracy.</p>
+    </section>
+
+    <section class="grid two-col">
+      <div class="panel">
+        <h2>Training Snapshot</h2>
+        <table>
+          <tbody>
+            <tr><th>Base model</th><td><code>unsloth/Qwen3.5-0.8B</code></td></tr>
+            <tr><th>Train / validation</th><td><code>1460 / 130</code></td></tr>
+            <tr><th>Train loss</th><td><code>0.26452613711357115</code></td></tr>
+            <tr><th>Runtime</th><td><code>1709.8471 sec</code></td></tr>
+            <tr><th>Samples / second</th><td><code>1.287</code></td></tr>
+            <tr><th>Steps / second</th><td><code>0.161</code></td></tr>
+            <tr><th>Output dir</th><td><code>ml/unsloth/outputs/qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration-lora</code></td></tr>
+          </tbody>
+        </table>
+        <p class="small">Training output was captured in the v4.7 plan page; no separate v4.7 training-result JSON file was present when this report was created.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Runtime Snapshot</h2>
+        <table>
+          <tbody>
+            <tr><th>Adapter</th><td><code>openai-compatible</code></td></tr>
+            <tr><th>Served alias</th><td><code>qwen3.6-8B-triage-v3</code></td></tr>
+            <tr><th>Base URL</th><td><code>http://192.168.8.141:8080/v1</code></td></tr>
+            <tr><th>Prompt</th><td><code>triage-json-v2.1</code></td></tr>
+            <tr><th>Response format</th><td><code>structured_outputs_json</code></td></tr>
+            <tr><th>Temperature</th><td><code>0.0</code></td></tr>
+            <tr><th>Max tokens</th><td><code>512</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Probe Metrics</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Probe</th>
+            <th class="num">Samples</th>
+            <th class="num">Label</th>
+            <th class="num">Severity</th>
+            <th class="num">Suspicious</th>
+            <th class="num">Evidence</th>
+            <th class="num">JSON/schema</th>
+            <th class="num">Invalid</th>
+            <th class="num">Avg latency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>v4.7 auth/SQLi/severity calibration</td>
+            <td class="num">30</td>
+            <td class="num">0.366667</td>
+            <td class="num">0.60</td>
+            <td class="num">0.666667</td>
+            <td class="num">1.0</td>
+            <td class="num">1.0 / 1.0</td>
+            <td class="num">0</td>
+            <td class="num">6592.079815 ms</td>
+          </tr>
+          <tr>
+            <td>v3 hard-contrast regression</td>
+            <td class="num">50</td>
+            <td class="num">0.92</td>
+            <td class="num">0.92</td>
+            <td class="num">0.98</td>
+            <td class="num">1.0</td>
+            <td class="num">1.0 / 1.0</td>
+            <td class="num">0</td>
+            <td class="num">6783.558132 ms</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="grid two-col">
+      <div class="panel">
+        <h2>Calibration Breakdown</h2>
+        <div class="bar-row">
+          <span><code>normal</code> label</span>
+          <div class="bar-track"><div class="bar-fill bad" style="width: 0%"></div></div>
+          <strong>0/15</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>failed_login_bruteforce</code> label</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 100%"></div></div>
+          <strong>7/7</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>failed_login_bruteforce</code> severity</span>
+          <div class="bar-track"><div class="bar-fill bad" style="width: 0%"></div></div>
+          <strong>0/7</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>sql_injection_attempt</code> label</span>
+          <div class="bar-track"><div class="bar-fill bad" style="width: 20%"></div></div>
+          <strong>1/5</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>port_scan_or_recon</code> label</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 100%"></div></div>
+          <strong>2/2</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>directory_traversal_attempt</code> label</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 100%"></div></div>
+          <strong>1/1</strong>
+        </div>
+        <p class="small">Main failures: all 15 normal-auth calibration samples were labeled brute force; four of five SQLi auth-context samples were labeled normal; all seven medium brute-force samples were escalated to high severity.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Hard-Contrast Breakdown</h2>
+        <div class="bar-row">
+          <span><code>normal</code> label</span>
+          <div class="bar-track"><div class="bar-fill warn" style="width: 70%"></div></div>
+          <strong>7/10</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>failed_login_bruteforce</code> label</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 100%"></div></div>
+          <strong>10/10</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>failed_login_bruteforce</code> severity</span>
+          <div class="bar-track"><div class="bar-fill warn" style="width: 70%"></div></div>
+          <strong>7/10</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>sql_injection_attempt</code> label</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 90%"></div></div>
+          <strong>9/10</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>directory_traversal_attempt</code> label</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 100%"></div></div>
+          <strong>10/10</strong>
+        </div>
+        <div class="bar-row">
+          <span><code>port_scan_or_recon</code> label</span>
+          <div class="bar-track"><div class="bar-fill good" style="width: 100%"></div></div>
+          <strong>10/10</strong>
+        </div>
+        <p class="small">Hard-contrast improved from v4.6 label <code>0.90</code> to <code>0.92</code>, severity <code>0.90</code> to <code>0.92</code>, suspicious accuracy <code>0.96</code> to <code>0.98</code>, and evidence <code>0.98</code> to <code>1.0</code>.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Gate Read</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Gate</th>
+            <th class="num">Target</th>
+            <th class="num">Observed</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>JSON/schema</td><td class="num">1.0 / 1.0</td><td class="num">1.0 / 1.0 on both probes</td><td><span class="tag pass">Pass</span></td></tr>
+          <tr><td>Invalid outputs</td><td class="num">0</td><td class="num">0 on both probes</td><td><span class="tag pass">Pass</span></td></tr>
+          <tr><td>Hard-contrast label accuracy</td><td class="num">&ge; 0.92</td><td class="num">0.92</td><td><span class="tag pass">Pass</span></td></tr>
+          <tr><td>Hard-contrast normal</td><td class="num">&ge; 8/10</td><td class="num">7/10</td><td><span class="tag hold">Hold</span></td></tr>
+          <tr><td>Hard-contrast SQLi</td><td class="num">&ge; 9/10</td><td class="num">9/10</td><td><span class="tag pass">Pass</span></td></tr>
+          <tr><td>Every suspicious hard-contrast label</td><td class="num">&ge; 9/10</td><td class="num">brute 10/10, SQLi 9/10, traversal 10/10, recon 10/10</td><td><span class="tag pass">Pass</span></td></tr>
+          <tr><td>Hard-contrast severity</td><td class="num">&ge; 0.90</td><td class="num">0.92</td><td><span class="tag pass">Pass</span></td></tr>
+          <tr><td>v4.7 calibration label/severity</td><td class="num">&ge; 0.90 / &ge; 0.90</td><td class="num">0.366667 / 0.60</td><td><span class="tag hold">Hold</span></td></tr>
+          <tr><td>v4.7 normal-auth probe</td><td class="num">&ge; 14/15</td><td class="num">0/15</td><td><span class="tag hold">Hold</span></td></tr>
+          <tr><td>v4.7 SQLi auth-context probe</td><td class="num">5/5</td><td class="num">1/5</td><td><span class="tag hold">Hold</span></td></tr>
+          <tr><td>v4.7 brute-force medium severity probe</td><td class="num">&ge; 5/5</td><td class="num">0/7</td><td><span class="tag hold">Hold</span></td></tr>
+          <tr><td>Specific repaired severity IDs</td><td class="num">000015, 000016, 000018, 000050</td><td class="num">000015/000016/000018 still high; 000050 fixed</td><td><span class="tag hold">Hold</span></td></tr>
+          <tr><td>Specific repaired evidence ID</td><td class="num">v3-hard-000035</td><td class="num">evidence partial match corrected</td><td><span class="tag pass">Pass</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="grid two-col">
+      <div class="panel">
+        <h2>Confusion Summary</h2>
+        <table>
+          <thead>
+            <tr><th>Probe</th><th>Expected -> predicted</th><th class="num">Count</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Calibration</td><td><code>normal -> failed_login_bruteforce</code></td><td class="num">15</td></tr>
+            <tr><td>Calibration</td><td><code>sql_injection_attempt -> normal</code></td><td class="num">4</td></tr>
+            <tr><td>Calibration</td><td><code>sql_injection_attempt -> sql_injection_attempt</code></td><td class="num">1</td></tr>
+            <tr><td>Hard-contrast</td><td><code>normal -> failed_login_bruteforce</code></td><td class="num">3</td></tr>
+            <tr><td>Hard-contrast</td><td><code>sql_injection_attempt -> failed_login_bruteforce</code></td><td class="num">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>Severity Summary</h2>
+        <table>
+          <thead>
+            <tr><th>Probe</th><th>Expected -> predicted</th><th class="num">Count</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Calibration</td><td><code>medium -> high</code></td><td class="num">8</td></tr>
+            <tr><td>Calibration</td><td><code>high -> low</code></td><td class="num">4</td></tr>
+            <tr><td>Calibration</td><td><code>low -> low</code></td><td class="num">15</td></tr>
+            <tr><td>Hard-contrast</td><td><code>medium -> high</code></td><td class="num">3</td></tr>
+            <tr><td>Hard-contrast</td><td><code>high -> medium</code></td><td class="num">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Source Artifacts</h2>
+      <ul class="file-list">
+        <li><a href="openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json">Auth/SQLi/severity calibration JSON report</a></li>
+        <li><a href="openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.md">Auth/SQLi/severity calibration markdown report</a></li>
+        <li><a href="openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json">Hard-contrast JSON report</a></li>
+        <li><a href="openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.md">Hard-contrast markdown report</a></li>
+        <li><a href="phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json">v4.7 failure slice JSON</a></li>
+        <li><a href="../docs/output-structure-fix/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-plan.md">v4.7 docs page</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
