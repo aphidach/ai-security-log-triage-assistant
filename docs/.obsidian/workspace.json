@@ -200,6 +200,8 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md",
+    "output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe.md",
     "small-model-fine-tuning-candidates-6gb.md",
     "slm-fine-tuning-model-choice.md",
     "slm-rag-fine-tuning-hallucination.md",
@@ -227,8 +229,6 @@
     "output-structure-fix/phase-6-v3-2-hard-contrast-probe.md",
     "output-structure-fix/phase-6-v3-1-mini-semantic-eval.md",
     "scripts.md",
-    "output-structure-fix/phase-6-1-evidence-constraints.md",
-    "output-structure-fix/phase-6-v3-hard-contrast-dataset.md",
     "output-structure-fix",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",

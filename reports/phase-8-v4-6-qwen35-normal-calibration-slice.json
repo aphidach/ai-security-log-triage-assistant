@@ -1,0 +1,523 @@
+{
+  "created_date": "2026-05-23",
+  "phase": "phase-8-v4-6",
+  "source_report": "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json",
+  "source_split": "data/generated/v3-hard-contrast-security-triage.jsonl",
+  "fixed_test_split_used": false,
+  "metrics": {
+    "average_latency_ms": 5648.582491,
+    "evidence_partial_match": 0.98,
+    "invalid_output_count": 0,
+    "is_suspicious_accuracy": 0.88,
+    "json_parse_success_rate": 1.0,
+    "label_accuracy": 0.88,
+    "schema_success_rate": 1.0,
+    "severity_accuracy": 0.72
+  },
+  "adapter_metadata": {
+    "model": "qwen3.6-8B-triage-v1",
+    "base_url": "http://192.168.8.141:8080/v1",
+    "config_path": "config-adapter.yml",
+    "response_format_requested": "structured_outputs",
+    "response_format_mode": "structured_outputs_json",
+    "prompt_version": "triage-json-v2.1",
+    "max_tokens": 512,
+    "timeout_seconds": 120.0,
+    "request_options": {
+      "temperature": 0.0
+    }
+  },
+  "sample_count": 50,
+  "label_failure_count": 6,
+  "severity_failure_count": 14,
+  "severity_only_failure_count": 8,
+  "evidence_failure_count": 1,
+  "bucket_summary": [
+    {
+      "bucket": "bruteforce_severity_high",
+      "title": "Brute force severity too high",
+      "count": 3,
+      "ids": [
+        "v3-hard-000015",
+        "v3-hard-000016",
+        "v3-hard-000018"
+      ],
+      "diagnosis": "Medium brute-force indicators are labelled correctly but escalated to high.",
+      "suggested_repair_pattern": "Add medium brute-force positives with repeated failures but limited blast radius, no admin compromise evidence, and no distributed spray."
+    },
+    {
+      "bucket": "evidence_miss",
+      "title": "Evidence miss",
+      "count": 1,
+      "ids": [
+        "v3-hard-000035"
+      ],
+      "diagnosis": "The label is correct, but evidence is incomplete or does not match the expected substring.",
+      "suggested_repair_pattern": "Keep exact evidence substrings short and copied from the log line."
+    },
+    {
+      "bucket": "normal_to_bruteforce",
+      "title": "Normal -> brute force",
+      "count": 3,
+      "ids": [
+        "v3-hard-000001",
+        "v3-hard-000002",
+        "v3-hard-000003"
+      ],
+      "diagnosis": "Single or low-volume auth failures are over-escalated into brute force.",
+      "suggested_repair_pattern": "Add normal auth negatives with failures=1-2, no burst window, no repeated source, and no account lockout."
+    },
+    {
+      "bucket": "normal_to_sqli",
+      "title": "Normal -> SQLi",
+      "count": 2,
+      "ids": [
+        "v3-hard-000005",
+        "v3-hard-000009"
+      ],
+      "diagnosis": "Benign text containing words like union or SQL training vocabulary is over-alerted.",
+      "suggested_repair_pattern": "Add benign documentation/search examples containing SQL words without quote, comment, tautology, stacked query, or blocked WAF evidence."
+    },
+    {
+      "bucket": "normal_to_traversal",
+      "title": "Normal -> traversal",
+      "count": 1,
+      "ids": [
+        "v3-hard-000007"
+      ],
+      "diagnosis": "Normalized relative paths under allowed docs/static routes are over-alerted.",
+      "suggested_repair_pattern": "Add normal normalized-path examples where the route is documentation/static content, status is successful, and no sensitive file target is present."
+    },
+    {
+      "bucket": "port_recon_severity_medium",
+      "title": "Port/recon severity too low",
+      "count": 5,
+      "ids": [
+        "v3-hard-000042",
+        "v3-hard-000043",
+        "v3-hard-000044",
+        "v3-hard-000046",
+        "v3-hard-000047"
+      ],
+      "diagnosis": "Clear nmap/SYN/horizontal scan indicators are labelled correctly but lowered to medium.",
+      "suggested_repair_pattern": "Add high-severity recon positives with explicit nmap/SYN scan or broad host/port enumeration."
+    }
+  ],
+  "cases": [
+    {
+      "id": "v3-hard-000001",
+      "failure_bucket": "normal_to_bruteforce",
+      "failure_bucket_title": "Normal -> brute force",
+      "input_log": "May 18 09:00:01 auth-01 sshd[2011]: Failed password for webapp from 192.0.2.44 port 51422 ssh2; failed_attempts=1",
+      "expected_label": "normal",
+      "predicted_label": "failed_login_bruteforce",
+      "expected_severity": "low",
+      "predicted_severity": "high",
+      "expected_is_suspicious": false,
+      "predicted_is_suspicious": true,
+      "label_correct": false,
+      "severity_correct": false,
+      "is_suspicious_correct": false,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "Failed password",
+        "failed_attempts=1"
+      ],
+      "predicted_evidence": [
+        "Failed password for webapp",
+        "failed_attempts=1"
+      ],
+      "diagnosis": "Single or low-volume auth failures are over-escalated into brute force.",
+      "suggested_repair_pattern": "Add normal auth negatives with failures=1-2, no burst window, no repeated source, and no account lockout."
+    },
+    {
+      "id": "v3-hard-000002",
+      "failure_bucket": "normal_to_bruteforce",
+      "failure_bucket_title": "Normal -> brute force",
+      "input_log": "2026-05-18T09:02:10+07:00 app=auth event=login_failed user=svc_backup src_ip=198.51.100.24 failures=1 window=10m outcome=allowed_retry",
+      "expected_label": "normal",
+      "predicted_label": "failed_login_bruteforce",
+      "expected_severity": "low",
+      "predicted_severity": "medium",
+      "expected_is_suspicious": false,
+      "predicted_is_suspicious": true,
+      "label_correct": false,
+      "severity_correct": false,
+      "is_suspicious_correct": false,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "event=login_failed",
+        "failures=1",
+        "outcome=allowed_retry"
+      ],
+      "predicted_evidence": [
+        "event=login_failed",
+        "failures=1",
+        "window=10m"
+      ],
+      "diagnosis": "Single or low-volume auth failures are over-escalated into brute force.",
+      "suggested_repair_pattern": "Add normal auth negatives with failures=1-2, no burst window, no repeated source, and no account lockout."
+    },
+    {
+      "id": "v3-hard-000003",
+      "failure_bucket": "normal_to_bruteforce",
+      "failure_bucket_title": "Normal -> brute force",
+      "input_log": "2026-05-18T09:04:30+07:00 winlog event_id=4625 host=ws-07 target_user=jdoe src_ip=203.0.113.74 count=1 status=failed_logon",
+      "expected_label": "normal",
+      "predicted_label": "failed_login_bruteforce",
+      "expected_severity": "low",
+      "predicted_severity": "medium",
+      "expected_is_suspicious": false,
+      "predicted_is_suspicious": true,
+      "label_correct": false,
+      "severity_correct": false,
+      "is_suspicious_correct": false,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "event_id=4625",
+        "count=1",
+        "status=failed_logon"
+      ],
+      "predicted_evidence": [
+        "event_id=4625",
+        "status=failed_logon"
+      ],
+      "diagnosis": "Single or low-volume auth failures are over-escalated into brute force.",
+      "suggested_repair_pattern": "Add normal auth negatives with failures=1-2, no burst window, no repeated source, and no account lockout."
+    },
+    {
+      "id": "v3-hard-000005",
+      "failure_bucket": "normal_to_sqli",
+      "failure_bucket_title": "Normal -> SQLi",
+      "input_log": "203.0.113.87 - - [18/May/2026:09:08:12 +0700] \"GET /search?q=union+station+map HTTP/1.1\" 200 1188 \"-\" \"Mozilla/5.0\"",
+      "expected_label": "normal",
+      "predicted_label": "sql_injection_attempt",
+      "expected_severity": "low",
+      "predicted_severity": "high",
+      "expected_is_suspicious": false,
+      "predicted_is_suspicious": true,
+      "label_correct": false,
+      "severity_correct": false,
+      "is_suspicious_correct": false,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "/search?q=union+station+map",
+        "200"
+      ],
+      "predicted_evidence": [
+        "union+station+map",
+        "200"
+      ],
+      "diagnosis": "Benign text containing words like union or SQL training vocabulary is over-alerted.",
+      "suggested_repair_pattern": "Add benign documentation/search examples containing SQL words without quote, comment, tautology, stacked query, or blocked WAF evidence."
+    },
+    {
+      "id": "v3-hard-000007",
+      "failure_bucket": "normal_to_traversal",
+      "failure_bucket_title": "Normal -> traversal",
+      "input_log": "203.0.113.41 - - [18/May/2026:09:12:16 +0700] \"GET /docs/../guide HTTP/1.1\" 200 998 \"-\" \"Mozilla/5.0\"",
+      "expected_label": "normal",
+      "predicted_label": "directory_traversal_attempt",
+      "expected_severity": "low",
+      "predicted_severity": "high",
+      "expected_is_suspicious": false,
+      "predicted_is_suspicious": true,
+      "label_correct": false,
+      "severity_correct": false,
+      "is_suspicious_correct": false,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "/docs/../guide",
+        "200"
+      ],
+      "predicted_evidence": [
+        "/docs/../guide",
+        "200"
+      ],
+      "diagnosis": "Normalized relative paths under allowed docs/static routes are over-alerted.",
+      "suggested_repair_pattern": "Add normal normalized-path examples where the route is documentation/static content, status is successful, and no sensitive file target is present."
+    },
+    {
+      "id": "v3-hard-000009",
+      "failure_bucket": "normal_to_sqli",
+      "failure_bucket_title": "Normal -> SQLi",
+      "input_log": "2026-05-18T09:16:48+07:00 api=inventory route=/api/items method=GET query=category=unionized-tools src_ip=192.0.2.98 status=200",
+      "expected_label": "normal",
+      "predicted_label": "sql_injection_attempt",
+      "expected_severity": "low",
+      "predicted_severity": "high",
+      "expected_is_suspicious": false,
+      "predicted_is_suspicious": true,
+      "label_correct": false,
+      "severity_correct": false,
+      "is_suspicious_correct": false,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "query=category=unionized-tools",
+        "status=200"
+      ],
+      "predicted_evidence": [
+        "query=category=unionized-tools",
+        "status=200"
+      ],
+      "diagnosis": "Benign text containing words like union or SQL training vocabulary is over-alerted.",
+      "suggested_repair_pattern": "Add benign documentation/search examples containing SQL words without quote, comment, tautology, stacked query, or blocked WAF evidence."
+    },
+    {
+      "id": "v3-hard-000015",
+      "failure_bucket": "bruteforce_severity_high",
+      "failure_bucket_title": "Brute force severity too high",
+      "input_log": "May 18 09:22:18 api-02 sshd[8842]: Failed password for root from 198.51.100.202 port 60111 ssh2; repeated 9 times in 2 minutes",
+      "expected_label": "failed_login_bruteforce",
+      "predicted_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "predicted_severity": "high",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": false,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "Failed password",
+        "repeated 9 times",
+        "2 minutes"
+      ],
+      "predicted_evidence": [
+        "Failed password for root",
+        "repeated 9 times in 2 minutes"
+      ],
+      "diagnosis": "Medium brute-force indicators are labelled correctly but escalated to high.",
+      "suggested_repair_pattern": "Add medium brute-force positives with repeated failures but limited blast radius, no admin compromise evidence, and no distributed spray."
+    },
+    {
+      "id": "v3-hard-000016",
+      "failure_bucket": "bruteforce_severity_high",
+      "failure_bucket_title": "Brute force severity too high",
+      "input_log": "2026-05-18T09:24:44+07:00 app=auth event=password_guessing user=admin src_ip=192.0.2.190 failures=11 window=5m lockout=true",
+      "expected_label": "failed_login_bruteforce",
+      "predicted_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "predicted_severity": "high",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": false,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "event=password_guessing",
+        "failures=11",
+        "lockout=true"
+      ],
+      "predicted_evidence": [
+        "event=password_guessing",
+        "failures=11",
+        "lockout=true"
+      ],
+      "diagnosis": "Medium brute-force indicators are labelled correctly but escalated to high.",
+      "suggested_repair_pattern": "Add medium brute-force positives with repeated failures but limited blast radius, no admin compromise evidence, and no distributed spray."
+    },
+    {
+      "id": "v3-hard-000018",
+      "failure_bucket": "bruteforce_severity_high",
+      "failure_bucket_title": "Brute force severity too high",
+      "input_log": "May 18 09:28:09 vpn-01 openvpn[5012]: auth failed for user deploy from 198.51.100.64; repeated=13 window=6m",
+      "expected_label": "failed_login_bruteforce",
+      "predicted_label": "failed_login_bruteforce",
+      "expected_severity": "medium",
+      "predicted_severity": "high",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": false,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "auth failed",
+        "repeated=13",
+        "window=6m"
+      ],
+      "predicted_evidence": [
+        "auth failed for user deploy",
+        "repeated=13 window=6m"
+      ],
+      "diagnosis": "Medium brute-force indicators are labelled correctly but escalated to high.",
+      "suggested_repair_pattern": "Add medium brute-force positives with repeated failures but limited blast radius, no admin compromise evidence, and no distributed spray."
+    },
+    {
+      "id": "v3-hard-000035",
+      "failure_bucket": "evidence_miss",
+      "failure_bucket_title": "Evidence miss",
+      "input_log": "2026-05-18T11:08:11+07:00 waf: blocked request src=203.0.113.222 uri=\"/files/..\\..\\windows\\win.ini\" rule=path_traversal status=403",
+      "expected_label": "directory_traversal_attempt",
+      "predicted_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "predicted_severity": "high",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": true,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": false,
+      "expected_evidence": [
+        "..\\..\\windows\\win.ini",
+        "rule=path_traversal"
+      ],
+      "predicted_evidence": [
+        "uri=/files/..%2f..%2fwindows%2fwin.ini",
+        "status=403"
+      ],
+      "diagnosis": "The label is correct, but evidence is incomplete or does not match the expected substring.",
+      "suggested_repair_pattern": "Keep exact evidence substrings short and copied from the log line."
+    },
+    {
+      "id": "v3-hard-000042",
+      "failure_bucket": "port_recon_severity_medium",
+      "failure_bucket_title": "Port/recon severity too low",
+      "input_log": "2026-05-18T12:02:18+07:00 ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224; probed_ports=80,443,8080,8443; packets=92",
+      "expected_label": "port_scan_or_recon",
+      "predicted_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "predicted_severity": "medium",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": false,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "nmap fingerprint",
+        "probed_ports=80,443,8080,8443"
+      ],
+      "predicted_evidence": [
+        "nmap fingerprint",
+        "probed_ports=80,443,8080,8443"
+      ],
+      "diagnosis": "Clear nmap/SYN/horizontal scan indicators are labelled correctly but lowered to medium.",
+      "suggested_repair_pattern": "Add high-severity recon positives with explicit nmap/SYN scan or broad host/port enumeration."
+    },
+    {
+      "id": "v3-hard-000043",
+      "failure_bucket": "port_recon_severity_medium",
+      "failure_bucket_title": "Port/recon severity too low",
+      "input_log": "2026-05-18T12:04:37+07:00 firewall: SYN scan detected src=198.51.100.105 dst=192.0.2.203 ports=80,443,8080 action=blocked",
+      "expected_label": "port_scan_or_recon",
+      "predicted_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "predicted_severity": "medium",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": false,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "SYN scan detected",
+        "ports=80,443,8080"
+      ],
+      "predicted_evidence": [
+        "SYN scan detected",
+        "ports=80,443,8080"
+      ],
+      "diagnosis": "Clear nmap/SYN/horizontal scan indicators are labelled correctly but lowered to medium.",
+      "suggested_repair_pattern": "Add high-severity recon positives with explicit nmap/SYN scan or broad host/port enumeration."
+    },
+    {
+      "id": "v3-hard-000044",
+      "failure_bucket": "port_recon_severity_medium",
+      "failure_bucket_title": "Port/recon severity too low",
+      "input_log": "2026-05-18T12:06:22+07:00 ids: horizontal scan src=203.0.113.90 dst_subnet=192.0.2.0/24 dst_port=22 unique_hosts=18 window=60s",
+      "expected_label": "port_scan_or_recon",
+      "predicted_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "predicted_severity": "medium",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": false,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "horizontal scan",
+        "unique_hosts=18"
+      ],
+      "predicted_evidence": [
+        "horizontal scan",
+        "dst_subnet=192.0.2.0/24",
+        "unique_hosts=18"
+      ],
+      "diagnosis": "Clear nmap/SYN/horizontal scan indicators are labelled correctly but lowered to medium.",
+      "suggested_repair_pattern": "Add high-severity recon positives with explicit nmap/SYN scan or broad host/port enumeration."
+    },
+    {
+      "id": "v3-hard-000046",
+      "failure_bucket": "port_recon_severity_medium",
+      "failure_bucket_title": "Port/recon severity too low",
+      "input_log": "2026-05-18T12:10:40+07:00 ids: nmap fingerprint from 203.0.113.120 to 198.51.100.77; probed_ports=135,139,445,3389; packets=140",
+      "expected_label": "port_scan_or_recon",
+      "predicted_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "predicted_severity": "medium",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": false,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "nmap fingerprint",
+        "probed_ports=135,139,445,3389"
+      ],
+      "predicted_evidence": [
+        "nmap fingerprint",
+        "probed_ports=135,139,445,3389"
+      ],
+      "diagnosis": "Clear nmap/SYN/horizontal scan indicators are labelled correctly but lowered to medium.",
+      "suggested_repair_pattern": "Add high-severity recon positives with explicit nmap/SYN scan or broad host/port enumeration."
+    },
+    {
+      "id": "v3-hard-000047",
+      "failure_bucket": "port_recon_severity_medium",
+      "failure_bucket_title": "Port/recon severity too low",
+      "input_log": "2026-05-18T12:12:02+07:00 firewall: SYN scan detected src=192.0.2.144 dst=198.51.100.220 ports=25,110,143,587,993 action=blocked",
+      "expected_label": "port_scan_or_recon",
+      "predicted_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "predicted_severity": "medium",
+      "expected_is_suspicious": true,
+      "predicted_is_suspicious": true,
+      "label_correct": true,
+      "severity_correct": false,
+      "is_suspicious_correct": true,
+      "evidence_partial_match": true,
+      "expected_evidence": [
+        "SYN scan detected",
+        "ports=25,110,143,587,993"
+      ],
+      "predicted_evidence": [
+        "SYN scan detected",
+        "ports=25,110,143,587,993"
+      ],
+      "diagnosis": "Clear nmap/SYN/horizontal scan indicators are labelled correctly but lowered to medium.",
+      "suggested_repair_pattern": "Add high-severity recon positives with explicit nmap/SYN scan or broad host/port enumeration."
+    }
+  ],
+  "dataset_implications": [
+    {
+      "bucket": "normal hard negatives",
+      "target": "train-heavy supplement",
+      "details": "Repair normal -> brute force, SQLi, and traversal false positives without touching fixed test."
+    },
+    {
+      "bucket": "severity calibration",
+      "target": "medium brute-force and high recon positives",
+      "details": "Teach severity boundaries while keeping labels unchanged."
+    },
+    {
+      "bucket": "suspicious recall guard",
+      "target": "small SQLi/traversal positives",
+      "details": "Prevent the normal repair from causing a return to suspicious -> normal collapse."
+    }
+  ]
+}

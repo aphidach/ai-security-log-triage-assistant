@@ -1,0 +1,21 @@
+{
+  "status": "training_complete",
+  "phase": "phase-8-v4-5",
+  "run_name": "qwen35-lora-pilot-v1",
+  "config_path": "ml/unsloth/qwen3-5-0-8b-security-triage-pilot.yaml",
+  "output_dir": "ml/unsloth/outputs/qwen3-5-0-8b-security-triage-pilot-lora-smoke",
+  "train_records": 1220,
+  "validation_records": 75,
+  "metrics": {
+    "epoch": 0.7868852459016393,
+    "total_flos": 2155432287402240.0,
+    "train_loss": 0.41032123460123937,
+    "train_runtime": 597.8327,
+    "train_samples_per_second": 1.606,
+    "train_steps_per_second": 0.201
+  },
+  "notes": [
+    "Captured from the user-provided training-complete summary on 2026-05-23.",
+    "This is an exploratory Qwen3.5 LoRA pilot run, separate from the earlier v4.3/v4.4 base-model probes."
+  ]
+}

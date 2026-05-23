@@ -62,6 +62,13 @@ reports/phase-{n}-{model-version}-boundary-audit.json
 reports/phase-{n}-{model-version}-boundary-audit.md
 ```
 
+Calibration slices:
+
+```text
+reports/phase-{n}-{model-version}-normal-calibration-slice.json
+reports/phase-{n}-{model-version}-normal-calibration-slice.md
+```
+
 Canonical fixed split format:
 
 ```text
