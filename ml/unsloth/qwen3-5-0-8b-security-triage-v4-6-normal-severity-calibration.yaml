@@ -52,7 +52,7 @@ training:
   per_device_eval_batch_size: 1
   gradient_accumulation_steps: 8
   warmup_steps: 3
-  max_steps: 140
+  max_steps: 260
   learning_rate: 0.00008
   num_train_epochs: 1
   optim: adamw_8bit
