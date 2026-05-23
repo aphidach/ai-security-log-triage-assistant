@@ -52,6 +52,20 @@
           "schema_success": 15,
           "severity_correct": 13
         },
+        "v4_6_model": {
+          "invalid_output": 0,
+          "label_correct": 2,
+          "predicted_label_distribution": {
+            "failed_login_bruteforce": 13,
+            "normal": 2
+          },
+          "predicted_severity_distribution": {
+            "low": 9,
+            "medium": 6
+          },
+          "schema_success": 15,
+          "severity_correct": 9
+        },
         "v4_7_model": {
           "invalid_output": 0,
           "label_correct": 0,
@@ -107,6 +121,21 @@
           },
           "schema_success": 5,
           "severity_correct": 3
+        },
+        "v4_6_model": {
+          "invalid_output": 0,
+          "label_correct": 1,
+          "predicted_label_distribution": {
+            "failed_login_bruteforce": 3,
+            "normal": 1,
+            "sql_injection_attempt": 1
+          },
+          "predicted_severity_distribution": {
+            "high": 1,
+            "low": 4
+          },
+          "schema_success": 5,
+          "severity_correct": 1
         },
         "v4_7_model": {
           "invalid_output": 0,
@@ -166,6 +195,18 @@
           "schema_success": 7,
           "severity_correct": 2
         },
+        "v4_6_model": {
+          "invalid_output": 0,
+          "label_correct": 7,
+          "predicted_label_distribution": {
+            "failed_login_bruteforce": 7
+          },
+          "predicted_severity_distribution": {
+            "high": 7
+          },
+          "schema_success": 7,
+          "severity_correct": 0
+        },
         "v4_7_model": {
           "invalid_output": 0,
           "label_correct": 7,
@@ -219,6 +260,19 @@
           "schema_success": 2,
           "severity_correct": 1
         },
+        "v4_6_model": {
+          "invalid_output": 0,
+          "label_correct": 2,
+          "predicted_label_distribution": {
+            "port_scan_or_recon": 2
+          },
+          "predicted_severity_distribution": {
+            "high": 1,
+            "medium": 1
+          },
+          "schema_success": 2,
+          "severity_correct": 1
+        },
         "v4_7_model": {
           "invalid_output": 0,
           "label_correct": 2,
@@ -257,6 +311,18 @@
           "severity_correct": 0
         },
         "heuristic": {
+          "invalid_output": 0,
+          "label_correct": 1,
+          "predicted_label_distribution": {
+            "directory_traversal_attempt": 1
+          },
+          "predicted_severity_distribution": {
+            "high": 1
+          },
+          "schema_success": 1,
+          "severity_correct": 1
+        },
+        "v4_6_model": {
           "invalid_output": 0,
           "label_correct": 1,
           "predicted_label_distribution": {
@@ -314,6 +380,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -345,6 +419,14 @@
           "severity_correct": false
         },
         "heuristic": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium",
+          "schema_success": true,
+          "severity_correct": false
+        },
+        "v4_6_model": {
           "evidence_partial_match": true,
           "label_correct": false,
           "predicted_label": "failed_login_bruteforce",
@@ -390,6 +472,14 @@
           "schema_success": true,
           "severity_correct": false
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -424,6 +514,14 @@
           "evidence_partial_match": true,
           "label_correct": true,
           "predicted_label": "normal",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
           "predicted_severity": "low",
           "schema_success": true,
           "severity_correct": true
@@ -466,6 +564,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -497,6 +603,14 @@
           "severity_correct": true
         },
         "heuristic": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "normal",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
+        "v4_6_model": {
           "evidence_partial_match": true,
           "label_correct": true,
           "predicted_label": "normal",
@@ -542,6 +656,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -579,6 +701,14 @@
           "predicted_severity": "low",
           "schema_success": true,
           "severity_correct": true
+        },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium",
+          "schema_success": true,
+          "severity_correct": false
         },
         "v4_7_model": {
           "evidence_partial_match": true,
@@ -618,6 +748,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -656,6 +794,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -687,6 +833,14 @@
           "severity_correct": true
         },
         "heuristic": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "normal",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
+        "v4_6_model": {
           "evidence_partial_match": true,
           "label_correct": true,
           "predicted_label": "normal",
@@ -732,6 +886,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -766,6 +928,14 @@
           "evidence_partial_match": true,
           "label_correct": true,
           "predicted_label": "normal",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
           "predicted_severity": "low",
           "schema_success": true,
           "severity_correct": true
@@ -808,6 +978,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": true
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -845,6 +1023,14 @@
           "predicted_severity": "low",
           "schema_success": true,
           "severity_correct": true
+        },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "medium",
+          "schema_success": true,
+          "severity_correct": false
         },
         "v4_7_model": {
           "evidence_partial_match": true,
@@ -884,6 +1070,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": true,
@@ -919,6 +1113,14 @@
           "label_correct": false,
           "predicted_label": "normal",
           "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": false
+        },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high",
           "schema_success": true,
           "severity_correct": false
         },
@@ -960,6 +1162,14 @@
           "schema_success": true,
           "severity_correct": false
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": true,
@@ -995,6 +1205,14 @@
           "label_correct": false,
           "predicted_label": "normal",
           "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": false
+        },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high",
           "schema_success": true,
           "severity_correct": false
         },
@@ -1036,6 +1254,14 @@
           "schema_success": true,
           "severity_correct": false
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": true,
@@ -1071,6 +1297,14 @@
           "label_correct": false,
           "predicted_label": "normal",
           "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": false
+        },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high",
           "schema_success": true,
           "severity_correct": false
         },
@@ -1112,6 +1346,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "high",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": true,
@@ -1149,6 +1391,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -1182,6 +1432,14 @@
           "evidence_partial_match": true,
           "label_correct": false,
           "predicted_label": "normal",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": false
+        },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
           "predicted_severity": "low",
           "schema_success": true,
           "severity_correct": false
@@ -1223,6 +1481,14 @@
           "schema_success": true,
           "severity_correct": false
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "failed_login_bruteforce",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -1260,6 +1526,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": false,
+          "predicted_label": "normal",
+          "predicted_severity": "low",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": false,
@@ -1290,6 +1564,14 @@
           "severity_correct": true
         },
         "heuristic": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "sql_injection_attempt",
+          "predicted_severity": "high",
+          "schema_success": true,
+          "severity_correct": true
+        },
+        "v4_6_model": {
           "evidence_partial_match": true,
           "label_correct": true,
           "predicted_label": "sql_injection_attempt",
@@ -1334,6 +1616,14 @@
           "schema_success": true,
           "severity_correct": false
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "port_scan_or_recon",
+          "predicted_severity": "high",
+          "schema_success": true,
+          "severity_correct": false
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": true,
@@ -1364,6 +1654,14 @@
           "severity_correct": true
         },
         "heuristic": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "port_scan_or_recon",
+          "predicted_severity": "medium",
+          "schema_success": true,
+          "severity_correct": true
+        },
+        "v4_6_model": {
           "evidence_partial_match": true,
           "label_correct": true,
           "predicted_label": "port_scan_or_recon",
@@ -1408,6 +1706,14 @@
           "schema_success": true,
           "severity_correct": true
         },
+        "v4_6_model": {
+          "evidence_partial_match": true,
+          "label_correct": true,
+          "predicted_label": "directory_traversal_attempt",
+          "predicted_severity": "high",
+          "schema_success": true,
+          "severity_correct": true
+        },
         "v4_7_model": {
           "evidence_partial_match": true,
           "label_correct": true,
@@ -1421,20 +1727,17 @@
   ],
   "comparator_status": {
     "v4_6_on_v4_7_probe": {
-      "note": "Endpoint inventory on 2026-05-23 did not expose the v4.6 alias, so the audit uses heuristic and base Qwen3.5 comparators first.",
-      "observed_served_model_ids": [
-        "unsloth/Qwen3.5-0.8B",
-        "qwen3.6-8B-triage-v3"
-      ],
+      "note": "v4.6 has now been evaluated on the same v4.7 calibration probe.",
       "requested_alias": "qwen3.6-8B-triage-v2",
-      "status": "blocked_not_served"
+      "source_report": "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json",
+      "status": "completed"
     }
   },
   "created_date": "2026-05-23",
   "decision": {
     "fixed_split": "closed",
     "status": "prepare_v4_8_diagnostic_first",
-    "summary": "v4.7 stays held. The next action is a small v4.8 paired-contrast repair after this diagnostic audit, not a broad dataset expansion or fixed-split run.",
+    "summary": "v4.7 stays held. v4.6 is slightly better on the same v4.7 calibration probe, but both trained adapters remain below the heuristic baseline. The next action is a small v4.8 paired-contrast repair, not a broad dataset expansion or fixed-split run.",
     "training": "not_started"
   },
   "diagnostic_type": "v4_8_auth_sqli_severity_diagnostic_audit",
@@ -1460,6 +1763,16 @@
       "schema_success_rate": 1.0,
       "severity_accuracy": 0.666667
     },
+    "v4_6_model": {
+      "average_latency_ms": 5957.112975,
+      "evidence_partial_match": 1.0,
+      "invalid_output_count": 0,
+      "is_suspicious_accuracy": 0.533333,
+      "json_parse_success_rate": 1.0,
+      "label_accuracy": 0.433333,
+      "schema_success_rate": 1.0,
+      "severity_accuracy": 0.4
+    },
     "v4_7_model": {
       "average_latency_ms": 6592.079815,
       "evidence_partial_match": 1.0,
@@ -1472,6 +1785,16 @@
     }
   },
   "metric_deltas": {
+    "v4_6_model_minus_heuristic": {
+      "average_latency_ms": 5957.054683,
+      "evidence_partial_match": 0.0,
+      "invalid_output_count": 0,
+      "is_suspicious_accuracy": -0.133334,
+      "json_parse_success_rate": 0.0,
+      "label_accuracy": -0.233334,
+      "schema_success_rate": 0.0,
+      "severity_accuracy": -0.266667
+    },
     "v4_7_model_minus_base_qwen35": {
       "average_latency_ms": -2176.512341,
       "evidence_partial_match": 0.3,
@@ -1491,6 +1814,16 @@
       "label_accuracy": -0.3,
       "schema_success_rate": 0.0,
       "severity_accuracy": -0.066667
+    },
+    "v4_7_model_minus_v4_6_model": {
+      "average_latency_ms": 634.96684,
+      "evidence_partial_match": 0.0,
+      "invalid_output_count": 0,
+      "is_suspicious_accuracy": 0.133334,
+      "json_parse_success_rate": 0.0,
+      "label_accuracy": -0.066666,
+      "schema_success_rate": 0.0,
+      "severity_accuracy": 0.2
     }
   },
   "output_reports": {
@@ -1511,6 +1844,7 @@
   "source_reports": {
     "base_qwen35": "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json",
     "heuristic": "reports/heuristic-v4-7-auth-sqli-severity-calibration-probe.json",
+    "v4_6_model": "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json",
     "v4_7_model": "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json"
   },
   "training_artifacts_created": false

@@ -3,8 +3,8 @@
 
 The audit reads only non-fixed v4.7 probe reports and the v4.7 probe split.
 It does not read the fixed test split, create training data, or change runtime
-configuration. Its job is to compare the held v4.7 adapter against the local
-heuristic baseline and the currently served base Qwen3.5 diagnostic run before
+configuration. Its job is to compare the held v4.7 adapter against the prior
+v4.6 adapter, local heuristic baseline, and base Qwen3.5 diagnostic run before
 any v4.8 training data is created.
 """
 
@@ -25,6 +25,11 @@ V4_7_MODEL_REPORT_PATH = (
     / "reports"
     / "openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json"
 )
+V4_6_ON_V4_7_REPORT_PATH = (
+    ROOT
+    / "reports"
+    / "openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json"
+)
 HEURISTIC_REPORT_PATH = ROOT / "reports" / "heuristic-v4-7-auth-sqli-severity-calibration-probe.json"
 BASE_MODEL_REPORT_PATH = (
     ROOT
@@ -41,12 +46,16 @@ JsonObject = dict[str, Any]
 
 
 REPORTS = {
+    "v4_6_model": V4_6_ON_V4_7_REPORT_PATH,
     "v4_7_model": V4_7_MODEL_REPORT_PATH,
     "heuristic": HEURISTIC_REPORT_PATH,
     "base_qwen35": BASE_MODEL_REPORT_PATH,
 }
 
+REPORT_ORDER = ("v4_6_model", "v4_7_model", "heuristic", "base_qwen35")
+
 REPORT_TITLES = {
+    "v4_6_model": "v4.6 trained adapter",
     "v4_7_model": "v4.7 trained adapter",
     "heuristic": "heuristic baseline",
     "base_qwen35": "base Qwen3.5",
@@ -259,14 +268,20 @@ def build_report() -> JsonObject:
         },
         "comparator_status": {
             "v4_6_on_v4_7_probe": {
-                "status": "blocked_not_served",
+                "status": "completed",
                 "requested_alias": "qwen3.6-8B-triage-v2",
-                "observed_served_model_ids": ["unsloth/Qwen3.5-0.8B", "qwen3.6-8B-triage-v3"],
-                "note": "Endpoint inventory on 2026-05-23 did not expose the v4.6 alias, so the audit uses heuristic and base Qwen3.5 comparators first.",
+                "source_report": str(V4_6_ON_V4_7_REPORT_PATH.relative_to(ROOT)),
+                "note": "v4.6 has now been evaluated on the same v4.7 calibration probe.",
             }
         },
         "headline_metrics": metrics,
         "metric_deltas": {
+            "v4_7_model_minus_v4_6_model": {
+                key: metric_delta(metrics["v4_7_model"], metrics["v4_6_model"], key) for key in METRIC_KEYS
+            },
+            "v4_6_model_minus_heuristic": {
+                key: metric_delta(metrics["v4_6_model"], metrics["heuristic"], key) for key in METRIC_KEYS
+            },
             "v4_7_model_minus_heuristic": {
                 key: metric_delta(metrics["v4_7_model"], metrics["heuristic"], key) for key in METRIC_KEYS
             },
@@ -293,8 +308,9 @@ def build_report() -> JsonObject:
             "fixed_split": "closed",
             "training": "not_started",
             "summary": (
-                "v4.7 stays held. The next action is a small v4.8 paired-contrast repair after "
-                "this diagnostic audit, not a broad dataset expansion or fixed-split run."
+                "v4.7 stays held. v4.6 is slightly better on the same v4.7 calibration probe, "
+                "but both trained adapters remain below the heuristic baseline. The next action "
+                "is a small v4.8 paired-contrast repair, not a broad dataset expansion or fixed-split run."
             ),
         },
     }
@@ -305,7 +321,7 @@ def markdown_metrics_table(report: JsonObject) -> list[str]:
         "| Comparator | Label | Severity | Suspicious | Evidence | JSON/schema | Invalid | Avg latency |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
-    for key in ("v4_7_model", "heuristic", "base_qwen35"):
+    for key in REPORT_ORDER:
         metrics = report["headline_metrics"][key]
         lines.append(
             "| "
@@ -328,8 +344,8 @@ def markdown_metrics_table(report: JsonObject) -> list[str]:
 
 def markdown_bucket_table(report: JsonObject) -> list[str]:
     lines = [
-        "| Bucket | Samples | v4.7 label/severity | Heuristic label/severity | Base label/severity | Diagnostic read |",
-        "| --- | ---: | ---: | ---: | ---: | --- |",
+        "| Bucket | Samples | v4.6 label/severity | v4.7 label/severity | Heuristic label/severity | Base label/severity | Diagnostic read |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for bucket in report["bucket_summary"]:
         reports = bucket["reports"]
@@ -339,6 +355,7 @@ def markdown_bucket_table(report: JsonObject) -> list[str]:
                 [
                     f"`{bucket['bucket']}`",
                     f"`{bucket['sample_count']}`",
+                    f"`{reports['v4_6_model']['label_correct']}/{bucket['sample_count']} / {reports['v4_6_model']['severity_correct']}/{bucket['sample_count']}`",
                     f"`{reports['v4_7_model']['label_correct']}/{bucket['sample_count']} / {reports['v4_7_model']['severity_correct']}/{bucket['sample_count']}`",
                     f"`{reports['heuristic']['label_correct']}/{bucket['sample_count']} / {reports['heuristic']['severity_correct']}/{bucket['sample_count']}`",
                     f"`{reports['base_qwen35']['label_correct']}/{bucket['sample_count']} / {reports['base_qwen35']['severity_correct']}/{bucket['sample_count']}`",
@@ -355,7 +372,7 @@ def write_json_report(report: JsonObject) -> None:
 
 
 def write_markdown_report(report: JsonObject) -> None:
-    blocked = report["comparator_status"]["v4_6_on_v4_7_probe"]
+    comparator = report["comparator_status"]["v4_6_on_v4_7_probe"]
     lines = [
         "# Phase 8 V4.8 Qwen3.5 Auth/SQLi Diagnostic Audit",
         "",
@@ -367,8 +384,8 @@ def write_markdown_report(report: JsonObject) -> None:
         "",
         "## Comparator Status",
         "",
-        f"- v4.6 on v4.7 probe: `{blocked['status']}` because alias `{blocked['requested_alias']}` was not in the observed served model list.",
-        f"- Observed served model IDs: `{', '.join(blocked['observed_served_model_ids'])}`",
+        f"- v4.6 on v4.7 probe: `{comparator['status']}` with alias `{comparator['requested_alias']}`.",
+        f"- Source report: `{comparator['source_report']}`",
         "",
         "## Headline Metrics",
         "",
@@ -403,7 +420,7 @@ def html_escape(value: Any) -> str:
 
 def write_html_report(report: JsonObject) -> None:
     metrics_rows = []
-    for key in ("v4_7_model", "heuristic", "base_qwen35"):
+    for key in REPORT_ORDER:
         metrics = report["headline_metrics"][key]
         metrics_rows.append(
             "<tr>"
@@ -426,6 +443,7 @@ def write_html_report(report: JsonObject) -> None:
             "<tr>"
             f"<td><code>{html_escape(bucket['bucket'])}</code><span>{html_escape(bucket['title'])}</span></td>"
             f"<td>{html_escape(count)}</td>"
+            f"<td>{html_escape(reports['v4_6_model']['label_correct'])}/{count}<small>label</small><br>{html_escape(reports['v4_6_model']['severity_correct'])}/{count}<small>severity</small></td>"
             f"<td>{html_escape(reports['v4_7_model']['label_correct'])}/{count}<small>label</small><br>{html_escape(reports['v4_7_model']['severity_correct'])}/{count}<small>severity</small></td>"
             f"<td>{html_escape(reports['heuristic']['label_correct'])}/{count}<small>label</small><br>{html_escape(reports['heuristic']['severity_correct'])}/{count}<small>severity</small></td>"
             f"<td>{html_escape(reports['base_qwen35']['label_correct'])}/{count}<small>label</small><br>{html_escape(reports['base_qwen35']['severity_correct'])}/{count}<small>severity</small></td>"
@@ -435,6 +453,7 @@ def write_html_report(report: JsonObject) -> None:
 
     case_rows = []
     for case in report["cases"]:
+        v46 = case["reports"]["v4_6_model"]
         v47 = case["reports"]["v4_7_model"]
         heuristic = case["reports"]["heuristic"]
         case_rows.append(
@@ -442,12 +461,13 @@ def write_html_report(report: JsonObject) -> None:
             f"<td><code>{html_escape(case['id'])}</code></td>"
             f"<td><code>{html_escape(case['bucket'])}</code></td>"
             f"<td>{html_escape(case['expected_label'])}<br><small>{html_escape(case['expected_severity'])}</small></td>"
+            f"<td>{html_escape(v46['predicted_label'])}<br><small>{html_escape(v46['predicted_severity'])}</small></td>"
             f"<td>{html_escape(v47['predicted_label'])}<br><small>{html_escape(v47['predicted_severity'])}</small></td>"
             f"<td>{html_escape(heuristic['predicted_label'])}<br><small>{html_escape(heuristic['predicted_severity'])}</small></td>"
             "</tr>"
         )
 
-    blocked = report["comparator_status"]["v4_6_on_v4_7_probe"]
+    comparator = report["comparator_status"]["v4_6_on_v4_7_probe"]
     html_text = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -562,7 +582,7 @@ def write_html_report(report: JsonObject) -> None:
   <header>
     <div class="pill">Created {html_escape(report['created_date'])}</div>
     <h1>Phase 8 v4.8 Qwen3.5 Diagnostic Audit</h1>
-    <p>v4.7 stays held. This report compares the held adapter against heuristic and base Qwen3.5 runs on the same non-fixed auth/SQLi/severity probe before any v4.8 training work.</p>
+    <p>v4.7 stays held. This report compares v4.6, v4.7, heuristic, and base Qwen3.5 runs on the same non-fixed auth/SQLi/severity probe before any v4.8 training work.</p>
     <div class="decision">
       <div class="metric hold"><strong>Hold</strong><span>fixed split remains closed</span></div>
       <div class="metric warn"><strong>{html_escape(report['headline_metrics']['v4_7_model']['label_accuracy'])}</strong><span>v4.7 calibration label accuracy</span></div>
@@ -571,7 +591,7 @@ def write_html_report(report: JsonObject) -> None:
   </header>
   <main>
     <h2>Comparator Status</h2>
-    <div class="note">v4.6 comparator is <code>{html_escape(blocked['status'])}</code>: alias <code>{html_escape(blocked['requested_alias'])}</code> was not in the observed served models. Observed: <code>{html_escape(', '.join(blocked['observed_served_model_ids']))}</code>.</div>
+    <div class="note">v4.6 comparator is <code>{html_escape(comparator['status'])}</code> with alias <code>{html_escape(comparator['requested_alias'])}</code>. Source: <code>{html_escape(comparator['source_report'])}</code>.</div>
 
     <h2>Headline Metrics</h2>
     <table>
@@ -581,13 +601,13 @@ def write_html_report(report: JsonObject) -> None:
 
     <h2>Bucket Summary</h2>
     <table>
-      <thead><tr><th>Bucket</th><th>Samples</th><th>v4.7</th><th>Heuristic</th><th>Base</th><th>V4.8 action</th></tr></thead>
+      <thead><tr><th>Bucket</th><th>Samples</th><th>v4.6</th><th>v4.7</th><th>Heuristic</th><th>Base</th><th>V4.8 action</th></tr></thead>
       <tbody>{''.join(bucket_rows)}</tbody>
     </table>
 
     <h2>Case Matrix</h2>
     <table>
-      <thead><tr><th>ID</th><th>Bucket</th><th>Expected</th><th>v4.7 predicted</th><th>Heuristic predicted</th></tr></thead>
+      <thead><tr><th>ID</th><th>Bucket</th><th>Expected</th><th>v4.6 predicted</th><th>v4.7 predicted</th><th>Heuristic predicted</th></tr></thead>
       <tbody>{''.join(case_rows)}</tbody>
     </table>
   </main>

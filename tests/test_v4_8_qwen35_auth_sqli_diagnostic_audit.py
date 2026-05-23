@@ -37,16 +37,21 @@ class V48Qwen35AuthSqliDiagnosticAuditTest(unittest.TestCase):
         self.assertEqual(report["decision"]["fixed_split"], "closed")
 
         comparator = report["comparator_status"]["v4_6_on_v4_7_probe"]
-        self.assertEqual(comparator["status"], "blocked_not_served")
+        self.assertEqual(comparator["status"], "completed")
         self.assertEqual(comparator["requested_alias"], "qwen3.6-8B-triage-v2")
         self.assertEqual(
-            comparator["observed_served_model_ids"],
-            ["unsloth/Qwen3.5-0.8B", "qwen3.6-8B-triage-v3"],
+            comparator["source_report"],
+            "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json",
         )
 
+        self.assertEqual(report["headline_metrics"]["v4_6_model"]["label_accuracy"], 0.433333)
         self.assertEqual(report["headline_metrics"]["v4_7_model"]["label_accuracy"], 0.366667)
         self.assertEqual(report["headline_metrics"]["heuristic"]["label_accuracy"], 0.666667)
         self.assertEqual(report["headline_metrics"]["base_qwen35"]["invalid_output_count"], 1)
+        self.assertEqual(
+            report["metric_deltas"]["v4_7_model_minus_v4_6_model"]["label_accuracy"],
+            -0.066666,
+        )
         self.assertEqual(
             report["metric_deltas"]["v4_7_model_minus_heuristic"]["label_accuracy"],
             -0.3,
@@ -57,14 +62,18 @@ class V48Qwen35AuthSqliDiagnosticAuditTest(unittest.TestCase):
         buckets = {bucket["bucket"]: bucket for bucket in report["bucket_summary"]}
 
         self.assertEqual(buckets["normal_auth_negative"]["sample_count"], 15)
+        self.assertEqual(buckets["normal_auth_negative"]["reports"]["v4_6_model"]["label_correct"], 2)
         self.assertEqual(buckets["normal_auth_negative"]["reports"]["v4_7_model"]["label_correct"], 0)
         self.assertEqual(buckets["normal_auth_negative"]["reports"]["heuristic"]["label_correct"], 13)
 
         self.assertEqual(buckets["sqli_auth_context"]["sample_count"], 5)
+        self.assertEqual(buckets["sqli_auth_context"]["reports"]["v4_6_model"]["label_correct"], 1)
         self.assertEqual(buckets["sqli_auth_context"]["reports"]["v4_7_model"]["label_correct"], 1)
         self.assertEqual(buckets["sqli_auth_context"]["reports"]["heuristic"]["label_correct"], 3)
 
         self.assertEqual(buckets["bruteforce_medium_severity"]["sample_count"], 7)
+        self.assertEqual(buckets["bruteforce_medium_severity"]["reports"]["v4_6_model"]["label_correct"], 7)
+        self.assertEqual(buckets["bruteforce_medium_severity"]["reports"]["v4_6_model"]["severity_correct"], 0)
         self.assertEqual(buckets["bruteforce_medium_severity"]["reports"]["v4_7_model"]["label_correct"], 7)
         self.assertEqual(buckets["bruteforce_medium_severity"]["reports"]["v4_7_model"]["severity_correct"], 0)
 
@@ -73,12 +82,13 @@ class V48Qwen35AuthSqliDiagnosticAuditTest(unittest.TestCase):
         html = V48_REPORT_HTML.read_text(encoding="utf-8")
 
         self.assertIn("Phase 8 V4.8 Qwen3.5 Auth/SQLi Diagnostic Audit", markdown)
-        self.assertIn("v4.6 on v4.7 probe: `blocked_not_served`", markdown)
+        self.assertIn("v4.6 on v4.7 probe: `completed`", markdown)
         self.assertIn("`normal_auth_negative`", markdown)
         self.assertIn("`bruteforce_medium_severity`", markdown)
 
         self.assertIn("<title>Phase 8 v4.8 Qwen3.5 Diagnostic Audit</title>", html)
         self.assertIn("fixed split remains closed", html)
+        self.assertIn("v4.6 comparator is <code>completed</code>", html)
         self.assertIn("Case Matrix", html)
 
     def test_v4_8_audit_script_is_deterministic_and_does_not_create_training_artifacts(self) -> None:
