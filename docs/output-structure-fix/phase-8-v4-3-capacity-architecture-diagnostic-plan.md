@@ -348,7 +348,7 @@ Run this only after the candidate passes the v4.3 hard-contrast gate or after a 
 Preflight only:
 
 ```bash
-rtk .venv/bin/python ml/unsloth/train_lora.py \
+rtk .venv/bin/python ml/unsloth/train_lora_vision_qwen.py \
   --config ml/unsloth/qwen3-5-0-8b-security-triage-pilot.yaml \
   --preflight-only
 ```
@@ -356,11 +356,11 @@ rtk .venv/bin/python ml/unsloth/train_lora.py \
 GPU smoke train:
 
 ```bash
-rtk .venv/bin/python ml/unsloth/train_lora.py \
+rtk .venv/bin/python ml/unsloth/train_lora_vision_qwen.py \
   --config ml/unsloth/qwen3-5-0-8b-security-triage-pilot.yaml
 ```
 
-The checked-in pilot config uses `model.loader: fast_vision_model` to follow the Unsloth Qwen3.5 notebook, keeps `finetune_vision_layers: false` for the text-only security-log task, and leaves the fixed split closed. If this smoke train succeeds, document it as a separate pilot result before scaling `max_steps`.
+The checked-in pilot config uses `model.loader: fast_vision_model` to follow the Unsloth Qwen3.5 notebook, keeps `finetune_vision_layers: false` for the text-only security-log task, and leaves the fixed split closed. The dedicated `ml/unsloth/train_lora_vision_qwen.py` runner keeps this vision-collator path separate from the LFM2 `train_lora.py` path. If this smoke train succeeds, document it as a separate pilot result before scaling `max_steps`.
 
 ## Gates
 
@@ -388,6 +388,7 @@ If a stronger candidate passes while v4.1 remains held, plan a capacity pilot. I
 | 2026-05-23 | Codex | Branched the held Qwen3.5 result into a v4.4 hard-contrast boundary audit | `docs/output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.json` | Follow-up audit complete |
 | 2026-05-23 | User/Codex | Clarified that v4.3 Qwen3.5 probes used the Hub base model, not a trained Qwen model | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` | Clarified |
 | 2026-05-23 | Codex | Updated Qwen3.5 train pilot command notes to use the checked-in `FastVisionModel` pilot config | `ml/unsloth/qwen3-5-0-8b-security-triage-pilot.yaml`, `ml/unsloth/train_lora.py` | Pilot wiring prepared |
+| 2026-05-23 | Codex | Split the Qwen3.5 train pilot runbook to the dedicated vision trainer | `ml/unsloth/train_lora_vision_qwen.py`, `ml/unsloth/qwen3-5-0-8b-security-triage-pilot.yaml` | Pilot runner separated |
 
 ## Decision Log
 
@@ -399,6 +400,7 @@ If a stronger candidate passes while v4.1 remains held, plan a capacity pilot. I
 | 2026-05-23 | Use `unsloth/Qwen3.5-0.8B` as the first base-model candidate intake | The user selected it as the next small-model architecture to test, and the Hugging Face card positions it for prototyping and task-specific fine-tuning | v4.3 can proceed to base-model serving and hard-contrast probes under prompt `triage-json-v2.1`; no v4.3 training artifacts are created |
 | 2026-05-23 | Hold the Qwen3.5-0.8B v4.3 base candidate after smoke and hard-contrast probes | The base model preserves JSON/schema reliability but hard-contrast label accuracy is only `0.50` at temp 0 and `0.48` at temp 0.3, with SQLi at `3/10` and `2/10` | Do not open fixed split or promote a future Qwen LoRA pilot as the v4.3 gate; next evidence should be another capacity candidate or a hard-contrast boundary audit |
 | 2026-05-23 | Keep checked-in Qwen3.5 LoRA config exploratory | The pilot exists to validate Unsloth `FastVisionModel` training mechanics, not to reverse the held base-model decision | Use existing v4.1 train/validation splits, keep `data/splits/test.jsonl` closed, and do not create `ml/unsloth/config.v4-3.yaml` |
+| 2026-05-23 | Keep the exploratory Qwen pilot on a dedicated runner | The Qwen path needs vision-native collation while LFM2 should keep the existing language SFTTrainer path | Run `ml/unsloth/train_lora_vision_qwen.py` for Qwen smoke training and leave `ml/unsloth/train_lora.py` for language configs |
 
 ## Related pages
 

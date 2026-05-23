@@ -104,7 +104,7 @@ openai-compatible:
         self.assertIn("data/splits/smoke-output-contract.jsonl", content)
         self.assertIn("OPENAI_COMPATIBLE_BASE_URL=\"$CANDIDATE_BASE_URL\"", content)
         self.assertIn("Train Pilot Commands, Not A V4.3 Gate", content)
-        self.assertIn("rtk .venv/bin/python ml/unsloth/train_lora.py", content)
+        self.assertIn("rtk .venv/bin/python ml/unsloth/train_lora_vision_qwen.py", content)
         self.assertIn("--preflight-only", content)
         self.assertNotIn("http://localhost:8000/v1", content)
         self.assertNotIn("--port 8000", content)
