@@ -329,7 +329,7 @@ def build_report() -> JsonObject:
 
     return {
         "summary": (
-            "v4.4 audits the v4.3 Qwen3.5 hard-contrast failures. The model keeps "
+            "v4.4 audits the v4.3 Qwen3.5 base-model hard-contrast failures. The model keeps "
             "JSON/schema reliability but collapses many suspicious SQLi, traversal, "
             "and recon records into normal."
         ),
@@ -374,8 +374,8 @@ def write_markdown(report: JsonObject) -> None:
         "",
         "**Sources**",
         "",
-        f"- `{report['probe_summaries']['temp_0']['source_report_path']}` for Qwen3.5 temp 0 hard-contrast failures.",
-        f"- `{report['probe_summaries']['temp_0_3']['source_report_path']}` for Qwen3.5 temp 0.3 hard-contrast failures.",
+        f"- `{report['probe_summaries']['temp_0']['source_report_path']}` for Qwen3.5 base-model temp 0 hard-contrast failures.",
+        f"- `{report['probe_summaries']['temp_0_3']['source_report_path']}` for Qwen3.5 base-model temp 0.3 hard-contrast failures.",
         f"- `{report['source_split_path']}` for source log lines and expected outputs.",
         "- `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` for the v4.3 hold decision.",
         "",

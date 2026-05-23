@@ -2,12 +2,12 @@
 
 **Summary**
 
-v4.4 audits the v4.3 Qwen3.5 hard-contrast failures. The model keeps JSON/schema reliability but collapses many suspicious SQLi, traversal, and recon records into normal.
+v4.4 audits the v4.3 Qwen3.5 base-model hard-contrast failures. The model keeps JSON/schema reliability but collapses many suspicious SQLi, traversal, and recon records into normal.
 
 **Sources**
 
-- `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json` for Qwen3.5 temp 0 hard-contrast failures.
-- `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json` for Qwen3.5 temp 0.3 hard-contrast failures.
+- `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json` for Qwen3.5 base-model temp 0 hard-contrast failures.
+- `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json` for Qwen3.5 base-model temp 0.3 hard-contrast failures.
 - `data/generated/v3-hard-contrast-security-triage.jsonl` for source log lines and expected outputs.
 - `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` for the v4.3 hold decision.
 

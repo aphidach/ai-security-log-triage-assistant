@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md",
+                "file": "output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "phase-8-v4-3-capacity-architecture-diagnostic-plan"
+              "title": "phase-8-v4-4-hard-contrast-boundary-audit-plan"
             }
           }
         ],
@@ -200,13 +200,14 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "raw/Qwen3_5_(0_8B)_Vision.ipynb",
+    "output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md",
     "output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md",
     "output-structure-fix/phase-7-fixed-split-comparison.md",
     "model-candidates/unsloth-qwen3.5-0.8b/model-card.md",
     "model-candidates/unsloth-qwen3.5-0.8b/README.md",
     "model-candidates/unsloth-qwen3.5-0.8b",
     "model-candidates",
-    "output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md",
     "output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md",
     "output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md",
     "output-structure-fix/phase-8-v4-sqli-boundary-repair-plan.md",
@@ -227,7 +228,6 @@
     "label-imbalance-and-prediction-collapse.md",
     "output-structure-fix/phase-6-v3-or-runtime-decision.md",
     "model-repetition-loop-diagnostics.md",
-    "output-structure-fix/phase-5-mini-semantic-eval.md",
     "output-structure-fix",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",

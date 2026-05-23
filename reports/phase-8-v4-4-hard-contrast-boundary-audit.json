@@ -1819,7 +1819,7 @@
   },
   "recommended_next_step": "Keep fixed test closed, keep Qwen3.5-0.8B held, and choose between another capacity candidate and a small boundary-repair prompt/data experiment.",
   "source_split_path": "data/generated/v3-hard-contrast-security-triage.jsonl",
-  "summary": "v4.4 audits the v4.3 Qwen3.5 hard-contrast failures. The model keeps JSON/schema reliability but collapses many suspicious SQLi, traversal, and recon records into normal.",
+  "summary": "v4.4 audits the v4.3 Qwen3.5 base-model hard-contrast failures. The model keeps JSON/schema reliability but collapses many suspicious SQLi, traversal, and recon records into normal.",
   "training_artifacts_created": false,
   "union_failure_cases": [
     {

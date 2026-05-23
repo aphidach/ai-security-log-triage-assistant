@@ -2,13 +2,13 @@
 
 **Summary**
 
-v4.4 เป็น boundary audit ต่อจาก v4.3 Qwen3.5 hold decision ไม่ได้ train เพิ่มและไม่ได้เปิด fixed split รอบนี้อ่านเฉพาะ hard-contrast report ของ `unsloth/Qwen3.5-0.8B` ทั้ง temp `0` และ temp `0.3` แล้วสรุปว่า failure หลักคือ suspicious security semantics ถูกลดเป็น `normal`: union label failures มี `26` IDs, persistent failures มี `25` IDs, และ SQLi/traversal/recon -> normal มี `20/50` ที่ temp `0` กับ `22/50` ที่ temp `0.3`
+v4.4 เป็น boundary audit ต่อจาก v4.3 Qwen3.5 hold decision โดย v4.3 ใช้ `unsloth/Qwen3.5-0.8B` เป็น base model ตรงจาก Hub ไม่ใช่ model ที่ train/LoRA แล้ว รอบนี้ไม่ได้ train เพิ่มและไม่ได้เปิด fixed split แต่อ่านเฉพาะ hard-contrast report ของ base model ทั้ง temp `0` และ temp `0.3` แล้วสรุปว่า failure หลักคือ suspicious security semantics ถูกลดเป็น `normal`: union label failures มี `26` IDs, persistent failures มี `25` IDs, และ SQLi/traversal/recon -> normal มี `20/50` ที่ temp `0` กับ `22/50` ที่ temp `0.3`
 
 **Sources**
 
 - v4.3 Qwen3.5 capacity diagnostic decision (source: docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md)
-- v4.3 Qwen3.5 hard-contrast temp 0 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json)
-- v4.3 Qwen3.5 hard-contrast temp 0.3 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json)
+- v4.3 Qwen3.5 base-model hard-contrast temp 0 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json)
+- v4.3 Qwen3.5 base-model hard-contrast temp 0.3 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json)
 - v4.4 generated boundary audit artifacts (source: scripts/create_v4_4_hard_contrast_boundary_audit.py, source: reports/phase-8-v4-4-hard-contrast-boundary-audit.json, source: reports/phase-8-v4-4-hard-contrast-boundary-audit.md)
 - hard-contrast source split used only for expected labels/evidence (source: data/generated/v3-hard-contrast-security-triage.jsonl)
 
@@ -29,7 +29,7 @@ No `data/splits/test.jsonl` run was opened. No v4.4 training split, generated su
 
 ## Why This Exists
 
-v4.3 answered one useful question already: `unsloth/Qwen3.5-0.8B` can follow the structured-output contract through vLLM structured outputs. JSON parse and schema success stayed `1.0`, invalid output stayed `0`, and evidence extraction was not the main blocker.
+v4.3 answered one useful question already: base `unsloth/Qwen3.5-0.8B`, served as-is with no project LoRA, can follow the structured-output contract through vLLM structured outputs. JSON parse and schema success stayed `1.0`, invalid output stayed `0`, and evidence extraction was not the main blocker.
 
 But the same reports showed semantic quality is far below gate. The model often quotes useful evidence, then explains it away as routine traffic. That is different from a pure parser problem and different from the earlier v4.2 SQLi-to-traversal drift. The v4.4 job is to name that failure clearly before we choose the next experiment.
 
@@ -59,13 +59,13 @@ The largest problem is not one SQLi variant. It is a broader security-semantics 
 
 ## Interpretation
 
-Qwen3.5-0.8B is not blocked by structured output. It is blocked by boundary meaning. The model often says the request contains SQLi, traversal, Nmap, or service enumeration cues, then still returns `normal` with low severity.
+The base Qwen3.5-0.8B candidate is not blocked by structured output. It is blocked by boundary meaning. The model often says the request contains SQLi, traversal, Nmap, or service enumeration cues, then still returns `normal` with low severity.
 
-This makes a direct Qwen LoRA run risky as the next default step. If we train immediately, we may only teach a small model to memorize these hard-contrast forms without proving it understands the broader boundary. A Qwen LoRA smoke can still exist as an explicitly exploratory pilot, but it should not become the v4.4 gate by itself.
+This makes a future direct Qwen LoRA run risky as the next default step. If we train immediately from this base-model result, we may only teach a small model to memorize these hard-contrast forms without proving it understands the broader boundary. A Qwen LoRA smoke can still exist as an explicitly exploratory pilot, but it should not become the v4.4 gate by itself.
 
 ## Decision
 
-Hold Qwen3.5-0.8B after v4.4 boundary audit. Do not run the fixed split. Do not create v4.4 training artifacts from this audit by default.
+Hold the base Qwen3.5-0.8B candidate after v4.4 boundary audit. Do not run the fixed split. Do not create v4.4 training artifacts from this audit by default.
 
 Default next path: test another capacity candidate that is stronger at text/security-log semantics under the same prompt, schema, hard-contrast split, and port `8080` serving convention. If compute or model availability blocks that path, run a deliberately scoped prompt/data boundary repair using only the buckets above, not a broad synthetic-data expansion.
 
@@ -111,7 +111,7 @@ Expected output is empty. The only v4.4 artifacts should be the audit script and
 | --- | --- | --- | --- |
 | Another capacity candidate | Default next step if the machine can serve another small/medium model | Whether the failure is Qwen3.5-0.8B-specific | More runtime setup |
 | Scoped prompt/data boundary repair | If model swapping is blocked or user wants to keep Qwen | Whether explicit security-boundary wording/examples can rescue the current candidate | May overfit the hard-contrast split |
-| Qwen LoRA exploratory pilot | Only if explicitly named as exploration | Whether the training stack works for Qwen3.5 | Not a gate; should not unlock fixed split |
+| Future Qwen LoRA exploratory pilot | Only if explicitly named as exploration after the base-model hold | Whether the training stack works for Qwen3.5 | Not a gate; should not unlock fixed split |
 
 ## Non-Goals
 
@@ -126,13 +126,14 @@ Expected output is empty. The only v4.4 artifacts should be the audit script and
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 2026-05-23 | Codex | Created v4.4 hard-contrast boundary audit from the two v4.3 Qwen3.5 hard-contrast reports | `scripts/create_v4_4_hard_contrast_boundary_audit.py`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.json`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.md` | Audit complete |
+| 2026-05-23 | Codex | Created v4.4 hard-contrast boundary audit from the two v4.3 Qwen3.5 base-model hard-contrast reports | `scripts/create_v4_4_hard_contrast_boundary_audit.py`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.json`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.md` | Audit complete |
+| 2026-05-23 | User/Codex | Clarified that the audited v4.3 Qwen3.5 reports are base-model reports, not trained Qwen reports | `docs/output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md` | Clarified |
 
 ## Decision Log
 
 | Date | Decision | Rationale | Impact |
 | --- | --- | --- | --- |
-| 2026-05-23 | Hold Qwen3.5-0.8B after v4.4 boundary audit | `25` failure IDs persist across both probes, and the main failure is SQLi/traversal/recon -> `normal` despite perfect JSON/schema | Do not open fixed split or create v4.4 train artifacts; choose another capacity candidate or a scoped boundary-repair experiment |
+| 2026-05-23 | Hold base Qwen3.5-0.8B after v4.4 boundary audit | `25` failure IDs persist across both base-model probes, and the main failure is SQLi/traversal/recon -> `normal` despite perfect JSON/schema | Do not open fixed split or create v4.4 train artifacts; choose another capacity candidate or a scoped boundary-repair experiment |
 
 ## Related pages
 

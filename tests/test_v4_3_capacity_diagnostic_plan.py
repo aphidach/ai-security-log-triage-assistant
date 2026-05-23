@@ -75,6 +75,8 @@ openai-compatible:
         self.assertIn("data/generated/v3-hard-contrast-security-triage.jsonl", content)
         self.assertIn("OPENAI_COMPATIBLE_PROMPT_VERSION=triage-json-v2.1", content)
         self.assertIn("capacity/architecture diagnostic", content)
+        self.assertIn("served as the Hub base model", content)
+        self.assertIn("no project fine-tune and no LoRA adapter", content)
         self.assertIn("Qwen3.5-0.8B Result Summary", content)
         self.assertIn("`0.50`", content)
         self.assertIn("`0.48`", content)
@@ -87,6 +89,7 @@ openai-compatible:
         self.assertIn("unsloth/Qwen3.5-0.8B", content)
         self.assertIn("docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md", content)
         self.assertIn("Candidate Intake", content)
+        self.assertIn("not a Qwen LoRA adapter", content)
         self.assertIn("# Qwen3.5-0.8B", model_card)
         self.assertIn("license: apache-2.0", model_card)
 

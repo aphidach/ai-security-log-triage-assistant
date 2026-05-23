@@ -25,7 +25,9 @@ class V44HardContrastBoundaryAuditTest(unittest.TestCase):
         self.assertIn("persistent failures มี `25`", content)
         self.assertIn("SQLi/traversal/recon -> normal มี `20/50`", content)
         self.assertIn("`22/50`", content)
-        self.assertIn("Hold Qwen3.5-0.8B after v4.4 boundary audit", content)
+        self.assertIn("base model ตรงจาก Hub", content)
+        self.assertIn("ไม่ใช่ model ที่ train/LoRA แล้ว", content)
+        self.assertIn("Hold the base Qwen3.5-0.8B candidate after v4.4 boundary audit", content)
         self.assertIn("No `data/splits/test.jsonl` run was opened", content)
         self.assertIn("No `ml/unsloth/config.v4-4.yaml`", content)
 
