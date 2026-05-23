@@ -13,6 +13,7 @@ v4.7 เป็น calibration run แบบแคบต่อจาก v4.6 เ�
 - v4.7 Qwen training config (source: ml/unsloth/qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration.yaml)
 - v4.7 non-fixed evaluation reports (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json)
 - v4.7 HTML summary report (source: reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-report.html)
+- v4.8 follow-up diagnostic audit (source: docs/output-structure-fix/phase-8-v4-8-qwen35-auth-sqli-diagnostic-plan.md, source: reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json)
 - v4.7 regression tests (source: tests/test_v4_7_qwen35_auth_sqli_severity_calibration_workflow.py)
 - v4.6 result page for prior checkpoint and hold decision (source: docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md)
 
@@ -322,6 +323,7 @@ python3 -m py_compile \
 | --- | --- | --- | --- | --- |
 | 2026-05-23 | Codex | Prepared v4.7 Qwen auth/SQLi/severity calibration workflow from v4.6 non-fixed failures | `reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json`, `data/splits/train-v4-7-qwen35-auth-sqli-severity-calibration.jsonl`, `ml/unsloth/qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration.yaml` | Prepared; training pending |
 | 2026-05-23 | User/Codex | Recorded v4.7 training completion, non-fixed probe metrics, gate read, and HTML report | `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-report.html` | Probed; fixed split held |
+| 2026-05-23 | Codex | Started v4.8 follow-up diagnostic audit from the v4.7 calibration failure shape | `docs/output-structure-fix/phase-8-v4-8-qwen35-auth-sqli-diagnostic-plan.md`, `reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json` | Diagnostic follow-up created |
 
 ## Decision Log
 
@@ -330,11 +332,13 @@ python3 -m py_compile \
 | 2026-05-23 | Create v4.7 as narrow auth/SQLi/severity calibration | v4.6 already reaches overall hard-contrast label/severity `0.90`, so broad data expansion would blur the remaining failure causes | Add targeted normal-auth, SQLi-auth-context, medium brute-force, limited recon, and exact traversal evidence examples; keep fixed split closed |
 | 2026-05-23 | Keep v4.7 training from base Qwen3.5, not the v4.6 adapter | Prior Qwen runs are recorded as separate LoRA experiments and should remain reproducible from the same base model | v4.7 config points directly to `unsloth/Qwen3.5-0.8B` and new train/validation splits |
 | 2026-05-23 | Hold v4.7 before fixed split | Hard-contrast improves to label/severity `0.92`, but the new calibration probe fails label `0.366667`, normal-auth `0/15`, SQLi-auth `1/5`, and brute-force medium severity `0/7` | Do not open mini semantic or fixed split comparison from this checkpoint; treat v4.7 as evidence that the narrow supplement overcorrected key auth/SQLi boundaries |
+| 2026-05-23 | Use v4.7 as v4.8 diagnostic input, not as a release checkpoint | Heuristic beats v4.7 by `0.30` label accuracy on the same calibration probe, and v4.6 direct comparator is not currently served | Keep fixed split closed; inspect paired boundaries before any v4.8 train supplement |
 
 ## Related pages
 
 - [[output-structure-fix/README]]
 - [[output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan]]
+- [[output-structure-fix/phase-8-v4-8-qwen35-auth-sqli-diagnostic-plan]]
 - [[fine-tuning-notes]]
 - [[data-card]]
 - [[openai-adapter-runtime-config]]

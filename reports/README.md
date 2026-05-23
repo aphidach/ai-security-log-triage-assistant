@@ -62,6 +62,14 @@ reports/phase-{n}-{model-version}-boundary-audit.json
 reports/phase-{n}-{model-version}-boundary-audit.md
 ```
 
+Diagnostic audits:
+
+```text
+reports/phase-{n}-{model-version}-diagnostic-audit.json
+reports/phase-{n}-{model-version}-diagnostic-audit.md
+reports/phase-{n}-{model-version}-diagnostic-audit-report.html
+```
+
 Calibration slices:
 
 ```text
