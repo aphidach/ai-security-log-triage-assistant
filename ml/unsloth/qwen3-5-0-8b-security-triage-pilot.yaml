@@ -1,10 +1,10 @@
 model:
   base_model: unsloth/Qwen3.5-0.8B
+  loader: fast_vision_model
   model_family: Qwen3.5
   max_seq_length: 2048
   load_in_4bit: true
   use_gradient_checkpointing: unsloth
-  dtype: bfloat16
 
 data:
   train_path: data/splits/train-v4-1-sqli-boundary-repair.jsonl
@@ -34,8 +34,10 @@ lora:
   random_state: 3407
   use_rslora: false
   loftq_config: null
-  target_modules:
-    - all-linear
+  finetune_vision_layers: false
+  finetune_language_layers: true
+  finetune_attention_modules: true
+  finetune_mlp_modules: true
 
 training:
   per_device_train_batch_size: 1

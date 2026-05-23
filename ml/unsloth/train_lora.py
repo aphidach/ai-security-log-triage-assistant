@@ -47,6 +47,9 @@ V4_1_TRAIN_PATH = ROOT / "data" / "splits" / "train-v4-1-sqli-boundary-repair.js
 V4_1_VALIDATION_PATH = ROOT / "data" / "splits" / "validation-v4-1-sqli-boundary-repair.jsonl"
 RESERVED_TEST_PATH = ROOT / "data" / "splits" / "test.jsonl"
 SPLITS_DIR = ROOT / "data" / "splits"
+FAST_LANGUAGE_MODEL_LOADER = "fast_language_model"
+FAST_VISION_MODEL_LOADER = "fast_vision_model"
+SUPPORTED_MODEL_LOADERS = (FAST_LANGUAGE_MODEL_LOADER, FAST_VISION_MODEL_LOADER)
 
 JsonObject = dict[str, Any]
 
@@ -243,6 +246,18 @@ def resolve_gradient_checkpointing(value: Any) -> bool | str:
     return coerce_bool(value, field_name="model.use_gradient_checkpointing")
 
 
+def resolve_model_loader(model_config: JsonObject) -> str:
+    loader = model_config.get("loader", FAST_LANGUAGE_MODEL_LOADER)
+    if not isinstance(loader, str):
+        raise TrainingConfigError("model.loader must be a string")
+    normalized = loader.strip().lower()
+    if normalized not in SUPPORTED_MODEL_LOADERS:
+        raise TrainingConfigError(
+            f"unsupported model.loader: {loader}; expected one of: {', '.join(SUPPORTED_MODEL_LOADERS)}"
+        )
+    return normalized
+
+
 def resolve_torch_dtype(dtype_name: Any, *, torch_module: Any) -> Any:
     if dtype_name in (None, "", "auto"):
         return None
@@ -293,6 +308,92 @@ def build_sft_dataset(records: list[JsonObject], tokenizer: Any) -> Any:
     return Dataset.from_list([{"text": apply_tokenizer_chat_template(tokenizer, record)} for record in records])
 
 
+def load_base_model_for_training(
+    *,
+    model_config: JsonObject,
+    lora_config: JsonObject,
+    training_config: JsonObject,
+    torch_module: Any,
+) -> tuple[Any, Any, str, Any]:
+    base_model = model_config.get("base_model")
+    if not isinstance(base_model, str) or not base_model:
+        raise TrainingConfigError("model.base_model must be a non-empty string")
+
+    loader = resolve_model_loader(model_config)
+    load_in_4bit = coerce_bool(model_config.get("load_in_4bit", True), field_name="model.load_in_4bit")
+
+    if loader == FAST_LANGUAGE_MODEL_LOADER:
+        from unsloth import FastLanguageModel
+
+        max_seq_length = int(model_config.get("max_seq_length", 2048))
+        model, tokenizer = FastLanguageModel.from_pretrained(
+            model_name=base_model,
+            max_seq_length=max_seq_length,
+            dtype=resolve_torch_dtype(model_config.get("dtype"), torch_module=torch_module),
+            load_in_4bit=load_in_4bit,
+        )
+        model = FastLanguageModel.get_peft_model(
+            model,
+            r=int(lora_config.get("r", 16)),
+            target_modules=normalize_string_list(
+                lora_config.get("target_modules", ["all-linear"]),
+                field_name="lora.target_modules",
+            ),
+            lora_alpha=int(lora_config.get("lora_alpha", 16)),
+            lora_dropout=float(lora_config.get("lora_dropout", 0.0)),
+            use_gradient_checkpointing=resolve_gradient_checkpointing(
+                model_config.get("use_gradient_checkpointing", False)
+            ),
+            bias=str(lora_config.get("bias", "none")).lower(),
+            random_state=int(lora_config.get("random_state", training_config.get("seed", 3407))),
+            use_rslora=coerce_bool(lora_config.get("use_rslora", False), field_name="lora.use_rslora"),
+            loftq_config=lora_config.get("loftq_config"),
+        )
+        return model, tokenizer, loader, FastLanguageModel
+
+    from unsloth import FastVisionModel
+
+    model, tokenizer = FastVisionModel.from_pretrained(
+        model_name=base_model,
+        load_in_4bit=load_in_4bit,
+        use_gradient_checkpointing=resolve_gradient_checkpointing(
+            model_config.get("use_gradient_checkpointing", False)
+        ),
+    )
+    peft_kwargs = {
+        "finetune_vision_layers": coerce_bool(
+            lora_config.get("finetune_vision_layers", False),
+            field_name="lora.finetune_vision_layers",
+        ),
+        "finetune_language_layers": coerce_bool(
+            lora_config.get("finetune_language_layers", True),
+            field_name="lora.finetune_language_layers",
+        ),
+        "finetune_attention_modules": coerce_bool(
+            lora_config.get("finetune_attention_modules", True),
+            field_name="lora.finetune_attention_modules",
+        ),
+        "finetune_mlp_modules": coerce_bool(
+            lora_config.get("finetune_mlp_modules", True),
+            field_name="lora.finetune_mlp_modules",
+        ),
+        "r": int(lora_config.get("r", 16)),
+        "lora_alpha": int(lora_config.get("lora_alpha", 16)),
+        "lora_dropout": float(lora_config.get("lora_dropout", 0.0)),
+        "bias": str(lora_config.get("bias", "none")).lower(),
+        "random_state": int(lora_config.get("random_state", training_config.get("seed", 3407))),
+        "use_rslora": coerce_bool(lora_config.get("use_rslora", False), field_name="lora.use_rslora"),
+        "loftq_config": lora_config.get("loftq_config"),
+    }
+    if "target_modules" in lora_config:
+        peft_kwargs["target_modules"] = normalize_string_list(
+            lora_config["target_modules"],
+            field_name="lora.target_modules",
+        )
+    model = FastVisionModel.get_peft_model(model, **peft_kwargs)
+    return model, tokenizer, loader, FastVisionModel
+
+
 def validate_prompt_version(config: JsonObject) -> str:
     format_config = require_section(config, "format")
     config_prompt_version = format_config.get("prompt_version")
@@ -321,6 +422,7 @@ def build_preflight_report(config_path: Path, config: JsonObject) -> JsonObject:
         "config_path": report_path(config_path),
         "model": {
             "base_model": model.get("base_model"),
+            "loader": resolve_model_loader(model),
             "max_seq_length": model.get("max_seq_length"),
             "load_in_4bit": model.get("load_in_4bit"),
         },
@@ -358,7 +460,7 @@ def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
         import torch
         # Unsloth must load before TRL so its SFTTrainer compatibility patch
         # accepts notebook-style tokenizer kwargs on this training path.
-        from unsloth import FastLanguageModel, is_bfloat16_supported
+        from unsloth import is_bfloat16_supported
         from trl import SFTConfig, SFTTrainer
     except ModuleNotFoundError as exc:
         raise TrainingConfigError(
@@ -368,39 +470,12 @@ def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
     if not torch.cuda.is_available():
         raise TrainingConfigError("GPU training requires CUDA, but torch.cuda.is_available() is false")
 
-    base_model = model_config.get("base_model")
-    if not isinstance(base_model, str) or not base_model:
-        raise TrainingConfigError("model.base_model must be a non-empty string")
-
     max_seq_length = int(model_config.get("max_seq_length", 2048))
-    dtype = resolve_torch_dtype(model_config.get("dtype"), torch_module=torch)
-    load_in_4bit = coerce_bool(model_config.get("load_in_4bit", True), field_name="model.load_in_4bit")
-
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name=base_model,
-        max_seq_length=max_seq_length,
-        dtype=dtype,
-        load_in_4bit=load_in_4bit,
-    )
-
-    target_modules = normalize_string_list(
-        lora_config.get("target_modules", ["all-linear"]),
-        field_name="lora.target_modules",
-    )
-
-    model = FastLanguageModel.get_peft_model(
-        model,
-        r=int(lora_config.get("r", 16)),
-        target_modules=target_modules,
-        lora_alpha=int(lora_config.get("lora_alpha", 16)),
-        lora_dropout=float(lora_config.get("lora_dropout", 0.0)),
-        use_gradient_checkpointing=resolve_gradient_checkpointing(
-            model_config.get("use_gradient_checkpointing", False)
-        ),
-        bias=str(lora_config.get("bias", "none")).lower(),
-        random_state=int(lora_config.get("random_state", training_config.get("seed", 3407))),
-        use_rslora=coerce_bool(lora_config.get("use_rslora", False), field_name="lora.use_rslora"),
-        loftq_config=lora_config.get("loftq_config"),
+    model, tokenizer, loader, model_backend = load_base_model_for_training(
+        model_config=model_config,
+        lora_config=lora_config,
+        training_config=training_config,
+        torch_module=torch,
     )
 
     train_records = load_jsonl(train_path)
@@ -409,6 +484,8 @@ def run_gpu_training(config_path: Path, config: JsonObject) -> JsonObject:
     train_dataset = build_sft_dataset(train_records, tokenizer)
     validation_dataset = build_sft_dataset(validation_records, tokenizer)
     bf16_supported = bool(is_bfloat16_supported())
+    if loader == FAST_VISION_MODEL_LOADER:
+        model_backend.for_training(model)
 
     args = SFTConfig(
         output_dir=str(output_dir),

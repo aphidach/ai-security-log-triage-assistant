@@ -16,9 +16,13 @@ if str(ROOT) not in sys.path:
 
 from ml.unsloth.train_lora import (  # noqa: E402
     DEFAULT_CONFIG_PATH,
+    FAST_LANGUAGE_MODEL_LOADER,
+    FAST_VISION_MODEL_LOADER,
     TrainingConfigError,
+    coerce_bool,
     load_config,
     require_section,
+    resolve_model_loader,
     resolve_repo_path,
 )
 from scripts.model_adapters.prompt_contract import (  # noqa: E402
@@ -111,7 +115,6 @@ def load_model_and_tokenizer(config: JsonObject, adapter_path: Path) -> tuple[An
     try:
         # Unsloth should load before PEFT/Transformers-backed helpers so the
         # runtime matches the repo's Unsloth-first training stack.
-        from unsloth import FastLanguageModel
         from peft import PeftModel
     except ModuleNotFoundError as exc:
         raise InferenceError(
@@ -119,14 +122,30 @@ def load_model_and_tokenizer(config: JsonObject, adapter_path: Path) -> tuple[An
         ) from exc
 
     try:
-        model, tokenizer = FastLanguageModel.from_pretrained(
-            model_name=base_model,
-            max_seq_length=int(model_config.get("max_seq_length", 2048)),
-            dtype=torch_dtype(model_config.get("dtype")),
-            load_in_4bit=bool(model_config.get("load_in_4bit", True)),
-        )
-        model = PeftModel.from_pretrained(model, str(adapter_path))
-        FastLanguageModel.for_inference(model)
+        loader = resolve_model_loader(model_config)
+        load_in_4bit = coerce_bool(model_config.get("load_in_4bit", True), field_name="model.load_in_4bit")
+        if loader == FAST_LANGUAGE_MODEL_LOADER:
+            from unsloth import FastLanguageModel
+
+            model, tokenizer = FastLanguageModel.from_pretrained(
+                model_name=base_model,
+                max_seq_length=int(model_config.get("max_seq_length", 2048)),
+                dtype=torch_dtype(model_config.get("dtype")),
+                load_in_4bit=load_in_4bit,
+            )
+            model = PeftModel.from_pretrained(model, str(adapter_path))
+            FastLanguageModel.for_inference(model)
+        elif loader == FAST_VISION_MODEL_LOADER:
+            from unsloth import FastVisionModel
+
+            model, tokenizer = FastVisionModel.from_pretrained(
+                model_name=base_model,
+                load_in_4bit=load_in_4bit,
+            )
+            model = PeftModel.from_pretrained(model, str(adapter_path))
+            FastVisionModel.for_inference(model)
+        else:
+            raise InferenceError(f"unsupported model.loader: {loader}")
     except Exception as exc:
         raise InferenceError(f"failed to load base model and LoRA adapter: {type(exc).__name__}: {exc}") from exc
 
@@ -297,6 +316,7 @@ def build_preflight_report(
         "schema_path": str(schema_path.relative_to(ROOT)),
         "prompt_version": TRIAGE_PROMPT_VERSION,
         "base_model": model_config.get("base_model"),
+        "loader": resolve_model_loader(model_config),
         "max_seq_length": model_config.get("max_seq_length"),
         "load_in_4bit": model_config.get("load_in_4bit"),
         "default_output_dir": output.get("output_dir"),

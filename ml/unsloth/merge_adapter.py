@@ -21,11 +21,14 @@ if str(ROOT) not in sys.path:
 
 from ml.unsloth.train_lora import (  # noqa: E402
     DEFAULT_CONFIG_PATH,
+    FAST_LANGUAGE_MODEL_LOADER,
+    FAST_VISION_MODEL_LOADER,
     TrainingConfigError,
     coerce_bool,
     load_config,
     report_path,
     require_section,
+    resolve_model_loader,
     resolve_repo_path,
     resolve_torch_dtype,
 )
@@ -73,6 +76,7 @@ def build_preflight_report(
         "status": "merge_preflight_ok",
         "config_path": report_path(config_path),
         "base_model": model_config.get("base_model"),
+        "loader": resolve_model_loader(model_config),
         "adapter_path": report_path(adapter_path),
         "adapter_exists": adapter_path.exists(),
         "output_dir": report_path(output_dir),
@@ -97,7 +101,6 @@ def load_model_tokenizer_and_adapter(config: JsonObject, adapter_path: Path) -> 
 
         # Keep Unsloth first so the runtime patching matches train_lora.py and
         # inference.py in the same GPU environment.
-        from unsloth import FastLanguageModel
         from peft import PeftModel
     except ModuleNotFoundError as exc:
         raise MergeAdapterError(
@@ -105,12 +108,26 @@ def load_model_tokenizer_and_adapter(config: JsonObject, adapter_path: Path) -> 
         ) from exc
 
     try:
-        model, tokenizer = FastLanguageModel.from_pretrained(
-            model_name=base_model,
-            max_seq_length=int(model_config.get("max_seq_length", 2048)),
-            dtype=resolve_torch_dtype(model_config.get("dtype"), torch_module=torch),
-            load_in_4bit=coerce_bool(model_config.get("load_in_4bit", True), field_name="model.load_in_4bit"),
-        )
+        loader = resolve_model_loader(model_config)
+        load_in_4bit = coerce_bool(model_config.get("load_in_4bit", True), field_name="model.load_in_4bit")
+        if loader == FAST_LANGUAGE_MODEL_LOADER:
+            from unsloth import FastLanguageModel
+
+            model, tokenizer = FastLanguageModel.from_pretrained(
+                model_name=base_model,
+                max_seq_length=int(model_config.get("max_seq_length", 2048)),
+                dtype=resolve_torch_dtype(model_config.get("dtype"), torch_module=torch),
+                load_in_4bit=load_in_4bit,
+            )
+        elif loader == FAST_VISION_MODEL_LOADER:
+            from unsloth import FastVisionModel
+
+            model, tokenizer = FastVisionModel.from_pretrained(
+                model_name=base_model,
+                load_in_4bit=load_in_4bit,
+            )
+        else:
+            raise MergeAdapterError(f"unsupported model.loader: {loader}")
         model = PeftModel.from_pretrained(model, str(adapter_path))
     except Exception as exc:
         raise MergeAdapterError(f"failed to load base model and LoRA adapter: {type(exc).__name__}: {exc}") from exc
