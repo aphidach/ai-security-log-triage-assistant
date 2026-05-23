@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "raw/What Small Language Model Is Best for Fine-Tuning.md",
+                "file": "output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "What Small Language Model Is Best for Fine-Tuning"
+              "title": "phase-8-v4-6-qwen35-normal-severity-calibration-plan"
             }
           }
         ],
@@ -200,6 +200,7 @@
   },
   "active": "5733e2a3144a5f2c",
   "lastOpenFiles": [
+    "raw/What Small Language Model Is Best for Fine-Tuning.md",
     "output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md",
     "output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe.md",
     "small-model-fine-tuning-candidates-6gb.md",
@@ -228,7 +229,6 @@
     "output-structure-fix/phase-6-v3-3-targeted-canary.md",
     "output-structure-fix/phase-6-v3-2-hard-contrast-probe.md",
     "output-structure-fix/phase-6-v3-1-mini-semantic-eval.md",
-    "scripts.md",
     "output-structure-fix",
     "model-output",
     "raw/Gemma4_(E2B)_Text.ipynb",

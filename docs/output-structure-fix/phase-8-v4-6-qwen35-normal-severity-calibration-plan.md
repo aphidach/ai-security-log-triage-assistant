@@ -185,6 +185,27 @@ python3 ml/unsloth/train_lora_vision_qwen.py \
   --config ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml
 ```
 
+
+```bash
+{
+  "status": "training_complete",
+  "config_path": "ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml",
+  "output_dir": "ml/unsloth/outputs/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration-lora",
+  "train_records": 1340,
+  "validation_records": 100,
+  "metrics": {
+    "epoch": 0.835820895522388,
+    "total_flos": 2516696972450304.0,
+    "train_loss": 0.4195894045489175,
+    "train_runtime": 767.7767,
+    "train_samples_per_second": 1.459,
+    "train_steps_per_second": 0.182
+  }
+}
+```
+
+
+
 After training, serve the adapter through vLLM using a new alias such as `qwen3.6-8B-triage-v4-6`, then run:
 
 ```bash
@@ -194,6 +215,24 @@ python3 scripts/evaluate.py \
   --split data/splits/v4-6-normal-severity-calibration-probe.jsonl \
   --out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json \
   --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.md
+```
+
+
+```bash
+adapter: openai-compatible
+split: data/splits/v4-6-normal-severity-calibration-probe.jsonl
+samples: 25
+label_accuracy: 0.8
+json_parse_success_rate: 1.0
+schema_success_rate: 1.0
+severity_accuracy: 0.64
+is_suspicious_accuracy: 0.88
+evidence_partial_match: 1.0
+average_latency_ms: 5622.601413
+invalid_output_count: 0
+json_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json
+markdown_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.md
+
 ```
 
 Then rerun the hard-contrast probe:
@@ -207,6 +246,21 @@ python3 scripts/evaluate.py \
   --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.md
 ```
 
+```bash
+adapter: openai-compatible
+split: data/generated/v3-hard-contrast-security-triage.jsonl
+samples: 50
+label_accuracy: 0.88
+json_parse_success_rate: 1.0
+schema_success_rate: 1.0
+severity_accuracy: 0.76
+is_suspicious_accuracy: 0.92
+evidence_partial_match: 0.98
+average_latency_ms: 5961.354693
+invalid_output_count: 0
+json_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json
+markdown_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.md
+```
 ## Gate Before Fixed Split
 
 Open fixed split only if v4.6 clears these checks on non-fixed probes:
