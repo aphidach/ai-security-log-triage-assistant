@@ -86,6 +86,22 @@ openai-compatible:
         self.assertIn("# Qwen3.5-0.8B", model_card)
         self.assertIn("license: apache-2.0", model_card)
 
+    def test_v4_3_command_runbook_covers_server_eval_and_train_pilot(self) -> None:
+        content = V43_DOC.read_text(encoding="utf-8")
+
+        self.assertIn("Command Runbook", content)
+        self.assertIn("rtk vllm serve \"$CANDIDATE_REPO\"", content)
+        self.assertIn("export CANDIDATE_BASE_URL=\"http://localhost:8080/v1\"", content)
+        self.assertIn("--port 8080", content)
+        self.assertIn("--language-model-only", content)
+        self.assertIn("data/splits/smoke-output-contract.jsonl", content)
+        self.assertIn("OPENAI_COMPATIBLE_BASE_URL=\"$CANDIDATE_BASE_URL\"", content)
+        self.assertIn("Train Pilot Commands, Not A V4.3 Gate", content)
+        self.assertIn("rtk .venv/bin/python ml/unsloth/train_lora.py", content)
+        self.assertIn("--preflight-only", content)
+        self.assertNotIn("http://localhost:8000/v1", content)
+        self.assertNotIn("--port 8000", content)
+
     def test_v4_3_plan_does_not_include_fixed_split_eval_command(self) -> None:
         content = V43_DOC.read_text(encoding="utf-8")
 
