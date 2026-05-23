@@ -69,6 +69,19 @@ reports/phase-{n}-{model-version}-normal-calibration-slice.json
 reports/phase-{n}-{model-version}-normal-calibration-slice.md
 ```
 
+Calibration result summary:
+
+```text
+reports/phase-{n}-{model-version}-normal-severity-calibration-report.html
+```
+
+Training result captures:
+
+```text
+reports/phase-{n}-{model-version}-training-result.json
+reports/phase-{n}-{model-version}-training-result.md
+```
+
 Canonical fixed split format:
 
 ```text

@@ -2,7 +2,7 @@
 
 **Summary**
 
-โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 7 fixed split comparison ปิดด้วย decision `hold`, Phase 8/v4 train/probe แล้วแต่ยัง held เพราะ SQLi hard-contrast ยัง `4/10`, v4.1 train/probe แล้วแต่ยัง held เพราะ canonical temp 0 SQLi ยัง `6/10`, v4.2 prompt-priority diagnostic ก็ held เพราะ prompt v2.2 ทำให้ broader label boundary เสีย, v4.3 ทดสอบ base model `unsloth/Qwen3.5-0.8B` ครบ 3 run แล้วและ held, v4.4 audit ชี้ failure หลักว่า SQLi/traversal/recon ถูก classify เป็น `normal` ซ้ำ ๆ แม้ JSON/schema จะ `1.0`, v4.5 trained-Qwen LoRA พลิก suspicious labels ได้ครบแต่ยัง held เพราะ normal false positives และ severity calibration, และ v4.6 เตรียม normal/severity calibration workflow โดยยังไม่เปิด fixed split
+โฟลเดอร์นี้เก็บ working notes แบบแยก phase สำหรับงานแก้ output contract หลัง smoke test ของ `unsloth_LFM2-350M_1779162226` เคยผ่าน JSON/schema เพียง 1/5 samples ตอนนี้ Phase 7 fixed split comparison ปิดด้วย decision `hold`, Phase 8/v4 train/probe แล้วแต่ยัง held เพราะ SQLi hard-contrast ยัง `4/10`, v4.1 train/probe แล้วแต่ยัง held เพราะ canonical temp 0 SQLi ยัง `6/10`, v4.2 prompt-priority diagnostic ก็ held เพราะ prompt v2.2 ทำให้ broader label boundary เสีย, v4.3 ทดสอบ base model `unsloth/Qwen3.5-0.8B` ครบ 3 run แล้วและ held, v4.4 audit ชี้ failure หลักว่า SQLi/traversal/recon ถูก classify เป็น `normal` ซ้ำ ๆ แม้ JSON/schema จะ `1.0`, v4.5 trained-Qwen LoRA พลิก suspicious labels ได้ครบแต่ยัง held เพราะ normal false positives และ severity calibration, และ v4.6 train/probe แล้วดีขึ้นเป็น hard-contrast label `0.90` และ severity `0.90` แต่ยัง held เพราะ normal, SQLi และ brute-force severity ยังไม่ผ่าน gate ย่อย
 
 หน้า `docs/structured-output-fix-plan.md` ยังเป็น master plan ส่วนโฟลเดอร์นี้ใช้เก็บรายละเอียดการทำงาน คำสั่งที่ต้องรัน หลักฐานที่ต้องเก็บ และ pass/fail condition ของแต่ละ phase ตั้งแต่ Phase 1 เป็นต้นไป
 
@@ -41,7 +41,7 @@
 | Phase 8 v4.3 | [[output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan]] | Probed; held | capacity/architecture diagnostic ด้วย base model `unsloth/Qwen3.5-0.8B` ครบ smoke, hard-contrast temp 0, และ hard-contrast temp 0.3; JSON/schema `1.0`, invalid `0`, แต่ label accuracy `0.50`/`0.48` และ SQLi `3/10`/`2/10` ยังไม่ผ่าน gate |
 | Phase 8 v4.4 | [[output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan]] | Audit complete; held | boundary audit จาก v4.3 Qwen3.5 base-model hard-contrast reports พบ union label failures `26`, persistent failures `25`, และ SQLi/traversal/recon -> `normal` `20/50` กับ `22/50`; fixed split และ train artifacts ยังปิด |
 | Phase 8 v4.5 | [[output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe]] | Trained/probed; calibration held | Qwen3.5 LoRA pilot train สำเร็จและ hard-contrast temp 0 ได้ label accuracy `0.88`, JSON/schema `1.0`, invalid `0`, suspicious labels `10/10` ทุกกลุ่ม แต่ `normal` เหลือ `4/10` และ severity accuracy `0.72`; fixed split ยังปิด |
-| Phase 8 v4.6 | [[output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan]] | Prepared; training pending | สร้าง v4.6 calibration slice, supplement `145` records, train `1340`, validation `100`, probe `25`, และ Qwen config ใหม่เพื่อแก้ normal false positives/severity โดยยังไม่ใช้ fixed split |
+| Phase 8 v4.6 | [[output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan]] | Trained/probed; held | v4.6 train/probe แล้ว: calibration probe label `0.84`, hard-contrast label `0.90`, JSON/schema `1.0`, invalid `0`; ยัง held เพราะ hard-contrast normal `7/10`, SQLi `8/10`, calibration normal `11/15`, และ brute-force severity ยังสูงเกิน |
 
 ## Operating Rules
 
@@ -90,6 +90,7 @@
 | 2026-05-23 | User/Codex | Clarified that v4.3/v4.4 Qwen3.5 evidence is from the Hub base model, not a trained Qwen model | `docs/output-structure-fix/README.md` | Clarified |
 | 2026-05-23 | User/Codex | Added v4.5 trained-Qwen LoRA hard-contrast probe page to the phase map | `docs/output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe.md`, `reports/phase-8-v4-5-qwen35-lora-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json` | Calibration held |
 | 2026-05-23 | Codex | Added v4.6 Qwen normal/severity calibration workflow to the phase map | `docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md`, `data/splits/train-v4-6-qwen35-normal-severity-calibration.jsonl`, `ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml` | Prepared; training pending |
+| 2026-05-23 | User/Codex | Updated v4.6 phase map after training, non-fixed probes, and HTML report | `reports/phase-8-v4-6-qwen35-lora-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html` | Improved but held |
 
 ## Decision Log
 
@@ -116,6 +117,7 @@
 | 2026-05-23 | Hold base Qwen3.5-0.8B after v4.4 boundary audit | The audit found `25` persistent failure IDs and a broad SQLi/traversal/recon -> `normal` collapse, not an output-contract problem | Do not create v4.4 train artifacts; choose another capacity candidate or a deliberately scoped boundary-repair experiment |
 | 2026-05-23 | Hold v4.5 before fixed split | Trained Qwen LoRA fixes the suspicious-to-normal collapse on hard-contrast labels, but normal false positives rise to `6/10` and severity accuracy is `0.72` | Add normal/severity calibration before mini semantic eval or fixed split comparison |
 | 2026-05-23 | Prepare v4.6 as normal/severity calibration | v4.5 no longer needs broad SQLi repair; its blocker is normal precision plus severity boundaries | Add normal-heavy and severity-boundary data with a non-fixed probe split; keep fixed split closed |
+| 2026-05-23 | Hold v4.6 before fixed split | Overall hard-contrast improves to `0.90`, but hard-contrast normal `7/10`, SQLi `8/10`, calibration normal `11/15`, and brute-force severity still miss gates | Keep fixed split closed; next repair should narrow on normal-vs-bruteforce and medium brute-force severity |
 
 ## Related pages
 

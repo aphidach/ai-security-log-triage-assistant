@@ -146,6 +146,8 @@ Decision: keep v4.5 as a promising trained-Qwen probe, but hold fixed split. The
 | Mini semantic eval, clearly marked exploratory | If normal false positives improve on a fresh diagnostic split | Whether v4.5 generalizes beyond this hard-contrast probe |
 | Fixed split comparison | Only after contract stays `1.0`, normal recovers, and severity improves | Whether trained Qwen beats or complements the heuristic baseline |
 
+Follow-up status: v4.6 completed this normal/severity calibration path. It improved hard-contrast label accuracy to `0.90` and severity to `0.90`, but fixed split remains closed because normal, SQLi, calibration-normal, and brute-force severity gates still miss (source: docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md).
+
 ## Non-Goals
 
 - Do not treat v4.5 as production detection.
@@ -158,6 +160,7 @@ Decision: keep v4.5 as a promising trained-Qwen probe, but hold fixed split. The
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-23 | User/Codex | Captured Qwen3.5 LoRA pilot training completion and hard-contrast evaluation result | `reports/phase-8-v4-5-qwen35-lora-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json` | Trained/probed; calibration held |
+| 2026-05-23 | User/Codex | Linked v4.5 follow-up to the completed v4.6 calibration result | `docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md` | Follow-up completed; fixed split still held |
 
 ## Decision Log
 

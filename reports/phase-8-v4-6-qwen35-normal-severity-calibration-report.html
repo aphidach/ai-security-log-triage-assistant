@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phase 8 v4.6 Qwen3.5 Normal Severity Calibration Report</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5c6674;
+      --line: #d9e2ec;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --navy: #132238;
+      --teal: #137a6b;
+      --teal-soft: #e1f5ef;
+      --amber: #a45e00;
+      --amber-soft: #fff1d6;
+      --red: #b33c39;
+      --red-soft: #ffe4df;
+      --blue: #286fb4;
+      --blue-soft: #e8f1fb;
+      --slate-soft: #eef3f8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    header {
+      background: var(--navy);
+      color: #ffffff;
+      padding: 34px 28px 30px;
+      border-bottom: 5px solid var(--teal);
+    }
+
+    main {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 32px;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.56;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .92em;
+    }
+
+    .subtitle {
+      max-width: 980px;
+      margin-bottom: 0;
+      color: #d8e2ef;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      border: 1px solid rgba(255, 255, 255, .28);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #ecf2f8;
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .metrics {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 22px;
+    }
+
+    .two-col {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .wide-narrow {
+      grid-template-columns: minmax(0, 1.08fr) minmax(330px, .92fr);
+      align-items: start;
+    }
+
+    .panel,
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(20, 32, 46, .05);
+    }
+
+    .panel {
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      min-height: 132px;
+      padding: 16px;
+    }
+
+    .metric-value {
+      margin-bottom: 8px;
+      font-size: 29px;
+      font-weight: 760;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #efc77d;
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font-size: 13px;
+      font-weight: 730;
+    }
+
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+
+    .callout {
+      margin: 14px 0 0;
+      border-left: 4px solid var(--amber);
+      border-radius: 6px;
+      padding: 12px 14px;
+      background: #fff8e8;
+      color: #60471c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 730;
+    }
+
+    td.num,
+    th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: var(--slate-soft);
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.pass {
+      background: var(--teal-soft);
+      color: var(--teal);
+    }
+
+    .tag.hold {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .tag.mixed {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .delta {
+      display: inline-block;
+      border-radius: 6px;
+      padding: 2px 6px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 730;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 220px 1fr 74px;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .bar-label {
+      overflow-wrap: anywhere;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .bar-track {
+      height: 14px;
+      overflow: hidden;
+      border: 1px solid #dce5ee;
+      border-radius: 999px;
+      background: var(--slate-soft);
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--teal);
+    }
+
+    .bar-fill.warn {
+      background: var(--amber);
+    }
+
+    .bar-fill.bad {
+      background: var(--red);
+    }
+
+    .bar-count {
+      text-align: right;
+      color: var(--muted);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .note-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.58;
+    }
+
+    .sources {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.58;
+    }
+
+    @media (max-width: 980px) {
+      header,
+      main {
+        padding-right: 18px;
+        padding-left: 18px;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .two-col,
+      .wide-narrow {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 160px 1fr 56px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      h1 {
+        font-size: 26px;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+
+      .bar-count {
+        text-align: left;
+      }
+
+      table {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Phase 8 v4.6 Qwen3.5 Normal/Severity Calibration</h1>
+    <p class="subtitle">
+      v4.6 train จาก Qwen3.5 base ใหม่ด้วย normal-heavy และ severity-boundary data แล้วรัน probe แบบไม่ใช้ fixed split
+      ผลดีขึ้นจาก v4.5 ชัดเจนด้าน severity และ overall hard-contrast แต่ยังไม่สะอาดพอสำหรับเปิด fixed split
+    </p>
+    <div class="pill-row">
+      <span class="pill">Model alias: <code>qwen3.6-8B-triage-v2</code></span>
+      <span class="pill">Prompt: <code>triage-json-v2.1</code></span>
+      <span class="pill">Mode: <code>structured_outputs_json</code></span>
+      <span class="pill">Temperature: <code>0</code></span>
+      <span class="pill">Fixed split: <code>not used</code></span>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid metrics">
+      <article class="card">
+        <div class="metric-value">90%</div>
+        <h3>Hard-contrast label accuracy</h3>
+        <div class="metric-label">เพิ่มจาก v4.5 ที่ <code>88%</code> และแตะ overall label gate พอดี</div>
+      </article>
+      <article class="card">
+        <div class="metric-value">90%</div>
+        <h3>Hard-contrast severity</h3>
+        <div class="metric-label">ดีขึ้นจาก <code>72%</code> แต่ calibration probe ยังเหลือ <code>80%</code></div>
+      </article>
+      <article class="card">
+        <div class="metric-value">100%</div>
+        <h3>JSON/schema</h3>
+        <div class="metric-label">ทั้ง calibration probe และ hard-contrast ผ่าน schema ครบ ไม่มี invalid output</div>
+      </article>
+      <article class="card">
+        <div class="metric-value">Hold</div>
+        <h3>Fixed split decision</h3>
+        <div class="metric-label">normal, SQLi และ brute-force severity ยังไม่ผ่าน gate ย่อย</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <span class="status">Decision: hold before fixed split</span>
+      <p class="callout">
+        v4.6 เป็น checkpoint ที่ดีขึ้น แต่ยังไม่ใช่ promotion candidate:
+        hard-contrast <code>normal</code> ยังได้ <code>7/10</code>,
+        SQLi ลดจาก v4.5 เหลือ <code>8/10</code>,
+        calibration probe normal ได้ <code>11/15</code>,
+        และ brute-force severity medium ถูกยกเป็น high ครบ <code>4/4</code> เคส
+      </p>
+    </section>
+
+    <section class="grid two-col">
+      <article class="panel">
+        <h2>Training Snapshot</h2>
+        <table>
+          <tbody>
+            <tr><th>Config</th><td><code>ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml</code></td></tr>
+            <tr><th>Base model</th><td><code>unsloth/Qwen3.5-0.8B</code></td></tr>
+            <tr><th>Train / validation</th><td><code>1340 / 100</code> records</td></tr>
+            <tr><th>Max seq length</th><td><code>1024</code></td></tr>
+            <tr><th>Max steps</th><td><code>260</code></td></tr>
+            <tr><th>Learning rate</th><td><code>0.00008</code></td></tr>
+            <tr><th>Train loss</th><td><code>0.2689869593</code></td></tr>
+            <tr><th>Runtime</th><td><code>1419.9621s</code>, <code>1.465</code> samples/sec</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>v4.5 -> v4.6 Movement</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th class="num">v4.5</th>
+              <th class="num">v4.6</th>
+              <th>Read</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Hard-contrast label</td>
+              <td class="num">0.88</td>
+              <td class="num"><span class="delta">0.90</span></td>
+              <td>ดีขึ้นเล็กน้อย</td>
+            </tr>
+            <tr>
+              <td>Hard-contrast severity</td>
+              <td class="num">0.72</td>
+              <td class="num"><span class="delta">0.90</span></td>
+              <td>ดีขึ้นชัด</td>
+            </tr>
+            <tr>
+              <td>Normal label</td>
+              <td class="num">4/10</td>
+              <td class="num"><span class="delta">7/10</span></td>
+              <td>ดีขึ้น แต่ยังต่ำกว่า gate</td>
+            </tr>
+            <tr>
+              <td>SQLi label</td>
+              <td class="num">10/10</td>
+              <td class="num">8/10</td>
+              <td>เสีย recall บางส่วน</td>
+            </tr>
+            <tr>
+              <td>Invalid outputs</td>
+              <td class="num">0</td>
+              <td class="num">0</td>
+              <td>output contract คงที่</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid wide-narrow">
+      <article class="panel">
+        <h2>Probe Metrics</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Probe</th>
+              <th class="num">Samples</th>
+              <th class="num">Label</th>
+              <th class="num">Severity</th>
+              <th class="num">Suspicious</th>
+              <th class="num">Evidence</th>
+              <th class="num">Latency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>v4.6 calibration probe</td>
+              <td class="num">25</td>
+              <td class="num">0.84</td>
+              <td class="num">0.80</td>
+              <td class="num">0.84</td>
+              <td class="num">1.00</td>
+              <td class="num">6041 ms</td>
+            </tr>
+            <tr>
+              <td>v4.6 hard-contrast</td>
+              <td class="num">50</td>
+              <td class="num">0.90</td>
+              <td class="num">0.90</td>
+              <td class="num">0.96</td>
+              <td class="num">0.98</td>
+              <td class="num">6614 ms</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>Gate Read</h2>
+        <table>
+          <tbody>
+            <tr><th>JSON/schema</th><td><span class="tag pass">pass</span></td></tr>
+            <tr><th>Invalid outputs</th><td><span class="tag pass">pass</span></td></tr>
+            <tr><th>Overall hard-contrast label</th><td><span class="tag pass">pass</span></td></tr>
+            <tr><th>Hard-contrast normal</th><td><span class="tag hold">hold</span></td></tr>
+            <tr><th>Suspicious label floor</th><td><span class="tag hold">hold</span></td></tr>
+            <tr><th>Calibration normal</th><td><span class="tag hold">hold</span></td></tr>
+            <tr><th>Brute-force severity</th><td><span class="tag mixed">mixed</span></td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid two-col">
+      <article class="panel">
+        <h2>Hard-Contrast Per Label</h2>
+        <div class="bar-row">
+          <div class="bar-label"><code>normal</code></div>
+          <div class="bar-track"><div class="bar-fill warn" style="width:70%"></div></div>
+          <div class="bar-count">7/10</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><code>failed_login_bruteforce</code></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+          <div class="bar-count">10/10</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><code>sql_injection_attempt</code></div>
+          <div class="bar-track"><div class="bar-fill warn" style="width:80%"></div></div>
+          <div class="bar-count">8/10</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><code>directory_traversal_attempt</code></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+          <div class="bar-count">10/10</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><code>port_scan_or_recon</code></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+          <div class="bar-count">10/10</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>Remaining Failures</h2>
+        <ul class="note-list">
+          <li>Hard-contrast normal ยัง over-alert เป็น brute force อยู่ 3 เคส</li>
+          <li>Hard-contrast SQLi พลาดเป็น brute force 2 เคส หลัง v4.5 เคยได้ 10/10</li>
+          <li>Calibration probe normal พลาดเป็น brute force 4 เคส จาก normal 15 เคส</li>
+          <li>Calibration probe brute-force medium ถูกทาย severity เป็น high ครบ 4 เคส</li>
+          <li>Evidence ยังดีมาก: calibration probe 25/25 และ hard-contrast 49/50</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>Recommended Next Step</h2>
+      <p>
+        รอบถัดไปควรเป็น v4.7 ที่แคบกว่า v4.6: เพิ่ม benign login/rate-limit normal hard negatives
+        ที่คล้าย brute-force แต่ไม่ถึง threshold, เพิ่ม SQLi-vs-auth contrast สำหรับเคสที่มี token แปลกแต่ไม่ใช่ auth failure,
+        และเพิ่ม brute-force medium severity examples ให้ชัดว่าปริมาณหรือช่วงเวลาระดับไหนยังไม่ควรเป็น high
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Sources</h2>
+      <p class="sources">
+        Training: <code>reports/phase-8-v4-6-qwen35-lora-training-result.json</code>.
+        Evaluation: <code>reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json</code>,
+        <code>reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json</code>.
+        Docs: <code>docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md</code>.
+        This report describes triage behavior only and does not claim compromise.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

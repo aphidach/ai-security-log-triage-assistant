@@ -1,0 +1,15 @@
+{
+  "status": "training_complete",
+  "config_path": "ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml",
+  "output_dir": "ml/unsloth/outputs/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration-lora",
+  "train_records": 1340,
+  "validation_records": 100,
+  "metrics": {
+    "epoch": 1.5492537313432835,
+    "total_flos": 4663705614868608.0,
+    "train_loss": 0.2689869593255795,
+    "train_runtime": 1419.9621,
+    "train_samples_per_second": 1.465,
+    "train_steps_per_second": 0.183
+  }
+}

@@ -82,8 +82,9 @@
 - [[output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan]]: Phase 8 v4.3 capacity/architecture diagnostic result; base model `unsloth/Qwen3.5-0.8B` passed JSON/schema on smoke and hard-contrast probes, but hard-contrast label accuracy stayed `0.50`/`0.48` with SQLi `3/10`/`2/10`, so the candidate is held and fixed test remains closed
 - [[output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan]]: Phase 8 v4.4 boundary audit result; v4.3 Qwen3.5 base-model failures have `26` union IDs and `25` persistent IDs, with SQLi/traversal/recon -> `normal` as the main failure family, so fixed test and v4.4 train artifacts remain closed
 - [[output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe]]: Phase 8 v4.5 trained-Qwen LoRA probe; hard-contrast JSON/schema `1.0`, invalid `0`, label accuracy `0.88`, evidence `0.98`, and all suspicious labels `10/10`, but normal is only `4/10` and severity `0.72`, so fixed split remains closed
-- [[output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan]]: Phase 8 v4.6 Qwen normal/severity calibration workflow; creates failure slice, 145-record supplement, 1340-record train split, 100-record validation split, 25-record non-fixed probe split, and Qwen config while keeping fixed split closed
+- [[output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan]]: Phase 8 v4.6 Qwen normal/severity calibration result; train/probe แล้วได้ hard-contrast label `0.90`, severity `0.90`, JSON/schema `1.0`, invalid `0`, แต่ยัง held เพราะ normal `7/10`, SQLi `8/10`, calibration normal `11/15`, และ brute-force severity ยังสูงเกิน
 - `reports/phase-8-lfm2-350m-vs-qwen35-0-8b-comparison.html`: HTML comparison report for LFM2-350M v4.1 and Qwen3.5-0.8B v4.5 on the same hard-contrast temp 0 probe
+- `reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html`: HTML report for Qwen3.5 v4.6 training, calibration probe, hard-contrast probe, gate read, and fixed-split hold decision
 
 ## Documentation Maintenance
 
@@ -157,6 +158,7 @@ Append-only log สำหรับบันทึกว่า index นี้เ
 | 2026-05-23 | User/Codex | Added Phase 8 v4.5 trained-Qwen LoRA hard-contrast probe to the docs index | `docs/output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe.md`, `reports/phase-8-v4-5-qwen35-lora-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json` | Trained/probed; calibration held |
 | 2026-05-23 | Codex | Added Phase 8 v4.6 Qwen normal/severity calibration workflow to the docs index | `docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md`, `scripts/create_v4_6_qwen35_normal_calibration_dataset.py`, `ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml` | Prepared; training pending |
 | 2026-05-23 | Codex | Added Phase 8 LFM2 vs Qwen HTML comparison report to the index | `reports/phase-8-lfm2-350m-vs-qwen35-0-8b-comparison.html`, `docs/index.md` | Comparison report ready |
+| 2026-05-23 | User/Codex | Updated the index after v4.6 Qwen training, non-fixed probes, and HTML report | `docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md`, `reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html` | Improved but held |
 
 ## Decision Log
 
@@ -182,6 +184,7 @@ Append-only log สำหรับบันทึกว่าตัดสิน�
 | 2026-05-23 | Refresh first-choice 6GB candidates to `LiquidAI/LFM2.5-1.2B-Instruct` or `Qwen/Qwen3.5-2B` | Newer model check found 1.2B-2B options that are fresher than the old shortlist while staying safer than 3B/4B on 6GB | Try LFM2.5/Qwen3.5-2B before Granite 4.1 3B, SmolLM3 3B, or Qwen3.5 4B stretch runs |
 | 2026-05-23 | Hold v4.5 before fixed split | Trained Qwen LoRA reaches hard-contrast label accuracy `0.88` with JSON/schema `1.0`, but normal accuracy is only `4/10` and severity accuracy is `0.72` | Calibrate normal false positives and severity before mini semantic or fixed split comparison |
 | 2026-05-23 | Prepare v4.6 as normal/severity calibration | v4.5 failure shape moved from suspicious recall to normal precision and severity calibration | Train and probe v4.6 on non-fixed calibration artifacts before any fixed split comparison |
+| 2026-05-23 | Hold v4.6 before fixed split | v4.6 improves hard-contrast overall metrics but still misses normal, SQLi, calibration-normal, and brute-force severity gates | Keep `data/splits/test.jsonl` closed; use v4.6 as evidence for a narrower v4.7 calibration pass |
 
 ## Related pages
 

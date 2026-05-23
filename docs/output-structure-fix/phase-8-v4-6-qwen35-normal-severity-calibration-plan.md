@@ -1,8 +1,8 @@
-# Phase 8 V4.6 Qwen3.5 Normal Severity Calibration Plan
+# Phase 8 V4.6 Qwen3.5 Normal Severity Calibration Result
 
 **Summary**
 
-v4.6 เป็น calibration workflow ต่อจาก v4.5 trained-Qwen LoRA probe รอบ v4.5 แก้ suspicious-to-normal collapse ได้ดีมาก แต่แลกมาด้วย normal false positives (`normal` เหลือ `4/10`) และ severity calibration ยังต่ำ (`0.72`) รอบนี้จึงสร้าง failure slice จาก v4.5, เพิ่ม normal-heavy supplement, เพิ่ม severity calibration examples, สร้าง train/validation/probe split ใหม่ และเตรียม Qwen3.5 LoRA config ใหม่ โดยยังไม่เปิด fixed split
+v4.6 เป็น calibration run ต่อจาก v4.5 trained-Qwen LoRA probe รอบนี้ train สำเร็จจาก Qwen3.5 base ใหม่ แล้วรันทั้ง non-fixed calibration probe และ hard-contrast probe เดิม ผลหลักคือ hard-contrast ดีขึ้นจาก v4.5: label accuracy `0.88` -> `0.90`, severity accuracy `0.72` -> `0.90`, JSON/schema ยัง `1.0`, invalid `0` แต่ fixed split ยังควรปิดต่อ เพราะ hard-contrast `normal` ยัง `7/10`, SQLi เหลือ `8/10`, calibration probe normal ได้ `11/15` และ brute-force severity ยังถูกยกเป็น `high` ครบ `4/4` เคส
 
 **Sources**
 
@@ -10,6 +10,9 @@ v4.6 เป็น calibration workflow ต่อจาก v4.5 trained-Qwen LoRA
 - v4.6 calibration slice artifacts (source: scripts/create_v4_6_qwen35_normal_calibration_slice.py, source: reports/phase-8-v4-6-qwen35-normal-calibration-slice.json, source: reports/phase-8-v4-6-qwen35-normal-calibration-slice.md)
 - v4.6 calibration dataset artifacts (source: scripts/create_v4_6_qwen35_normal_calibration_dataset.py, source: data/generated/v4-6-qwen35-normal-severity-calibration-security-triage.jsonl, source: data/splits/train-v4-6-qwen35-normal-severity-calibration.jsonl, source: data/splits/validation-v4-6-qwen35-normal-severity-calibration.jsonl, source: data/splits/v4-6-normal-severity-calibration-probe.jsonl)
 - v4.6 Qwen training config (source: ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml)
+- v4.6 Qwen training result capture (source: reports/phase-8-v4-6-qwen35-lora-training-result.json, source: reports/phase-8-v4-6-qwen35-lora-training-result.md)
+- v4.6 calibration and hard-contrast evaluation reports (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json)
+- Stakeholder-readable v4.6 HTML report (source: reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html)
 - v4.6 regression tests (source: tests/test_v4_6_qwen35_normal_calibration_workflow.py)
 
 **Last updated**
@@ -18,7 +21,7 @@ v4.6 เป็น calibration workflow ต่อจาก v4.5 trained-Qwen LoRA
 
 ## Status
 
-Prepared; training pending. v4.6 now has:
+Trained and probed; still held before fixed split. v4.6 now has:
 
 - failure slice report from v4.5 hard-contrast output
 - 145-record calibration supplement
@@ -26,9 +29,13 @@ Prepared; training pending. v4.6 now has:
 - 100-record validation split
 - 25-record non-fixed calibration probe split
 - Qwen3.5 LoRA config
+- training-complete capture
+- non-fixed calibration probe result
+- hard-contrast probe result
+- HTML report for quick review
 - regression tests for artifact determinism and split guardrails
 
-No `data/splits/test.jsonl` run was opened or used.
+No `data/splits/test.jsonl` run was opened or used in v4.6 tuning/evaluation.
 
 ## Why This Exists
 
@@ -151,10 +158,32 @@ Key settings:
 | Max sequence length | `1024` |
 | LoRA rank | `16` |
 | Learning rate | `0.00008` |
-| Max steps | `140` |
+| Max steps | `260` |
 | Output dir | `ml/unsloth/outputs/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration-lora` |
 
 The learning rate is slightly lower than v4.5 (`0.00008` vs `0.0001`) because this is a calibration pass, not a broad class-learning pass.
+
+## Training Result
+
+The v4.6 training-complete capture is stored as:
+
+```text
+reports/phase-8-v4-6-qwen35-lora-training-result.json
+reports/phase-8-v4-6-qwen35-lora-training-result.md
+```
+
+| Metric | Value |
+| --- | ---: |
+| Train records | `1340` |
+| Validation records | `100` |
+| Epoch | `1.5492537313432835` |
+| Train loss | `0.2689869593255795` |
+| Train runtime | `1419.9621` seconds |
+| Train samples/sec | `1.465` |
+| Train steps/sec | `0.183` |
+| Total FLOPs | `4663705614868608.0` |
+
+Compared with v4.5, v4.6 used more calibration data (`1220/75` -> `1340/100`) and ended with lower train loss (`0.4103` -> `0.2690`). The runtime is longer, so this is not a latency or training-efficiency win by itself; the useful signal is evaluation behavior.
 
 ## Command Runbook
 
@@ -185,7 +214,6 @@ python3 ml/unsloth/train_lora_vision_qwen.py \
   --config ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml
 ```
 
-
 ```bash
 {
   "status": "training_complete",
@@ -194,19 +222,17 @@ python3 ml/unsloth/train_lora_vision_qwen.py \
   "train_records": 1340,
   "validation_records": 100,
   "metrics": {
-    "epoch": 0.835820895522388,
-    "total_flos": 2516696972450304.0,
-    "train_loss": 0.4195894045489175,
-    "train_runtime": 767.7767,
-    "train_samples_per_second": 1.459,
-    "train_steps_per_second": 0.182
+    "epoch": 1.5492537313432835,
+    "total_flos": 4663705614868608.0,
+    "train_loss": 0.2689869593255795,
+    "train_runtime": 1419.9621,
+    "train_samples_per_second": 1.465,
+    "train_steps_per_second": 0.183
   }
 }
 ```
 
-
-
-After training, serve the adapter through vLLM using a new alias such as `qwen3.6-8B-triage-v4-6`, then run:
+After training, serve the adapter through vLLM. The recorded v4.6 probe used alias `qwen3.6-8B-triage-v2`, then ran:
 
 ```bash
 OPENAI_COMPATIBLE_CONFIG_PATH=config-adapter.yml \
@@ -222,13 +248,13 @@ python3 scripts/evaluate.py \
 adapter: openai-compatible
 split: data/splits/v4-6-normal-severity-calibration-probe.jsonl
 samples: 25
-label_accuracy: 0.8
+label_accuracy: 0.84
 json_parse_success_rate: 1.0
 schema_success_rate: 1.0
-severity_accuracy: 0.64
-is_suspicious_accuracy: 0.88
+severity_accuracy: 0.8
+is_suspicious_accuracy: 0.84
 evidence_partial_match: 1.0
-average_latency_ms: 5622.601413
+average_latency_ms: 6040.52215
 invalid_output_count: 0
 json_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json
 markdown_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.md
@@ -250,31 +276,105 @@ python3 scripts/evaluate.py \
 adapter: openai-compatible
 split: data/generated/v3-hard-contrast-security-triage.jsonl
 samples: 50
-label_accuracy: 0.88
+label_accuracy: 0.9
 json_parse_success_rate: 1.0
 schema_success_rate: 1.0
-severity_accuracy: 0.76
-is_suspicious_accuracy: 0.92
+severity_accuracy: 0.9
+is_suspicious_accuracy: 0.96
 evidence_partial_match: 0.98
-average_latency_ms: 5961.354693
+average_latency_ms: 6613.680663
 invalid_output_count: 0
 json_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json
 markdown_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.md
 ```
+
+## Evaluation Result
+
+Runtime metadata for both v4.6 probes:
+
+| Field | Value |
+| --- | --- |
+| Adapter | `openai-compatible` |
+| Base URL | `http://192.168.8.141:8080/v1` |
+| Model alias | `qwen3.6-8B-triage-v2` |
+| Prompt version | `triage-json-v2.1` |
+| Response format | `structured_outputs_json` |
+| Temperature | `0` |
+| Max tokens | `512` |
+
+Metric comparison:
+
+| Probe | Samples | Label acc. | Severity acc. | Suspicious acc. | Evidence | JSON/schema | Invalid | Avg latency |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| v4.5 hard-contrast | `50` | `0.88` | `0.72` | `0.88` | `0.98` | `1.0 / 1.0` | `0` | `5648.582491 ms` |
+| v4.6 hard-contrast | `50` | `0.90` | `0.90` | `0.96` | `0.98` | `1.0 / 1.0` | `0` | `6613.680663 ms` |
+| v4.6 calibration probe | `25` | `0.84` | `0.80` | `0.84` | `1.00` | `1.0 / 1.0` | `0` | `6040.52215 ms` |
+
+v4.6 hard-contrast per-label read:
+
+| Expected label | Label correct | Severity correct | Suspicious correct | Evidence match |
+| --- | ---: | ---: | ---: | ---: |
+| `normal` | `7/10` | `9/10` | `8/10` | `10/10` |
+| `failed_login_bruteforce` | `10/10` | `7/10` | `10/10` | `10/10` |
+| `sql_injection_attempt` | `8/10` | `10/10` | `10/10` | `10/10` |
+| `directory_traversal_attempt` | `10/10` | `10/10` | `10/10` | `9/10` |
+| `port_scan_or_recon` | `10/10` | `9/10` | `10/10` | `10/10` |
+
+v4.6 calibration probe per-label read:
+
+| Expected label | Label correct | Severity correct | Suspicious correct | Evidence match |
+| --- | ---: | ---: | ---: | ---: |
+| `normal` | `11/15` | `14/15` | `11/15` | `15/15` |
+| `failed_login_bruteforce` | `4/4` | `0/4` | `4/4` | `4/4` |
+| `sql_injection_attempt` | `1/1` | `1/1` | `1/1` | `1/1` |
+| `directory_traversal_attempt` | `1/1` | `1/1` | `1/1` | `1/1` |
+| `port_scan_or_recon` | `4/4` | `4/4` | `4/4` | `4/4` |
+
+Hard-contrast failure shape moved in the right direction but is not clean:
+
+| Failure family | Count | IDs |
+| --- | ---: | --- |
+| `normal` -> `failed_login_bruteforce` | `3` | `v3-hard-000001`, `v3-hard-000002`, `v3-hard-000003` |
+| `sql_injection_attempt` -> `failed_login_bruteforce` | `2` | `v3-hard-000021`, `v3-hard-000025` |
+| Brute-force severity `medium` -> `high` | `3` | `v3-hard-000015`, `v3-hard-000016`, `v3-hard-000018` |
+| Port/recon severity `medium` -> `high` | `1` | `v3-hard-000050` |
+| Evidence miss on traversal | `1` | `v3-hard-000035` |
+
+Calibration-probe failure shape is narrower:
+
+| Failure family | Count | IDs |
+| --- | ---: | --- |
+| `normal` -> `failed_login_bruteforce` | `4` | `v4-6-qwen35-cal-000121`, `000122`, `000123`, `000124` |
+| Brute-force severity `medium` -> `high` | `4` | `v4-6-qwen35-cal-000136`, `000137`, `000138`, `000139` |
+
+## Interpretation
+
+v4.6 did what the calibration pass was supposed to test: it improved severity on the hard-contrast probe and restored some normal precision without breaking JSON/schema. The hard-contrast result now reaches the overall label gate at `0.90`, and severity rises to `0.90`.
+
+But the remaining errors matter. Normal hard negatives are still over-alerted as brute force, SQLi drops from `10/10` in v4.5 to `8/10`, and the fresh calibration probe still misses the normal gate by one sample (`11/15` vs target `12/15`). Brute-force severity also remains too aggressive on medium cases. So v4.6 is a better Qwen checkpoint than v4.5, but it is still a held calibration result, not a fixed-split candidate.
+
+HTML summary:
+
+```text
+reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html
+```
+
 ## Gate Before Fixed Split
 
 Open fixed split only if v4.6 clears these checks on non-fixed probes:
 
-| Gate | Target |
-| --- | ---: |
-| JSON/schema | `1.0 / 1.0` |
-| Invalid outputs | `0` |
-| Hard-contrast label accuracy | `>= 0.90` |
-| Hard-contrast `normal` | `>= 8/10` |
-| Suspicious hard-contrast labels | `>= 9/10` each |
-| Severity accuracy | `>= 0.85` |
-| Calibration probe normal accuracy | `>= 12/15` |
-| Calibration probe suspicious recall | no class collapses |
+| Gate | Target | v4.6 result | Status |
+| --- | ---: | ---: | --- |
+| JSON/schema | `1.0 / 1.0` | `1.0 / 1.0` | Pass |
+| Invalid outputs | `0` | `0` | Pass |
+| Hard-contrast label accuracy | `>= 0.90` | `0.90` | Pass |
+| Hard-contrast `normal` | `>= 8/10` | `7/10` | Hold |
+| Suspicious hard-contrast labels | `>= 9/10` each | SQLi `8/10`, others `10/10` | Hold |
+| Severity accuracy | `>= 0.85` | hard-contrast `0.90`, calibration `0.80` | Mixed |
+| Calibration probe normal accuracy | `>= 12/15` | `11/15` | Hold |
+| Calibration probe suspicious recall | no class collapses | labels `10/10`, brute-force severity `0/4` | Mixed |
+
+Decision: keep fixed split closed. v4.6 improves the Qwen path enough to justify a narrower v4.7 calibration pass, but not enough to promote this adapter.
 
 ## Non-Goals
 
@@ -282,7 +382,7 @@ Open fixed split only if v4.6 clears these checks on non-fixed probes:
 - No taxonomy expansion
 - No prompt default change
 - No production detection claim
-- No merge/export decision until calibration is measured
+- No merge/export decision until normal false positives and brute-force severity are repaired
 
 ## Verification
 
@@ -298,12 +398,14 @@ python3 -m py_compile scripts/create_v4_6_qwen35_normal_calibration_slice.py scr
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-23 | Codex | Prepared v4.6 Qwen normal/severity calibration workflow from v4.5 failure slice | `reports/phase-8-v4-6-qwen35-normal-calibration-slice.json`, `data/splits/train-v4-6-qwen35-normal-severity-calibration.jsonl`, `ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml` | Prepared; training pending |
+| 2026-05-23 | User/Codex | Recorded v4.6 Qwen training completion, calibration probe, hard-contrast probe, and HTML summary | `reports/phase-8-v4-6-qwen35-lora-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html` | Trained/probed; fixed split held |
 
 ## Decision Log
 
 | Date | Decision | Rationale | Impact |
 | --- | --- | --- | --- |
 | 2026-05-23 | Create v4.6 as calibration, not broad repair | v4.5 already catches suspicious labels but over-alerts normal and miscalibrates severity | Add normal-heavy and severity-boundary data while preserving suspicious recall guards; keep fixed split closed |
+| 2026-05-23 | Hold v4.6 before fixed split | v4.6 improves hard-contrast label/severity metrics, but normal hard negatives, SQLi `8/10`, calibration normal `11/15`, and brute-force severity still miss gates | Keep fixed split closed; next work should target normal-vs-bruteforce hard negatives and medium brute-force severity |
 
 ## Related pages
 
