@@ -40,6 +40,7 @@ python3 -m pip install -r requirements.txt
 ```bash
 cd frontend
 npm install
+cp .env.example .env.local
 npx tsc --noEmit
 npm run lint
 npm run dev
@@ -94,6 +95,7 @@ nvidia-smi
 ```bash
 cd frontend
 npm install
+cp .env.example .env.local
 npm run dev -- --port 3000
 ```
 
@@ -114,6 +116,7 @@ shared triage contract อยู่ที่:
 - `frontend/lib/labels.ts` - label taxonomy ฝั่ง TypeScript
 - `frontend/lib/triage-schema.ts` - runtime validator และ type ของ triage output
 - `frontend/lib/heuristic-baseline.ts` - heuristic analyzer สำหรับ demo UI ที่รันได้โดยไม่ต้องใช้ model key
+- `frontend/app/api/triage/route.ts` - API route สำหรับ heuristic, base-model และ fine-tuned analyzer โดยอ่าน endpoint จาก `frontend/.env.local`
 
 ## สถานะ
 
@@ -123,7 +126,7 @@ shared triage contract อยู่ที่:
 - มี heuristic baseline ที่รัน local และ evaluator ที่เก็บ metrics ซ้ำได้
 - มี OpenAI-compatible adapter path และ structured-output runtime notes
 - มี Unsloth/LFM2-350M LoRA training path พร้อม v3.5 repair artifacts
-- มี Next.js demo UI สำหรับ paste log, sample picker, analyzer selector, structured result, evidence highlight, raw JSON และ comparison panel
+- มี Next.js demo UI สำหรับ paste log, sample picker, analyzer selector, structured result, evidence highlight, raw JSON, comparison panel และ `/api/triage` สำหรับต่อ OpenAI-compatible endpoint ผ่าน env ฝั่ง server
 
 ข้อจำกัดล่าสุด: Phase 6 ปิดแบบ `closed_with_limitations`; fixed `data/splits/test.jsonl` ยัง held สำหรับ Phase 7 fixed-split comparison เพราะ v3.5 ยังมี SQLi/quote-heavy weakness และ canonical temp 0 ยังไม่ผ่าน gate เดิมครบ
 
@@ -134,7 +137,7 @@ shared triage contract อยู่ที่:
 3. Heuristic baseline และ evaluation runner - done
 4. Model adapters และ structured-output runtime probes - done
 5. LFM2-350M Unsloth LoRA/QLoRA path - done through v3.5 repair run
-6. Demo UI สำหรับ paste log, analyze และ highlight evidence - done for heuristic baseline
+6. Demo UI สำหรับ paste log, analyze และ highlight evidence - done with server-side heuristic and OpenAI-compatible endpoint wiring
 7. Phase 7 fixed-split comparison - held until go/no-go gate clears
 
 ## Docs

@@ -7,6 +7,7 @@ import {
   CircleDot,
   ClipboardPaste,
   FileJson,
+  Loader2,
   Play,
   ShieldAlert,
   ShieldCheck,
@@ -15,7 +16,6 @@ import { useMemo, useState, type ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import { SAMPLE_LOGS, METRIC_SNAPSHOTS, type SampleLog } from "@/lib/demo-data"
-import { analyzeLogWithHeuristic } from "@/lib/heuristic-baseline"
 import {
   TRIAGE_LABEL_METADATA,
   type TriageLabel,
@@ -32,12 +32,15 @@ type AnalyzerId = "heuristic" | "base-model" | "fine-tuned"
 type AnalyzerOption = {
   id: AnalyzerId
   label: string
-  status: "ready" | "unconfigured"
 }
 
 type AnalysisState =
   | {
       kind: "idle"
+    }
+  | {
+      kind: "loading"
+      analyzer: AnalyzerOption
     }
   | {
       kind: "result"
@@ -49,12 +52,36 @@ type AnalysisState =
   | {
       kind: "unconfigured"
       analyzer: AnalyzerOption
+      message: string
+    }
+  | {
+      kind: "error"
+      analyzer: AnalyzerOption
+      message: string
+      rawJson?: string
+      validationIssues?: TriageParseIssue[]
     }
 
+type TriageApiSuccess = {
+  output: TriageOutput
+  rawJson: string
+  validationIssues: TriageParseIssue[]
+  elapsedMs: number
+}
+
+type TriageApiError = {
+  error: string
+  code?: string
+  rawJson?: string
+  validationIssues?: TriageParseIssue[]
+}
+
+type TriageApiResponse = TriageApiSuccess | TriageApiError
+
 const ANALYZERS: AnalyzerOption[] = [
-  { id: "heuristic", label: "Heuristic", status: "ready" },
-  { id: "base-model", label: "Base model", status: "unconfigured" },
-  { id: "fine-tuned", label: "Fine-tuned", status: "unconfigured" },
+  { id: "heuristic", label: "Heuristic" },
+  { id: "base-model", label: "Base model" },
+  { id: "fine-tuned", label: "Fine-tuned" },
 ]
 
 const DEFAULT_SAMPLE = SAMPLE_LOGS[0]
@@ -82,24 +109,63 @@ export default function Home() {
     setAnalysis({ kind: "idle" })
   }
 
-  function analyzeLog() {
-    if (selectedAnalyzer.status !== "ready") {
-      setAnalysis({ kind: "unconfigured", analyzer: selectedAnalyzer })
-      return
+  async function analyzeLog() {
+    const analyzer = selectedAnalyzer
+    setAnalysis({ kind: "loading", analyzer })
+
+    try {
+      const response = await fetch("/api/triage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          analyzer: analyzer.id,
+          logLine: logInput.trim(),
+        }),
+      })
+      const payload = (await response.json()) as TriageApiResponse
+
+      if (!response.ok || "error" in payload) {
+        const message =
+          "error" in payload ? payload.error : "Analyzer request failed."
+        if ("code" in payload && payload.code === "unconfigured") {
+          setAnalysis({
+            kind: "unconfigured",
+            analyzer,
+            message,
+          })
+          return
+        }
+        setAnalysis({
+          kind: "error",
+          analyzer,
+          message,
+          rawJson: "rawJson" in payload ? payload.rawJson : undefined,
+          validationIssues:
+            "validationIssues" in payload ? payload.validationIssues : undefined,
+        })
+        return
+      }
+
+      const validation = parseTriageOutput(payload.output)
+      setAnalysis({
+        kind: "result",
+        output: payload.output,
+        rawJson: payload.rawJson,
+        validationIssues: validation.ok ? payload.validationIssues : validation.errors,
+        elapsedMs: payload.elapsedMs,
+      })
+    } catch (error) {
+      setAnalysis({
+        kind: "error",
+        analyzer,
+        message:
+          error instanceof Error
+            ? `${error.name}: ${error.message}`
+            : "Analyzer request failed.",
+      })
     }
-
-    const started = performance.now()
-    const output = analyzeLogWithHeuristic(logInput.trim())
-    const validation = parseTriageOutput(output)
-    const elapsedMs = performance.now() - started
-
-    setAnalysis({
-      kind: "result",
-      output,
-      rawJson: JSON.stringify(output, null, 2),
-      validationIssues: validation.ok ? [] : validation.errors,
-      elapsedMs,
-    })
   }
 
   return (
@@ -195,11 +261,19 @@ export default function Home() {
               <Button
                 type="button"
                 size="lg"
-                onClick={analyzeLog}
-                disabled={logInput.trim().length === 0}
+                onClick={() => {
+                  void analyzeLog()
+                }}
+                disabled={
+                  logInput.trim().length === 0 || analysis.kind === "loading"
+                }
                 className="h-11 bg-emerald-700 px-4 text-white hover:bg-emerald-800"
               >
-                <Play className="size-4" aria-hidden="true" />
+                {analysis.kind === "loading" ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Play className="size-4" aria-hidden="true" />
+                )}
                 Analyze
               </Button>
             </div>
@@ -261,8 +335,22 @@ export default function Home() {
               <EmptyState />
             ) : null}
 
+            {analysis.kind === "loading" ? (
+              <LoadingState analyzer={analysis.analyzer} />
+            ) : null}
+
             {analysis.kind === "unconfigured" ? (
-              <UnconfiguredState analyzer={analysis.analyzer} />
+              <UnconfiguredState
+                analyzer={analysis.analyzer}
+                message={analysis.message}
+              />
+            ) : null}
+
+            {analysis.kind === "error" ? (
+              <ErrorState
+                message={analysis.message}
+                validationIssues={analysis.validationIssues}
+              />
             ) : null}
 
             {analysis.kind === "result" && result ? (
@@ -353,11 +441,32 @@ export default function Home() {
                       {
                         status: "unconfigured",
                         analyzer: analysis.analyzer.id,
+                        message: analysis.message,
                       },
                       null,
                       2,
                     )
-                : "{\n  \"status\": \"pending\"\n}"}
+                  : analysis.kind === "error"
+                    ? analysis.rawJson ??
+                      JSON.stringify(
+                        {
+                          status: "error",
+                          analyzer: analysis.analyzer.id,
+                          message: analysis.message,
+                        },
+                        null,
+                        2,
+                      )
+                    : analysis.kind === "loading"
+                      ? JSON.stringify(
+                          {
+                            status: "running",
+                            analyzer: analysis.analyzer.id,
+                          },
+                          null,
+                          2,
+                        )
+                      : "{\n  \"status\": \"pending\"\n}"}
             </pre>
           </div>
         </div>
@@ -431,7 +540,24 @@ function EmptyState() {
   )
 }
 
-function UnconfiguredState({ analyzer }: { analyzer: AnalyzerOption }) {
+function LoadingState({ analyzer }: { analyzer: AnalyzerOption }) {
+  return (
+    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
+      <Loader2 className="size-8 animate-spin text-slate-500" aria-hidden="true" />
+      <div className="mt-3 text-sm font-medium text-slate-600">
+        Running {analyzer.label}
+      </div>
+    </div>
+  )
+}
+
+function UnconfiguredState({
+  analyzer,
+  message,
+}: {
+  analyzer: AnalyzerOption
+  message?: string
+}) {
   return (
     <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-amber-200 bg-amber-50 p-6 text-center">
       <AlertTriangle className="size-8 text-amber-700" aria-hidden="true" />
@@ -439,8 +565,35 @@ function UnconfiguredState({ analyzer }: { analyzer: AnalyzerOption }) {
         {analyzer.label} is not configured
       </div>
       <div className="mt-2 max-w-sm text-sm text-amber-800">
-        No endpoint configured.
+        {message ?? "No endpoint configured."}
       </div>
+    </div>
+  )
+}
+
+function ErrorState({
+  message,
+  validationIssues,
+}: {
+  message: string
+  validationIssues?: TriageParseIssue[]
+}) {
+  return (
+    <div className="min-h-72 rounded-lg border border-red-200 bg-red-50 p-6">
+      <div className="flex items-center gap-2 text-base font-semibold text-red-950">
+        <AlertTriangle className="size-5 text-red-700" aria-hidden="true" />
+        Analyzer error
+      </div>
+      <p className="mt-3 text-sm leading-6 text-red-800">{message}</p>
+      {validationIssues && validationIssues.length > 0 ? (
+        <div className="mt-4 space-y-1 text-sm text-red-800">
+          {validationIssues.map((issue) => (
+            <div key={`${issue.path}-${issue.message}`}>
+              {issue.path}: {issue.message}
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }
