@@ -229,7 +229,7 @@ export default function Home() {
         <section className="min-w-0 flex-1">
           <div className="grid w-full gap-4 p-3 sm:p-4 xl:grid-cols-[minmax(0,1.08fr)_minmax(380px,0.92fr)]">
             <div className="min-w-0 space-y-4">
-              <Panel>
+              <Panel id="triage-input">
                 <SectionHeader
                   eyebrow="Input"
                   title="Log event"
@@ -277,7 +277,7 @@ export default function Home() {
                             setAnalysis({ kind: "idle" })
                           }}
                           className={cn(
-                            "flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-[6px] border px-3 text-sm font-semibold transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30",
+                            "flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-[6px] border px-3 text-sm font-semibold transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30",
                             selectedAnalyzerId === analyzer.id
                               ? "border-[#AE4DFF] bg-[#AE4DFF]/15 text-white"
                               : "border-[#35363D] bg-transparent text-[#EAEAF0] hover:border-[#4A4B54] hover:bg-[#27282F]",
@@ -318,7 +318,7 @@ export default function Home() {
                 </div>
               </Panel>
 
-              <Panel>
+              <Panel id="samples">
                 <SectionHeader
                   eyebrow="Samples"
                   title="Coverage set"
@@ -332,7 +332,7 @@ export default function Home() {
                       type="button"
                       onClick={() => selectSample(sample)}
                       className={cn(
-                        "min-h-24 rounded-lg border p-3 text-left transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30",
+                        "min-h-24 cursor-pointer rounded-lg border p-3 text-left transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30",
                         selectedSampleId === sample.id
                           ? "border-[#AE4DFF] bg-[#AE4DFF]/10"
                           : "border-[#35363D] bg-[#111216] hover:border-[#4A4B54] hover:bg-[#27282F]",
@@ -364,7 +364,7 @@ export default function Home() {
             </div>
 
             <div className="min-w-0 space-y-4">
-              <Panel>
+              <Panel id="result-panel">
                 <SectionHeader
                   eyebrow="Result"
                   title="Structured triage"
@@ -470,7 +470,7 @@ export default function Home() {
                 </div>
               </Panel>
 
-              <Panel>
+              <Panel id="raw-json">
                 <SectionHeader
                   eyebrow="Raw JSON"
                   title="Output payload"
@@ -522,7 +522,7 @@ export default function Home() {
 
 function TopNav({ analysis }: { analysis: AnalysisState }) {
   return (
-    <header className="flex h-12 items-center justify-between border-b border-[#1C1D22] bg-[#0B0C0F] px-3 sm:px-4">
+    <header className="sticky top-0 z-20 flex h-12 items-center justify-between border-b border-[#1C1D22] bg-[#0B0C0F] px-3 sm:px-4">
       <div className="flex min-w-0 items-center gap-3">
         <div className="flex size-8 shrink-0 items-center justify-center rounded-[6px] bg-[#AE4DFF] text-white">
           <ShieldAlert className="size-4" aria-hidden="true" />
@@ -561,14 +561,24 @@ function TopNav({ analysis }: { analysis: AnalysisState }) {
 
 function AppSidebar({ selectedAnalyzer }: { selectedAnalyzer: string }) {
   const items = [
-    { label: "Triage", icon: ShieldAlert, active: true },
-    { label: "Samples", icon: Braces, active: false },
-    { label: "Results", icon: ShieldCheck, active: false },
-    { label: "JSON", icon: FileJson, active: false },
+    {
+      label: "Triage",
+      icon: ShieldAlert,
+      active: true,
+      targetId: "triage-input",
+    },
+    { label: "Samples", icon: Braces, active: false, targetId: "samples" },
+    {
+      label: "Results",
+      icon: ShieldCheck,
+      active: false,
+      targetId: "result-panel",
+    },
+    { label: "JSON", icon: FileJson, active: false, targetId: "raw-json" },
   ]
 
   return (
-    <aside className="hidden w-16 shrink-0 flex-col border-r border-[#1C1D22] bg-[#0B0C0F] p-2 md:flex lg:w-60">
+    <aside className="sticky top-12 hidden h-[calc(100vh-48px)] w-16 shrink-0 flex-col border-r border-[#1C1D22] bg-[#0B0C0F] p-2 md:flex lg:w-60">
       <div className="space-y-1">
         {items.map((item) => {
           const Icon = item.icon
@@ -577,8 +587,14 @@ function AppSidebar({ selectedAnalyzer }: { selectedAnalyzer: string }) {
               key={item.label}
               type="button"
               title={item.label}
+              onClick={() => {
+                document.getElementById(item.targetId)?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                })
+              }}
               className={cn(
-                "flex min-h-11 w-full items-center justify-center gap-3 rounded-[6px] px-3 text-sm font-semibold transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30 lg:justify-start",
+                "flex min-h-11 w-full cursor-pointer items-center justify-center gap-3 rounded-[6px] px-3 text-sm font-semibold transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30 lg:justify-start",
                 item.active
                   ? "bg-[#AE4DFF]/15 text-white"
                   : "text-[#8B8D97] hover:bg-[#1C1D22] hover:text-[#EAEAF0]",
@@ -612,7 +628,9 @@ function buildMetricSnapshots(
 ): MetricSnapshot[] {
   const baseModel = triageConfig?.endpoints.baseModel
   const fineTuned = triageConfig?.endpoints.fineTuned
-  const endpointsConfigured = Boolean(baseModel?.configured && fineTuned?.configured)
+  const endpointsConfigured = Boolean(
+    baseModel?.configured && fineTuned?.configured,
+  )
   const configSnapshot: MetricSnapshot = {
     name: "Configured model env",
     source: "OPENAI_COMPATIBLE_MODEL / OPENAI_FINETUNE_MODEL",
@@ -625,12 +643,12 @@ function buildMetricSnapshots(
     metrics: [
       {
         label: "Base model",
-        value: baseModel?.model ?? "Loading",
+        value: triageConfig ? (baseModel?.model ?? "Not set") : "Loading",
         tone: baseModel?.model ? "neutral" : "warn",
       },
       {
         label: "Fine-tuned",
-        value: fineTuned?.model ?? "Loading",
+        value: triageConfig ? (fineTuned?.model ?? "Not set") : "Loading",
         tone: fineTuned?.model ? "neutral" : "warn",
       },
       {
@@ -667,7 +685,7 @@ function ComparisonPanel({ snapshots }: { snapshots: MetricSnapshot[] }) {
         {snapshots.map((snapshot) => (
           <article
             key={snapshot.name}
-            className="rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
+            className="min-w-0 rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -684,7 +702,7 @@ function ComparisonPanel({ snapshots }: { snapshots: MetricSnapshot[] }) {
               {snapshot.metrics.map((metric) => (
                 <div
                   key={`${snapshot.name}-${metric.label}`}
-                  className="rounded-[6px] border border-[#35363D] bg-[#111216] p-2"
+                  className="min-w-0 rounded-[6px] border border-[#35363D] bg-[#111216] p-2"
                 >
                   <dt className="text-xs text-[#8B8D97]">{metric.label}</dt>
                   <dd
@@ -782,14 +800,17 @@ function ErrorState({
 function Panel({
   children,
   className,
+  id,
 }: {
   children: ReactNode
   className?: string
+  id?: string
 }) {
   return (
     <section
+      id={id}
       className={cn(
-        "rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]",
+        "scroll-mt-16 rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]",
         className,
       )}
     >

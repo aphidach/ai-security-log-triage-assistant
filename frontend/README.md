@@ -38,4 +38,5 @@ npm run build
 - view structured triage output and raw JSON
 - highlight evidence substrings in the input log
 - show unconfigured or endpoint-error state when live model settings are missing or unavailable
-- show current comparison artifacts with Qwen3.5 v4.7 as the latest fine-tuned model, while keeping v4.8 diagnostic results separate from fixed-split promotion
+- show current comparison artifacts with Qwen3.5 v4.7 as the latest fine-tuned model
+- show configured base and fine-tuned model names from `OPENAI_COMPATIBLE_MODEL` and `OPENAI_FINETUNE_MODEL` without exposing API keys or base URLs
