@@ -68,6 +68,7 @@ def build_preflight_report(
     output_dir: Path,
     export_format: str,
     save_method: str,
+    load_in_4bit: bool | None,
     gguf_quantizations: list[str],
     hub_repo: str | None,
 ) -> JsonObject:
@@ -83,12 +84,18 @@ def build_preflight_report(
         "output_exists": output_dir.exists(),
         "export_format": export_format,
         "save_method": save_method,
+        "load_in_4bit_override": load_in_4bit,
         "gguf_quantizations": gguf_quantizations,
         "hub_repo": hub_repo,
     }
 
 
-def load_model_tokenizer_and_adapter(config: JsonObject, adapter_path: Path) -> tuple[Any, Any, str]:
+def load_model_tokenizer_and_adapter(
+    config: JsonObject,
+    adapter_path: Path,
+    *,
+    load_in_4bit_override: bool | None = None,
+) -> tuple[Any, Any, str]:
     model_config = require_section(config, "model")
     base_model = model_config.get("base_model")
     if not isinstance(base_model, str) or not base_model:
@@ -98,10 +105,6 @@ def load_model_tokenizer_and_adapter(config: JsonObject, adapter_path: Path) -> 
 
     try:
         import torch
-
-        # Keep Unsloth first so the runtime patching matches train_lora.py and
-        # inference.py in the same GPU environment.
-        from peft import PeftModel
     except ModuleNotFoundError as exc:
         raise MergeAdapterError(
             "merge dependencies are missing. Activate the GPU environment and run scripts/setup_gpu_env.sh first."
@@ -109,9 +112,14 @@ def load_model_tokenizer_and_adapter(config: JsonObject, adapter_path: Path) -> 
 
     try:
         loader = resolve_model_loader(model_config)
-        load_in_4bit = coerce_bool(model_config.get("load_in_4bit", True), field_name="model.load_in_4bit")
+        load_in_4bit = (
+            load_in_4bit_override
+            if load_in_4bit_override is not None
+            else coerce_bool(model_config.get("load_in_4bit", True), field_name="model.load_in_4bit")
+        )
         if loader == FAST_LANGUAGE_MODEL_LOADER:
             from unsloth import FastLanguageModel
+            from peft import PeftModel
 
             model, tokenizer = FastLanguageModel.from_pretrained(
                 model_name=base_model,
@@ -121,6 +129,7 @@ def load_model_tokenizer_and_adapter(config: JsonObject, adapter_path: Path) -> 
             )
         elif loader == FAST_VISION_MODEL_LOADER:
             from unsloth import FastVisionModel
+            from peft import PeftModel
 
             model, tokenizer = FastVisionModel.from_pretrained(
                 model_name=base_model,
@@ -282,6 +291,14 @@ def parse_args() -> argparse.Namespace:
         help="Unsloth save method when save_pretrained_merged is available.",
     )
     parser.add_argument(
+        "--load-in-4bit",
+        choices=("true", "false"),
+        help=(
+            "Override model.load_in_4bit during merge/export loading. "
+            "Use false for GGUF export so the intermediate HF checkpoint is not bitsandbytes."
+        ),
+    )
+    parser.add_argument(
         "--gguf-quantization",
         action="append",
         choices=GGUF_QUANTIZATIONS,
@@ -322,6 +339,11 @@ def main() -> int:
         gguf_quantizations = (
             normalize_gguf_quantizations(args.gguf_quantization) if args.export_format == "gguf" else []
         )
+        load_in_4bit_override = (
+            coerce_bool(args.load_in_4bit, field_name="--load-in-4bit")
+            if args.load_in_4bit is not None
+            else None
+        )
         report = build_preflight_report(
             config_path=config_path,
             config=config,
@@ -329,6 +351,7 @@ def main() -> int:
             output_dir=output_dir,
             export_format=args.export_format,
             save_method=args.save_method,
+            load_in_4bit=load_in_4bit_override,
             gguf_quantizations=gguf_quantizations,
             hub_repo=args.hub_repo,
         )
@@ -336,7 +359,11 @@ def main() -> int:
         if args.preflight_only:
             return 0
 
-        model, tokenizer, base_model = load_model_tokenizer_and_adapter(config, adapter_path)
+        model, tokenizer, base_model = load_model_tokenizer_and_adapter(
+            config,
+            adapter_path,
+            load_in_4bit_override=load_in_4bit_override,
+        )
         if args.export_format == "gguf":
             import os
 
