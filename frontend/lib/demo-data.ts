@@ -11,7 +11,7 @@ export type MetricSnapshot = {
   name: string
   source: string
   split: string
-  status: "ready" | "exploratory" | "unconfigured"
+  status: "ready" | "exploratory" | "held" | "unconfigured"
   metrics: Array<{
     label: string
     value: string
@@ -54,40 +54,40 @@ export const SAMPLE_LOGS: SampleLog[] = [
 
 export const METRIC_SNAPSHOTS: MetricSnapshot[] = [
   {
-    name: "Heuristic baseline",
-    source: "reports/baseline-eval.json",
+    name: "Heuristic fixed split",
+    source: "reports/phase-7-heuristic-fixed-split-eval.json",
     split: "fixed test split, 75 samples",
     status: "ready",
     metrics: [
       { label: "Label accuracy", value: "1.00", tone: "good" },
       { label: "Schema success", value: "1.00", tone: "good" },
       { label: "Evidence match", value: "1.00", tone: "good" },
-      { label: "Latency", value: "0.04 ms", tone: "good" },
+      { label: "Latency", value: "0.05 ms", tone: "good" },
     ],
   },
   {
-    name: "Fine-tuned v3.5 probe",
+    name: "Latest fine-tuned v4.7",
     source:
-      "reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json",
-    split: "hard-contrast probe, 50 samples; not fixed split",
+      "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json",
+    split: "Qwen3.5 v4.7 hard-contrast probe, 50 samples; not fixed split",
+    status: "held",
+    metrics: [
+      { label: "Label accuracy", value: "0.92", tone: "good" },
+      { label: "Severity", value: "0.92", tone: "good" },
+      { label: "Schema success", value: "1.00", tone: "good" },
+      { label: "Calib label", value: "0.37", tone: "warn" },
+    ],
+  },
+  {
+    name: "Configured model env",
+    source: "OPENAI_COMPATIBLE_MODEL / OPENAI_FINETUNE_MODEL",
+    split: "server-side env model names; keys stay hidden",
     status: "exploratory",
     metrics: [
-      { label: "Label accuracy", value: "0.88", tone: "warn" },
-      { label: "Schema success", value: "1.00", tone: "good" },
-      { label: "Evidence match", value: "0.98", tone: "good" },
-      { label: "Latency", value: "499 ms", tone: "neutral" },
-    ],
-  },
-  {
-    name: "Live model endpoint",
-    source: "OPENAI_COMPATIBLE_* env not wired into the UI",
-    split: "not run from demo UI",
-    status: "unconfigured",
-    metrics: [
-      { label: "Base model", value: "Unavailable", tone: "neutral" },
-      { label: "Fine-tuned", value: "Unavailable", tone: "neutral" },
-      { label: "Fixed split", value: "Held", tone: "warn" },
-      { label: "Reason", value: "No fake output", tone: "good" },
+      { label: "Base model", value: "Loading", tone: "neutral" },
+      { label: "Fine-tuned", value: "Loading", tone: "neutral" },
+      { label: "Base env", value: "OPENAI_COMPATIBLE_MODEL", tone: "neutral" },
+      { label: "Fine env", value: "OPENAI_FINETUNE_MODEL", tone: "neutral" },
     ],
   },
 ]

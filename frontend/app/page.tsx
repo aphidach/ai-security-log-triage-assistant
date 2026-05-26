@@ -12,10 +12,15 @@ import {
   ShieldAlert,
   ShieldCheck,
 } from "lucide-react"
-import { useMemo, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useState, type ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
-import { SAMPLE_LOGS, METRIC_SNAPSHOTS, type SampleLog } from "@/lib/demo-data"
+import {
+  SAMPLE_LOGS,
+  METRIC_SNAPSHOTS,
+  type MetricSnapshot,
+  type SampleLog,
+} from "@/lib/demo-data"
 import {
   TRIAGE_LABEL_METADATA,
   type TriageLabel,
@@ -78,6 +83,21 @@ type TriageApiError = {
 
 type TriageApiResponse = TriageApiSuccess | TriageApiError
 
+type PublicEndpointConfig = {
+  analyzer: Exclude<AnalyzerId, "heuristic">
+  label: string
+  modelEnv: string
+  model: string | null
+  configured: boolean
+}
+
+type PublicTriageConfig = {
+  endpoints: {
+    baseModel: PublicEndpointConfig
+    fineTuned: PublicEndpointConfig
+  }
+}
+
 const ANALYZERS: AnalyzerOption[] = [
   { id: "heuristic", label: "Heuristic" },
   { id: "base-model", label: "Base model" },
@@ -92,6 +112,9 @@ export default function Home() {
   const [selectedAnalyzerId, setSelectedAnalyzerId] =
     useState<AnalyzerId>("heuristic")
   const [analysis, setAnalysis] = useState<AnalysisState>({ kind: "idle" })
+  const [triageConfig, setTriageConfig] = useState<PublicTriageConfig | null>(
+    null,
+  )
 
   const selectedAnalyzer = useMemo(
     () =>
@@ -102,6 +125,35 @@ export default function Home() {
 
   const result = analysis.kind === "result" ? analysis.output : null
   const labelTone = result ? getLabelTone(result.label) : null
+  const metricSnapshots = useMemo(
+    () => buildMetricSnapshots(triageConfig),
+    [triageConfig],
+  )
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadTriageConfig() {
+      try {
+        const response = await fetch("/api/triage")
+        if (!response.ok) {
+          return
+        }
+        const payload = (await response.json()) as PublicTriageConfig
+        if (isMounted) {
+          setTriageConfig(payload)
+        }
+      } catch {
+        // Keep the static loading snapshot if config metadata cannot be read.
+      }
+    }
+
+    void loadTriageConfig()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   function selectSample(sample: SampleLog) {
     setSelectedSampleId(sample.id)
@@ -308,7 +360,7 @@ export default function Home() {
                 </div>
               </Panel>
 
-              <ComparisonPanel />
+              <ComparisonPanel snapshots={metricSnapshots} />
             </div>
 
             <div className="min-w-0 space-y-4">
@@ -555,7 +607,49 @@ function AppSidebar({ selectedAnalyzer }: { selectedAnalyzer: string }) {
   )
 }
 
-function ComparisonPanel() {
+function buildMetricSnapshots(
+  triageConfig: PublicTriageConfig | null,
+): MetricSnapshot[] {
+  const baseModel = triageConfig?.endpoints.baseModel
+  const fineTuned = triageConfig?.endpoints.fineTuned
+  const endpointsConfigured = Boolean(baseModel?.configured && fineTuned?.configured)
+  const configSnapshot: MetricSnapshot = {
+    name: "Configured model env",
+    source: "OPENAI_COMPATIBLE_MODEL / OPENAI_FINETUNE_MODEL",
+    split: "server-side env model names; keys stay hidden",
+    status: triageConfig
+      ? endpointsConfigured
+        ? "ready"
+        : "unconfigured"
+      : "exploratory",
+    metrics: [
+      {
+        label: "Base model",
+        value: baseModel?.model ?? "Loading",
+        tone: baseModel?.model ? "neutral" : "warn",
+      },
+      {
+        label: "Fine-tuned",
+        value: fineTuned?.model ?? "Loading",
+        tone: fineTuned?.model ? "neutral" : "warn",
+      },
+      {
+        label: "Base env",
+        value: baseModel?.modelEnv ?? "OPENAI_COMPATIBLE_MODEL",
+        tone: "neutral",
+      },
+      {
+        label: "Fine env",
+        value: fineTuned?.modelEnv ?? "OPENAI_FINETUNE_MODEL",
+        tone: "neutral",
+      },
+    ],
+  }
+
+  return [...METRIC_SNAPSHOTS.slice(0, -1), configSnapshot]
+}
+
+function ComparisonPanel({ snapshots }: { snapshots: MetricSnapshot[] }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
@@ -566,11 +660,11 @@ function ComparisonPanel() {
           </h2>
         </div>
         <span className="rounded-full border border-[#35363D] px-2 py-1 text-xs text-[#8B8D97]">
-          fixed split
+          docs + env
         </span>
       </div>
       <div className="grid gap-3 xl:grid-cols-3">
-        {METRIC_SNAPSHOTS.map((snapshot) => (
+        {snapshots.map((snapshot) => (
           <article
             key={snapshot.name}
             className="rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
@@ -595,7 +689,7 @@ function ComparisonPanel() {
                   <dt className="text-xs text-[#8B8D97]">{metric.label}</dt>
                   <dd
                     className={cn(
-                      "mt-1 text-sm font-semibold",
+                      "mt-1 break-words text-sm font-semibold",
                       metric.tone === "good" && "text-[#4F8EF7]",
                       metric.tone === "warn" && "text-[#F59E0B]",
                       metric.tone === "neutral" && "text-[#EAEAF0]",
@@ -808,13 +902,18 @@ function ResultBadge({
   )
 }
 
-function StatusDot({ status }: { status: "ready" | "exploratory" | "unconfigured" }) {
+function StatusDot({
+  status,
+}: {
+  status: "ready" | "exploratory" | "held" | "unconfigured"
+}) {
   return (
     <span
       className={cn(
         "inline-flex h-7 items-center rounded-[4px] border px-2 text-xs font-semibold capitalize",
         status === "ready" && "border-[#4F8EF7]/40 bg-[#4F8EF7]/10 text-[#AECBFF]",
         status === "exploratory" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
+        status === "held" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
         status === "unconfigured" && "border-[#35363D] bg-[#27282F] text-[#8B8D97]",
       )}
     >

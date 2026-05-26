@@ -56,6 +56,21 @@ type SuccessPayload = {
   metadata: Record<string, unknown>
 }
 
+type PublicEndpointConfig = {
+  analyzer: Exclude<AnalyzerId, "heuristic">
+  label: string
+  modelEnv: string
+  model: string | null
+  configured: boolean
+}
+
+type PublicConfigPayload = {
+  endpoints: {
+    baseModel: PublicEndpointConfig
+    fineTuned: PublicEndpointConfig
+  }
+}
+
 const ENDPOINT_ENVS: Record<Exclude<AnalyzerId, "heuristic">, EndpointEnv> = {
   "base-model": {
     baseUrl: "OPENAI_COMPATIBLE_BASE_URL",
@@ -91,6 +106,15 @@ const RESPONSE_FORMATS: ReadonlySet<ResponseFormat> = new Set([
   "guided_json",
   "responses_parse",
 ])
+
+export async function GET() {
+  return NextResponse.json({
+    endpoints: {
+      baseModel: readPublicEndpointConfig("base-model"),
+      fineTuned: readPublicEndpointConfig("fine-tuned"),
+    },
+  } satisfies PublicConfigPayload)
+}
 
 export async function POST(request: Request) {
   const started = performance.now()
@@ -169,6 +193,25 @@ export async function POST(request: Request) {
     elapsedMs: performance.now() - started,
     metadata: invokeResult.metadata,
   } satisfies SuccessPayload)
+}
+
+function readPublicEndpointConfig(
+  analyzer: Exclude<AnalyzerId, "heuristic">,
+): PublicEndpointConfig {
+  const env = ENDPOINT_ENVS[analyzer]
+  const model = process.env[env.model]?.trim() || null
+
+  return {
+    analyzer,
+    label: analyzer === "base-model" ? "Base model" : "Fine-tuned model",
+    modelEnv: env.model,
+    model,
+    configured: Boolean(
+      process.env[env.baseUrl]?.trim() &&
+        process.env[env.apiKey]?.trim() &&
+        model,
+    ),
+  }
 }
 
 function readEndpointConfig(

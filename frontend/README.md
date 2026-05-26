@@ -38,4 +38,4 @@ npm run build
 - view structured triage output and raw JSON
 - highlight evidence substrings in the input log
 - show unconfigured or endpoint-error state when live model settings are missing or unavailable
-- show current comparison artifacts without treating exploratory v3.5 probes as fixed-split results
+- show current comparison artifacts with Qwen3.5 v4.7 as the latest fine-tuned model, while keeping v4.8 diagnostic results separate from fixed-split promotion
