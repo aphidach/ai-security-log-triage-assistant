@@ -169,309 +169,389 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f8fa] text-slate-950">
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                <ShieldAlert className="size-5" aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-xl font-semibold text-slate-950 sm:text-2xl">
-                  AI Security Log Triage Assistant
-                </h1>
-                <p className="mt-1 text-sm text-slate-600">
-                  Phase 7 demo workspace
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
-              <StatusPill
-                label="Heuristic ready"
-                tone="good"
-                icon={<CheckCircle2 className="size-3.5" aria-hidden="true" />}
-              />
-              <StatusPill
-                label="Fixed split held"
-                tone="warn"
-                icon={<AlertTriangle className="size-3.5" aria-hidden="true" />}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+    <main className="min-h-screen bg-[#0B0C0F] text-[#EAEAF0]">
+      <TopNav analysis={analysis} />
+      <div className="flex min-h-[calc(100vh-48px)]">
+        <AppSidebar selectedAnalyzer={selectedAnalyzer.label} />
 
-      <section className="mx-auto grid w-full max-w-7xl gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(380px,0.92fr)] lg:px-8">
-        <div className="min-w-0 space-y-5">
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold uppercase text-slate-500">
-                Input
-              </h2>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  void navigator.clipboard?.writeText(logInput)
-                }}
-              >
-                <ClipboardPaste className="size-4" aria-hidden="true" />
-                Copy
-              </Button>
-            </div>
-            <textarea
-              value={logInput}
-              onChange={(event) => {
-                setLogInput(event.target.value)
-                setSelectedSampleId("")
-                setAnalysis({ kind: "idle" })
-              }}
-              className="min-h-44 w-full resize-y rounded-lg border border-slate-300 bg-slate-50 p-3 font-mono text-sm leading-6 text-slate-950 outline-none ring-0 transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
-              spellCheck={false}
-            />
-            <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-              <div>
-                <div className="mb-2 text-sm font-semibold text-slate-700">
-                  Analyzer
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {ANALYZERS.map((analyzer) => (
-                    <button
-                      key={analyzer.id}
+        <section className="min-w-0 flex-1">
+          <div className="grid w-full gap-4 p-3 sm:p-4 xl:grid-cols-[minmax(0,1.08fr)_minmax(380px,0.92fr)]">
+            <div className="min-w-0 space-y-4">
+              <Panel>
+                <SectionHeader
+                  eyebrow="Input"
+                  title="Log event"
+                  meta="single event"
+                  icon={<Braces className="size-4" aria-hidden="true" />}
+                  action={
+                    <Button
                       type="button"
+                      variant="outline"
+                      size="sm"
                       onClick={() => {
-                        setSelectedAnalyzerId(analyzer.id)
-                        setAnalysis({ kind: "idle" })
+                        void navigator.clipboard?.writeText(logInput)
                       }}
+                      className="min-h-11 md:min-h-8"
+                    >
+                      <ClipboardPaste className="size-4" aria-hidden="true" />
+                      Copy
+                    </Button>
+                  }
+                />
+
+                <textarea
+                  value={logInput}
+                  onChange={(event) => {
+                    setLogInput(event.target.value)
+                    setSelectedSampleId("")
+                    setAnalysis({ kind: "idle" })
+                  }}
+                  className="mt-3 min-h-44 w-full resize-y rounded-[6px] border border-[#35363D] bg-[#27282F] p-3 font-mono text-[13px] leading-6 text-[#EAEAF0] outline-none transition placeholder:text-[#5A5C66] focus:border-[#AE4DFF] focus:ring-3 focus:ring-[#AE4DFF]/30"
+                  spellCheck={false}
+                />
+
+                <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                  <div>
+                    <div className="mb-2 text-xs font-semibold text-[#8B8D97]">
+                      Analyzer
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      {ANALYZERS.map((analyzer) => (
+                        <button
+                          key={analyzer.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedAnalyzerId(analyzer.id)
+                            setAnalysis({ kind: "idle" })
+                          }}
+                          className={cn(
+                            "flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-[6px] border px-3 text-sm font-semibold transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30",
+                            selectedAnalyzerId === analyzer.id
+                              ? "border-[#AE4DFF] bg-[#AE4DFF]/15 text-white"
+                              : "border-[#35363D] bg-transparent text-[#EAEAF0] hover:border-[#4A4B54] hover:bg-[#27282F]",
+                          )}
+                        >
+                          <CircleDot
+                            className={cn(
+                              "size-3.5 shrink-0",
+                              selectedAnalyzerId === analyzer.id
+                                ? "text-[#AE4DFF]"
+                                : "text-[#8B8D97]",
+                            )}
+                            aria-hidden="true"
+                          />
+                          <span>{analyzer.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    size="lg"
+                    onClick={() => {
+                      void analyzeLog()
+                    }}
+                    disabled={
+                      logInput.trim().length === 0 || analysis.kind === "loading"
+                    }
+                    className="min-h-11 px-5"
+                  >
+                    {analysis.kind === "loading" ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Play className="size-4" aria-hidden="true" />
+                    )}
+                    Analyze
+                  </Button>
+                </div>
+              </Panel>
+
+              <Panel>
+                <SectionHeader
+                  eyebrow="Samples"
+                  title="Coverage set"
+                  meta="5 labels"
+                  icon={<ShieldAlert className="size-4" aria-hidden="true" />}
+                />
+                <div className="mt-3 grid gap-2 sm:grid-cols-2 2xl:grid-cols-5">
+                  {SAMPLE_LOGS.map((sample) => (
+                    <button
+                      key={sample.id}
+                      type="button"
+                      onClick={() => selectSample(sample)}
                       className={cn(
-                        "flex h-12 min-w-0 items-center justify-center gap-2 rounded-lg border px-2 text-sm font-medium transition",
-                        selectedAnalyzerId === analyzer.id
-                          ? "border-emerald-600 bg-emerald-50 text-emerald-800"
-                          : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50",
+                        "min-h-24 rounded-lg border p-3 text-left transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30",
+                        selectedSampleId === sample.id
+                          ? "border-[#AE4DFF] bg-[#AE4DFF]/10"
+                          : "border-[#35363D] bg-[#111216] hover:border-[#4A4B54] hover:bg-[#27282F]",
                       )}
                     >
-                      <CircleDot className="size-3.5 shrink-0" aria-hidden="true" />
-                      <span className="truncate">{analyzer.label}</span>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-[#EAEAF0]">
+                        {sample.label === "normal" ? (
+                          <ShieldCheck
+                            className="size-4 text-[#8B8D97]"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <ShieldAlert
+                            className="size-4 text-[#F59E0B]"
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span>{sample.name}</span>
+                      </div>
+                      <div className="mt-2 text-xs leading-5 text-[#8B8D97]">
+                        {TRIAGE_LABEL_METADATA[sample.label].displayName}
+                      </div>
                     </button>
                   ))}
                 </div>
-              </div>
-              <Button
-                type="button"
-                size="lg"
-                onClick={() => {
-                  void analyzeLog()
-                }}
-                disabled={
-                  logInput.trim().length === 0 || analysis.kind === "loading"
-                }
-                className="h-11 bg-emerald-700 px-4 text-white hover:bg-emerald-800"
-              >
-                {analysis.kind === "loading" ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                ) : (
-                  <Play className="size-4" aria-hidden="true" />
-                )}
-                Analyze
-              </Button>
-            </div>
-          </div>
+              </Panel>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold uppercase text-slate-500">
-                Samples
-              </h2>
-              <span className="text-sm text-slate-500">5 labels</span>
-            </div>
-            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
-              {SAMPLE_LOGS.map((sample) => (
-                <button
-                  key={sample.id}
-                  type="button"
-                  onClick={() => selectSample(sample)}
-                  className={cn(
-                    "min-h-24 rounded-lg border p-3 text-left transition",
-                    selectedSampleId === sample.id
-                      ? "border-emerald-600 bg-emerald-50"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50",
-                  )}
-                >
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                    {sample.label === "normal" ? (
-                      <ShieldCheck className="size-4 text-emerald-700" aria-hidden="true" />
-                    ) : (
-                      <ShieldAlert className="size-4 text-amber-700" aria-hidden="true" />
-                    )}
-                    <span>{sample.name}</span>
-                  </div>
-                  <div className="mt-2 text-xs text-slate-500">
-                    {TRIAGE_LABEL_METADATA[sample.label].displayName}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <ComparisonPanel />
-        </div>
-
-        <div className="min-w-0 space-y-5">
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold uppercase text-slate-500">
-                Result
-              </h2>
-              {analysis.kind === "result" ? (
-                <span className="text-sm text-slate-500">
-                  {analysis.elapsedMs.toFixed(2)} ms
-                </span>
-              ) : null}
+              <ComparisonPanel />
             </div>
 
-            {analysis.kind === "idle" ? (
-              <EmptyState />
-            ) : null}
+            <div className="min-w-0 space-y-4">
+              <Panel>
+                <SectionHeader
+                  eyebrow="Result"
+                  title="Structured triage"
+                  meta={
+                    analysis.kind === "result"
+                      ? `${analysis.elapsedMs.toFixed(2)} ms`
+                      : "pending"
+                  }
+                  icon={<ShieldCheck className="size-4" aria-hidden="true" />}
+                />
 
-            {analysis.kind === "loading" ? (
-              <LoadingState analyzer={analysis.analyzer} />
-            ) : null}
+                <div className="mt-3">
+                  {analysis.kind === "idle" ? <EmptyState /> : null}
 
-            {analysis.kind === "unconfigured" ? (
-              <UnconfiguredState
-                analyzer={analysis.analyzer}
-                message={analysis.message}
-              />
-            ) : null}
+                  {analysis.kind === "loading" ? (
+                    <LoadingState analyzer={analysis.analyzer} />
+                  ) : null}
 
-            {analysis.kind === "error" ? (
-              <ErrorState
-                message={analysis.message}
-                validationIssues={analysis.validationIssues}
-              />
-            ) : null}
+                  {analysis.kind === "unconfigured" ? (
+                    <UnconfiguredState
+                      analyzer={analysis.analyzer}
+                      message={analysis.message}
+                    />
+                  ) : null}
 
-            {analysis.kind === "result" && result ? (
-              <div className="space-y-4">
-                <div
-                  className={cn(
-                    "border-l-4 px-4 py-3",
-                    labelTone === "normal"
-                      ? "border-emerald-500 bg-emerald-50"
-                      : "border-amber-500 bg-amber-50",
-                  )}
-                >
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <div className="text-sm text-slate-600">Label</div>
-                      <div className="mt-1 text-2xl font-semibold text-slate-950">
-                        {TRIAGE_LABEL_METADATA[result.label].displayName}
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <ResultBadge tone={labelTone ?? "normal"}>
-                        {result.is_suspicious ? "Suspicious" : "Normal"}
-                      </ResultBadge>
-                      <ResultBadge tone={getSeverityTone(result.severity)}>
-                        {result.severity}
-                      </ResultBadge>
-                    </div>
-                  </div>
-                </div>
+                  {analysis.kind === "error" ? (
+                    <ErrorState
+                      message={analysis.message}
+                      validationIssues={analysis.validationIssues}
+                    />
+                  ) : null}
 
-                <div>
-                  <div className="mb-2 text-sm font-semibold text-slate-700">
-                    Evidence highlight
-                  </div>
-                  <div className="rounded-lg border border-slate-200 bg-slate-950 p-3 font-mono text-sm leading-6 text-slate-100">
-                    {highlightEvidence(logInput, result.evidence)}
-                  </div>
-                </div>
-
-                <FieldBlock title="Evidence">
-                  <div className="flex flex-wrap gap-2">
-                    {result.evidence.map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-md border border-sky-200 bg-sky-50 px-2 py-1 font-mono text-xs text-sky-900"
+                  {analysis.kind === "result" && result ? (
+                    <div className="space-y-4">
+                      <div
+                        className={cn(
+                          "rounded-lg border p-4",
+                          labelTone === "normal"
+                            ? "border-[#35363D] bg-[#111216]"
+                            : "border-[#F59E0B]/50 bg-[#F59E0B]/10",
+                        )}
                       >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </FieldBlock>
-
-                <FieldBlock title="Reason">{result.reason}</FieldBlock>
-                <FieldBlock title="Recommended action">
-                  {result.recommended_action}
-                </FieldBlock>
-
-                {analysis.validationIssues.length > 0 ? (
-                  <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-                    {analysis.validationIssues.map((issue) => (
-                      <div key={`${issue.path}-${issue.message}`}>
-                        {issue.path}: {issue.message}
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <div className="text-xs font-medium text-[#8B8D97]">
+                              Label
+                            </div>
+                            <div className="mt-1 text-xl font-semibold leading-tight text-[#EAEAF0]">
+                              {TRIAGE_LABEL_METADATA[result.label].displayName}
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <ResultBadge tone={labelTone ?? "normal"}>
+                              {result.is_suspicious ? "Suspicious" : "Normal"}
+                            </ResultBadge>
+                            <ResultBadge tone={getSeverityTone(result.severity)}>
+                              {result.severity}
+                            </ResultBadge>
+                          </div>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-800">
-                    <CheckCircle2 className="size-4" aria-hidden="true" />
-                    Schema-valid output
-                  </div>
-                )}
-              </div>
-            ) : null}
-          </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="mb-3 flex items-center gap-2">
-              <FileJson className="size-4 text-slate-500" aria-hidden="true" />
-              <h2 className="text-sm font-semibold uppercase text-slate-500">
-                Raw JSON
-              </h2>
-            </div>
-            <pre className="min-h-72 overflow-auto rounded-lg border border-slate-200 bg-slate-950 p-3 text-xs leading-5 text-slate-100">
-              {analysis.kind === "result"
-                ? analysis.rawJson
-                : analysis.kind === "unconfigured"
-                  ? JSON.stringify(
-                      {
-                        status: "unconfigured",
-                        analyzer: analysis.analyzer.id,
-                        message: analysis.message,
-                      },
-                      null,
-                      2,
-                    )
-                  : analysis.kind === "error"
-                    ? analysis.rawJson ??
-                      JSON.stringify(
-                        {
-                          status: "error",
-                          analyzer: analysis.analyzer.id,
-                          message: analysis.message,
-                        },
-                        null,
-                        2,
-                      )
-                    : analysis.kind === "loading"
+                      <FieldBlock title="Evidence highlight">
+                        <div className="overflow-x-auto whitespace-pre-wrap break-words rounded-[6px] border border-[#35363D] bg-[#0B0C0F] p-3 font-mono text-[13px] leading-6 text-[#EAEAF0]">
+                          {highlightEvidence(logInput, result.evidence)}
+                        </div>
+                      </FieldBlock>
+
+                      <FieldBlock title="Evidence">
+                        <div className="flex flex-wrap gap-2">
+                          {result.evidence.map((item) => (
+                            <span
+                              key={item}
+                              className="rounded-[4px] border border-[#4F8EF7]/40 bg-[#4F8EF7]/10 px-2 py-1 font-mono text-xs leading-5 text-[#AECBFF]"
+                            >
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      </FieldBlock>
+
+                      <FieldBlock title="Reason">{result.reason}</FieldBlock>
+                      <FieldBlock title="Recommended action">
+                        {result.recommended_action}
+                      </FieldBlock>
+
+                      {analysis.validationIssues.length > 0 ? (
+                        <div className="rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/10 p-3 text-sm leading-6 text-[#FCA5A5]">
+                          {analysis.validationIssues.map((issue) => (
+                            <div key={`${issue.path}-${issue.message}`}>
+                              {issue.path}: {issue.message}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 rounded-lg border border-[#4F8EF7]/40 bg-[#4F8EF7]/10 p-3 text-sm font-semibold text-[#AECBFF]">
+                          <CheckCircle2 className="size-4" aria-hidden="true" />
+                          Schema-valid output
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              </Panel>
+
+              <Panel>
+                <SectionHeader
+                  eyebrow="Raw JSON"
+                  title="Output payload"
+                  icon={<FileJson className="size-4" aria-hidden="true" />}
+                />
+                <pre className="mt-3 min-h-72 overflow-auto rounded-[6px] border border-[#35363D] bg-[#0B0C0F] p-3 font-mono text-xs leading-5 text-[#EAEAF0]">
+                  {analysis.kind === "result"
+                    ? analysis.rawJson
+                    : analysis.kind === "unconfigured"
                       ? JSON.stringify(
                           {
-                            status: "running",
+                            status: "unconfigured",
                             analyzer: analysis.analyzer.id,
+                            message: analysis.message,
                           },
                           null,
                           2,
                         )
-                      : "{\n  \"status\": \"pending\"\n}"}
-            </pre>
+                      : analysis.kind === "error"
+                        ? analysis.rawJson ??
+                          JSON.stringify(
+                            {
+                              status: "error",
+                              analyzer: analysis.analyzer.id,
+                              message: analysis.message,
+                            },
+                            null,
+                            2,
+                          )
+                        : analysis.kind === "loading"
+                          ? JSON.stringify(
+                              {
+                                status: "running",
+                                analyzer: analysis.analyzer.id,
+                              },
+                              null,
+                              2,
+                            )
+                          : "{\n  \"status\": \"pending\"\n}"}
+                </pre>
+              </Panel>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
+  )
+}
+
+function TopNav({ analysis }: { analysis: AnalysisState }) {
+  return (
+    <header className="flex h-12 items-center justify-between border-b border-[#1C1D22] bg-[#0B0C0F] px-3 sm:px-4">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-[6px] bg-[#AE4DFF] text-white">
+          <ShieldAlert className="size-4" aria-hidden="true" />
+        </div>
+        <div className="min-w-0">
+          <h1 className="truncate text-sm font-bold leading-tight text-[#EAEAF0] sm:text-base">
+            AI Security Log Triage Assistant
+          </h1>
+          <p className="hidden text-xs leading-tight text-[#8B8D97] sm:block">
+            Phase 7 demo workspace
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <StatusPill
+          label="Heuristic ready"
+          tone="info"
+          icon={<CheckCircle2 className="size-3.5" aria-hidden="true" />}
+        />
+        <StatusPill
+          label="Fixed split held"
+          tone="warn"
+          icon={<AlertTriangle className="size-3.5" aria-hidden="true" />}
+        />
+        {analysis.kind === "loading" ? (
+          <span className="hidden h-8 items-center gap-1.5 rounded-[6px] border border-[#35363D] bg-[#27282F] px-2 text-xs font-semibold text-[#8B8D97] sm:inline-flex">
+            <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+            Running
+          </span>
+        ) : null}
+      </div>
+    </header>
+  )
+}
+
+function AppSidebar({ selectedAnalyzer }: { selectedAnalyzer: string }) {
+  const items = [
+    { label: "Triage", icon: ShieldAlert, active: true },
+    { label: "Samples", icon: Braces, active: false },
+    { label: "Results", icon: ShieldCheck, active: false },
+    { label: "JSON", icon: FileJson, active: false },
+  ]
+
+  return (
+    <aside className="hidden w-16 shrink-0 flex-col border-r border-[#1C1D22] bg-[#0B0C0F] p-2 md:flex lg:w-60">
+      <div className="space-y-1">
+        {items.map((item) => {
+          const Icon = item.icon
+          return (
+            <button
+              key={item.label}
+              type="button"
+              title={item.label}
+              className={cn(
+                "flex min-h-11 w-full items-center justify-center gap-3 rounded-[6px] px-3 text-sm font-semibold transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30 lg:justify-start",
+                item.active
+                  ? "bg-[#AE4DFF]/15 text-white"
+                  : "text-[#8B8D97] hover:bg-[#1C1D22] hover:text-[#EAEAF0]",
+              )}
+            >
+              <Icon
+                className={cn(
+                  "size-4 shrink-0",
+                  item.active ? "text-[#AE4DFF]" : "text-[#8B8D97]",
+                )}
+                aria-hidden="true"
+              />
+              <span className="hidden lg:inline">{item.label}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="mt-auto hidden rounded-lg border border-[#35363D] bg-[#1C1D22] p-3 lg:block">
+        <div className="text-xs font-medium text-[#8B8D97]">Analyzer</div>
+        <div className="mt-1 text-sm font-semibold text-[#EAEAF0]">
+          {selectedAnalyzer}
+        </div>
+      </div>
+    </aside>
   )
 }
 
@@ -479,23 +559,30 @@ function ComparisonPanel() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold uppercase text-slate-500">
-          Comparison
-        </h2>
-        <span className="text-sm text-slate-500">Current artifacts</span>
+        <div>
+          <div className="text-xs font-semibold text-[#8B8D97]">Comparison</div>
+          <h2 className="text-base font-semibold text-[#EAEAF0]">
+            Current artifacts
+          </h2>
+        </div>
+        <span className="rounded-full border border-[#35363D] px-2 py-1 text-xs text-[#8B8D97]">
+          fixed split
+        </span>
       </div>
       <div className="grid gap-3 xl:grid-cols-3">
         {METRIC_SNAPSHOTS.map((snapshot) => (
           <article
             key={snapshot.name}
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+            className="rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-base font-semibold text-slate-950">
+                <h3 className="text-sm font-semibold text-[#EAEAF0]">
                   {snapshot.name}
                 </h3>
-                <p className="mt-1 text-xs text-slate-500">{snapshot.split}</p>
+                <p className="mt-1 text-xs leading-5 text-[#8B8D97]">
+                  {snapshot.split}
+                </p>
               </div>
               <StatusDot status={snapshot.status} />
             </div>
@@ -503,15 +590,15 @@ function ComparisonPanel() {
               {snapshot.metrics.map((metric) => (
                 <div
                   key={`${snapshot.name}-${metric.label}`}
-                  className="rounded-md border border-slate-200 bg-slate-50 p-2"
+                  className="rounded-[6px] border border-[#35363D] bg-[#111216] p-2"
                 >
-                  <dt className="text-xs text-slate-500">{metric.label}</dt>
+                  <dt className="text-xs text-[#8B8D97]">{metric.label}</dt>
                   <dd
                     className={cn(
                       "mt-1 text-sm font-semibold",
-                      metric.tone === "good" && "text-emerald-700",
-                      metric.tone === "warn" && "text-amber-700",
-                      metric.tone === "neutral" && "text-slate-800",
+                      metric.tone === "good" && "text-[#4F8EF7]",
+                      metric.tone === "warn" && "text-[#F59E0B]",
+                      metric.tone === "neutral" && "text-[#EAEAF0]",
                     )}
                   >
                     {metric.value}
@@ -519,7 +606,7 @@ function ComparisonPanel() {
                 </div>
               ))}
             </dl>
-            <p className="mt-3 break-words font-mono text-xs text-slate-500">
+            <p className="mt-3 break-words font-mono text-xs leading-5 text-[#8B8D97]">
               {snapshot.source}
             </p>
           </article>
@@ -531,9 +618,9 @@ function ComparisonPanel() {
 
 function EmptyState() {
   return (
-    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-      <Braces className="size-8 text-slate-400" aria-hidden="true" />
-      <div className="mt-3 text-sm font-medium text-slate-600">
+    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-dashed border-[#35363D] bg-[#111216] p-6 text-center">
+      <Braces className="size-8 text-[#5A5C66]" aria-hidden="true" />
+      <div className="mt-3 text-sm font-semibold text-[#8B8D97]">
         No analysis yet
       </div>
     </div>
@@ -542,9 +629,9 @@ function EmptyState() {
 
 function LoadingState({ analyzer }: { analyzer: AnalyzerOption }) {
   return (
-    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-      <Loader2 className="size-8 animate-spin text-slate-500" aria-hidden="true" />
-      <div className="mt-3 text-sm font-medium text-slate-600">
+    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-dashed border-[#35363D] bg-[#111216] p-6 text-center">
+      <Loader2 className="size-8 animate-spin text-[#AE4DFF]" aria-hidden="true" />
+      <div className="mt-3 text-sm font-semibold text-[#8B8D97]">
         Running {analyzer.label}
       </div>
     </div>
@@ -559,12 +646,12 @@ function UnconfiguredState({
   message?: string
 }) {
   return (
-    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-amber-200 bg-amber-50 p-6 text-center">
-      <AlertTriangle className="size-8 text-amber-700" aria-hidden="true" />
-      <div className="mt-3 text-base font-semibold text-amber-950">
+    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-[#F59E0B]/40 bg-[#F59E0B]/10 p-6 text-center">
+      <AlertTriangle className="size-8 text-[#F59E0B]" aria-hidden="true" />
+      <div className="mt-3 text-base font-semibold text-[#FDE68A]">
         {analyzer.label} is not configured
       </div>
-      <div className="mt-2 max-w-sm text-sm text-amber-800">
+      <div className="mt-2 max-w-sm text-sm leading-6 text-[#FCD34D]">
         {message ?? "No endpoint configured."}
       </div>
     </div>
@@ -579,19 +666,80 @@ function ErrorState({
   validationIssues?: TriageParseIssue[]
 }) {
   return (
-    <div className="min-h-72 rounded-lg border border-red-200 bg-red-50 p-6">
-      <div className="flex items-center gap-2 text-base font-semibold text-red-950">
-        <AlertTriangle className="size-5 text-red-700" aria-hidden="true" />
+    <div className="min-h-72 rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/10 p-6">
+      <div className="flex items-center gap-2 text-base font-semibold text-[#FCA5A5]">
+        <AlertTriangle className="size-5 text-[#EF4444]" aria-hidden="true" />
         Analyzer error
       </div>
-      <p className="mt-3 text-sm leading-6 text-red-800">{message}</p>
+      <p className="mt-3 text-sm leading-6 text-[#FECACA]">{message}</p>
       {validationIssues && validationIssues.length > 0 ? (
-        <div className="mt-4 space-y-1 text-sm text-red-800">
+        <div className="mt-4 space-y-1 text-sm leading-6 text-[#FECACA]">
           {validationIssues.map((issue) => (
             <div key={`${issue.path}-${issue.message}`}>
               {issue.path}: {issue.message}
             </div>
           ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function Panel({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <section
+      className={cn(
+        "rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]",
+        className,
+      )}
+    >
+      {children}
+    </section>
+  )
+}
+
+function SectionHeader({
+  eyebrow,
+  title,
+  meta,
+  icon,
+  action,
+}: {
+  eyebrow: string
+  title: string
+  meta?: string
+  icon?: ReactNode
+  action?: ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-2">
+        {icon ? (
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-[6px] border border-[#35363D] bg-[#27282F] text-[#8B8D97]">
+            {icon}
+          </span>
+        ) : null}
+        <div className="min-w-0">
+          <div className="text-xs font-semibold text-[#8B8D97]">{eyebrow}</div>
+          <h2 className="truncate text-base font-semibold leading-tight text-[#EAEAF0]">
+            {title}
+          </h2>
+        </div>
+      </div>
+      {meta || action ? (
+        <div className="flex w-full shrink-0 items-center justify-between gap-2 sm:w-auto sm:justify-end">
+          {meta ? (
+            <span className="hidden text-xs text-[#8B8D97] sm:inline">
+              {meta}
+            </span>
+          ) : null}
+          {action}
         </div>
       ) : null}
     </div>
@@ -606,9 +754,9 @@ function FieldBlock({
   children: ReactNode
 }) {
   return (
-    <div className="border-t border-slate-200 pt-3">
-      <div className="mb-2 text-sm font-semibold text-slate-700">{title}</div>
-      <div className="text-sm leading-6 text-slate-700">{children}</div>
+    <div className="border-t border-[#35363D] pt-3">
+      <div className="mb-2 text-xs font-semibold text-[#8B8D97]">{title}</div>
+      <div className="text-sm leading-6 text-[#EAEAF0]">{children}</div>
     </div>
   )
 }
@@ -619,15 +767,15 @@ function StatusPill({
   icon,
 }: {
   label: string
-  tone: "good" | "warn"
+  tone: "info" | "warn"
   icon: ReactNode
 }) {
   return (
     <span
       className={cn(
-        "inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border px-2 text-sm font-medium",
-        tone === "good" && "border-emerald-200 bg-emerald-50 text-emerald-800",
-        tone === "warn" && "border-amber-200 bg-amber-50 text-amber-800",
+        "hidden h-8 items-center justify-center gap-1.5 rounded-[6px] border px-2 text-xs font-semibold sm:inline-flex",
+        tone === "info" && "border-[#4F8EF7]/40 bg-[#4F8EF7]/10 text-[#AECBFF]",
+        tone === "warn" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
       )}
     >
       {icon}
@@ -646,13 +794,13 @@ function ResultBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-8 items-center rounded-lg border px-2 text-sm font-semibold capitalize",
-        tone === "normal" && "border-emerald-300 bg-white text-emerald-800",
-        tone === "suspicious" && "border-amber-300 bg-white text-amber-800",
-        tone === "low" && "border-slate-300 bg-white text-slate-700",
-        tone === "medium" && "border-sky-300 bg-white text-sky-800",
-        tone === "high" && "border-amber-300 bg-white text-amber-800",
-        tone === "critical" && "border-red-300 bg-white text-red-800",
+        "inline-flex h-8 items-center rounded-[4px] border px-2 text-sm font-semibold capitalize",
+        tone === "normal" && "border-[#8B8D97]/40 bg-[#8B8D97]/10 text-[#C7C8D0]",
+        tone === "suspicious" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
+        tone === "low" && "border-[#8B8D97]/40 bg-[#8B8D97]/10 text-[#C7C8D0]",
+        tone === "medium" && "border-[#4F8EF7]/40 bg-[#4F8EF7]/10 text-[#AECBFF]",
+        tone === "high" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
+        tone === "critical" && "border-[#EF4444]/40 bg-[#EF4444]/10 text-[#FCA5A5]",
       )}
     >
       {children}
@@ -664,10 +812,10 @@ function StatusDot({ status }: { status: "ready" | "exploratory" | "unconfigured
   return (
     <span
       className={cn(
-        "inline-flex h-7 items-center rounded-lg border px-2 text-xs font-semibold capitalize",
-        status === "ready" && "border-emerald-200 bg-emerald-50 text-emerald-800",
-        status === "exploratory" && "border-amber-200 bg-amber-50 text-amber-800",
-        status === "unconfigured" && "border-slate-200 bg-slate-50 text-slate-600",
+        "inline-flex h-7 items-center rounded-[4px] border px-2 text-xs font-semibold capitalize",
+        status === "ready" && "border-[#4F8EF7]/40 bg-[#4F8EF7]/10 text-[#AECBFF]",
+        status === "exploratory" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
+        status === "unconfigured" && "border-[#35363D] bg-[#27282F] text-[#8B8D97]",
       )}
     >
       {status}
@@ -701,7 +849,7 @@ function highlightEvidence(logLine: string, evidence: string[]) {
     parts.push(
       <mark
         key={`${range.start}-${range.end}-${index}`}
-        className="rounded bg-yellow-300 px-0.5 text-slate-950"
+        className="rounded-[4px] bg-[#F59E0B]/25 px-1 text-[#FDE68A] ring-1 ring-[#F59E0B]/40"
       >
         {logLine.slice(range.start, range.end)}
       </mark>,
