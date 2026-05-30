@@ -1,30 +1,34 @@
 "use client"
 
 import {
+  Activity,
   AlertTriangle,
+  ArrowRight,
   Braces,
   CheckCircle2,
   CircleDot,
   ClipboardPaste,
+  Code2,
   FileJson,
+  Gauge,
+  Layers2,
   Loader2,
   Play,
+  Radar,
   ShieldAlert,
   ShieldCheck,
+  Terminal,
 } from "lucide-react"
 import { useEffect, useMemo, useState, type ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
-  SAMPLE_LOGS,
   METRIC_SNAPSHOTS,
+  SAMPLE_LOGS,
   type MetricSnapshot,
   type SampleLog,
 } from "@/lib/demo-data"
-import {
-  TRIAGE_LABEL_METADATA,
-  type TriageLabel,
-} from "@/lib/labels"
+import { TRIAGE_LABEL_METADATA, type TriageLabel } from "@/lib/labels"
 import {
   parseTriageOutput,
   type TriageOutput,
@@ -37,6 +41,7 @@ type AnalyzerId = "heuristic" | "base-model" | "fine-tuned"
 type AnalyzerOption = {
   id: AnalyzerId
   label: string
+  detail: string
 }
 
 type AnalysisState =
@@ -99,12 +104,46 @@ type PublicTriageConfig = {
 }
 
 const ANALYZERS: AnalyzerOption[] = [
-  { id: "heuristic", label: "Heuristic" },
-  { id: "base-model", label: "Base model" },
-  { id: "fine-tuned", label: "Fine-tuned" },
+  {
+    id: "heuristic",
+    label: "Heuristic",
+    detail: "Local baseline",
+  },
+  {
+    id: "base-model",
+    label: "Base model",
+    detail: "OpenAI-compatible",
+  },
+  {
+    id: "fine-tuned",
+    label: "Fine-tuned",
+    detail: "Adapter endpoint",
+  },
 ]
 
 const DEFAULT_SAMPLE = SAMPLE_LOGS[0]
+
+const HERO_STATS = [
+  { label: "Fixed split baseline", value: "1.00", detail: "label accuracy" },
+  { label: "Schema parse", value: "100%", detail: "structured output" },
+  { label: "POC taxonomy", value: "5", detail: "labels in scope" },
+]
+
+const HERO_LOG_LINES = [
+  "auth-01 sshd Failed password for admin repeated 18 times",
+  "waf request=/login?username=admin%27%20OR%201%3D1-- status=500",
+  "ids alert='nmap fingerprint' probed_ports=21,22,23,25,80,443",
+  "web GET /download?file=..%2f..%2fetc%2fpasswd status=404",
+]
+
+const SCHEMA_FIELDS = [
+  "label",
+  "severity",
+  "is_suspicious",
+  "evidence",
+  "reason",
+  "recommended_action",
+]
 
 export default function Home() {
   const [logInput, setLogInput] = useState(DEFAULT_SAMPLE.log)
@@ -205,7 +244,9 @@ export default function Home() {
         kind: "result",
         output: payload.output,
         rawJson: payload.rawJson,
-        validationIssues: validation.ok ? payload.validationIssues : validation.errors,
+        validationIssues: validation.ok
+          ? payload.validationIssues
+          : validation.errors,
         elapsedMs: payload.elapsedMs,
       })
     } catch (error) {
@@ -221,405 +262,622 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0C0F] text-[#EAEAF0]">
+    <main className="min-h-screen overflow-hidden bg-[#F7FBFF] text-[#082F49]">
       <TopNav analysis={analysis} />
-      <div className="flex min-h-[calc(100vh-48px)]">
-        <AppSidebar selectedAnalyzer={selectedAnalyzer.label} />
+      <Hero />
 
-        <section className="min-w-0 flex-1">
-          <div className="grid w-full gap-4 p-3 sm:p-4 xl:grid-cols-[minmax(0,1.08fr)_minmax(380px,0.92fr)]">
-            <div className="min-w-0 space-y-4">
-              <Panel id="triage-input">
-                <SectionHeader
-                  eyebrow="Input"
-                  title="Log event"
-                  meta="single event"
-                  icon={<Braces className="size-4" aria-hidden="true" />}
-                  action={
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        void navigator.clipboard?.writeText(logInput)
-                      }}
-                      className="min-h-11 md:min-h-8"
-                    >
-                      <ClipboardPaste className="size-4" aria-hidden="true" />
-                      Copy
-                    </Button>
-                  }
-                />
+      <section
+        id="demo"
+        className="border-y border-[#BAE6FD] bg-white py-8 sm:py-10 lg:py-12"
+      >
+        <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.04fr)_minmax(360px,0.96fr)] lg:px-8">
+          <TriageInputPanel
+            analysis={analysis}
+            logInput={logInput}
+            selectedAnalyzerId={selectedAnalyzerId}
+            selectedSampleId={selectedSampleId}
+            selectedAnalyzer={selectedAnalyzer}
+            onAnalyze={() => {
+              void analyzeLog()
+            }}
+            onLogInputChange={(value) => {
+              setLogInput(value)
+              setSelectedSampleId("")
+              setAnalysis({ kind: "idle" })
+            }}
+            onSampleSelect={selectSample}
+            onAnalyzerSelect={(analyzerId) => {
+              setSelectedAnalyzerId(analyzerId)
+              setAnalysis({ kind: "idle" })
+            }}
+          />
 
-                <textarea
-                  value={logInput}
-                  onChange={(event) => {
-                    setLogInput(event.target.value)
-                    setSelectedSampleId("")
-                    setAnalysis({ kind: "idle" })
-                  }}
-                  className="mt-3 min-h-44 w-full resize-y rounded-[6px] border border-[#35363D] bg-[#27282F] p-3 font-mono text-[13px] leading-6 text-[#EAEAF0] outline-none transition placeholder:text-[#5A5C66] focus:border-[#AE4DFF] focus:ring-3 focus:ring-[#AE4DFF]/30"
-                  spellCheck={false}
-                />
+          <div className="min-w-0 space-y-4">
+            <TriageResultPanel
+              analysis={analysis}
+              logInput={logInput}
+              result={result}
+              labelTone={labelTone}
+            />
+            <RawJsonPanel analysis={analysis} />
+          </div>
+        </div>
+      </section>
 
-                <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-                  <div>
-                    <div className="mb-2 text-xs font-semibold text-[#8B8D97]">
-                      Analyzer
-                    </div>
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                      {ANALYZERS.map((analyzer) => (
-                        <button
-                          key={analyzer.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedAnalyzerId(analyzer.id)
-                            setAnalysis({ kind: "idle" })
-                          }}
-                          className={cn(
-                            "flex min-h-11 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-[6px] border px-3 text-sm font-semibold transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30",
-                            selectedAnalyzerId === analyzer.id
-                              ? "border-[#AE4DFF] bg-[#AE4DFF]/15 text-white"
-                              : "border-[#35363D] bg-transparent text-[#EAEAF0] hover:border-[#4A4B54] hover:bg-[#27282F]",
-                          )}
-                        >
-                          <CircleDot
-                            className={cn(
-                              "size-3.5 shrink-0",
-                              selectedAnalyzerId === analyzer.id
-                                ? "text-[#AE4DFF]"
-                                : "text-[#8B8D97]",
-                            )}
-                            aria-hidden="true"
-                          />
-                          <span>{analyzer.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <Button
-                    type="button"
-                    size="lg"
-                    onClick={() => {
-                      void analyzeLog()
-                    }}
-                    disabled={
-                      logInput.trim().length === 0 || analysis.kind === "loading"
-                    }
-                    className="min-h-11 px-5"
+      <section id="workflow" className="bg-[#F7FBFF] py-16 sm:py-20">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionIntro
+            eyebrow="Evaluation-ready workflow"
+            title="Built around a stable triage contract."
+            description="The demo keeps the product story close to the measurable POC: fixed labels, schema-valid JSON, visible evidence, and baseline comparison."
+          />
+
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
+            <WorkflowCard
+              icon={<Terminal className="size-5" aria-hidden="true" />}
+              title="Raw event in"
+              text="A single security log line stays visible while the analyzer produces the structured result."
+            />
+            <WorkflowCard
+              icon={<Radar className="size-5" aria-hidden="true" />}
+              title="Evidence marked"
+              text="Matched fragments are highlighted in the source log and repeated as evidence chips."
+            />
+            <WorkflowCard
+              icon={<FileJson className="size-5" aria-hidden="true" />}
+              title="JSON contract out"
+              text="Every result is checked against the shared schema before it is shown as valid output."
+            />
+          </div>
+
+          <div className="mt-8 rounded-lg border border-[#BAE6FD] bg-white p-4 shadow-[0_16px_60px_rgba(14,165,233,0.10)]">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div className="text-sm font-semibold text-[#0369A1]">
+                  Output schema
+                </div>
+                <div className="mt-1 text-base font-semibold text-[#082F49]">
+                  The UI, API, evaluator, and dataset all share these fields.
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {SCHEMA_FIELDS.map((field) => (
+                  <span
+                    key={field}
+                    className="rounded-[6px] border border-[#E0F2FE] bg-[#F0F9FF] px-2.5 py-1.5 font-mono text-xs font-semibold text-[#075985]"
                   >
-                    {analysis.kind === "loading" ? (
-                      <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                    ) : (
-                      <Play className="size-4" aria-hidden="true" />
-                    )}
-                    Analyze
-                  </Button>
-                </div>
-              </Panel>
-
-              <Panel id="samples">
-                <SectionHeader
-                  eyebrow="Samples"
-                  title="Coverage set"
-                  meta="5 labels"
-                  icon={<ShieldAlert className="size-4" aria-hidden="true" />}
-                />
-                <div className="mt-3 grid gap-2 sm:grid-cols-2 2xl:grid-cols-5">
-                  {SAMPLE_LOGS.map((sample) => (
-                    <button
-                      key={sample.id}
-                      type="button"
-                      onClick={() => selectSample(sample)}
-                      className={cn(
-                        "min-h-24 cursor-pointer rounded-lg border p-3 text-left transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30",
-                        selectedSampleId === sample.id
-                          ? "border-[#AE4DFF] bg-[#AE4DFF]/10"
-                          : "border-[#35363D] bg-[#111216] hover:border-[#4A4B54] hover:bg-[#27282F]",
-                      )}
-                    >
-                      <div className="flex items-center gap-2 text-sm font-semibold text-[#EAEAF0]">
-                        {sample.label === "normal" ? (
-                          <ShieldCheck
-                            className="size-4 text-[#8B8D97]"
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <ShieldAlert
-                            className="size-4 text-[#F59E0B]"
-                            aria-hidden="true"
-                          />
-                        )}
-                        <span>{sample.name}</span>
-                      </div>
-                      <div className="mt-2 text-xs leading-5 text-[#8B8D97]">
-                        {TRIAGE_LABEL_METADATA[sample.label].displayName}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </Panel>
-
-              <ComparisonPanel snapshots={metricSnapshots} />
-            </div>
-
-            <div className="min-w-0 space-y-4">
-              <Panel id="result-panel">
-                <SectionHeader
-                  eyebrow="Result"
-                  title="Structured triage"
-                  meta={
-                    analysis.kind === "result"
-                      ? `${analysis.elapsedMs.toFixed(2)} ms`
-                      : "pending"
-                  }
-                  icon={<ShieldCheck className="size-4" aria-hidden="true" />}
-                />
-
-                <div className="mt-3">
-                  {analysis.kind === "idle" ? <EmptyState /> : null}
-
-                  {analysis.kind === "loading" ? (
-                    <LoadingState analyzer={analysis.analyzer} />
-                  ) : null}
-
-                  {analysis.kind === "unconfigured" ? (
-                    <UnconfiguredState
-                      analyzer={analysis.analyzer}
-                      message={analysis.message}
-                    />
-                  ) : null}
-
-                  {analysis.kind === "error" ? (
-                    <ErrorState
-                      message={analysis.message}
-                      validationIssues={analysis.validationIssues}
-                    />
-                  ) : null}
-
-                  {analysis.kind === "result" && result ? (
-                    <div className="space-y-4">
-                      <div
-                        className={cn(
-                          "rounded-lg border p-4",
-                          labelTone === "normal"
-                            ? "border-[#35363D] bg-[#111216]"
-                            : "border-[#F59E0B]/50 bg-[#F59E0B]/10",
-                        )}
-                      >
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                          <div>
-                            <div className="text-xs font-medium text-[#8B8D97]">
-                              Label
-                            </div>
-                            <div className="mt-1 text-xl font-semibold leading-tight text-[#EAEAF0]">
-                              {TRIAGE_LABEL_METADATA[result.label].displayName}
-                            </div>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            <ResultBadge tone={labelTone ?? "normal"}>
-                              {result.is_suspicious ? "Suspicious" : "Normal"}
-                            </ResultBadge>
-                            <ResultBadge tone={getSeverityTone(result.severity)}>
-                              {result.severity}
-                            </ResultBadge>
-                          </div>
-                        </div>
-                      </div>
-
-                      <FieldBlock title="Evidence highlight">
-                        <div className="overflow-x-auto whitespace-pre-wrap break-words rounded-[6px] border border-[#35363D] bg-[#0B0C0F] p-3 font-mono text-[13px] leading-6 text-[#EAEAF0]">
-                          {highlightEvidence(logInput, result.evidence)}
-                        </div>
-                      </FieldBlock>
-
-                      <FieldBlock title="Evidence">
-                        <div className="flex flex-wrap gap-2">
-                          {result.evidence.map((item) => (
-                            <span
-                              key={item}
-                              className="rounded-[4px] border border-[#4F8EF7]/40 bg-[#4F8EF7]/10 px-2 py-1 font-mono text-xs leading-5 text-[#AECBFF]"
-                            >
-                              {item}
-                            </span>
-                          ))}
-                        </div>
-                      </FieldBlock>
-
-                      <FieldBlock title="Reason">{result.reason}</FieldBlock>
-                      <FieldBlock title="Recommended action">
-                        {result.recommended_action}
-                      </FieldBlock>
-
-                      {analysis.validationIssues.length > 0 ? (
-                        <div className="rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/10 p-3 text-sm leading-6 text-[#FCA5A5]">
-                          {analysis.validationIssues.map((issue) => (
-                            <div key={`${issue.path}-${issue.message}`}>
-                              {issue.path}: {issue.message}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2 rounded-lg border border-[#4F8EF7]/40 bg-[#4F8EF7]/10 p-3 text-sm font-semibold text-[#AECBFF]">
-                          <CheckCircle2 className="size-4" aria-hidden="true" />
-                          Schema-valid output
-                        </div>
-                      )}
-                    </div>
-                  ) : null}
-                </div>
-              </Panel>
-
-              <Panel id="raw-json">
-                <SectionHeader
-                  eyebrow="Raw JSON"
-                  title="Output payload"
-                  icon={<FileJson className="size-4" aria-hidden="true" />}
-                />
-                <pre className="mt-3 min-h-72 overflow-auto rounded-[6px] border border-[#35363D] bg-[#0B0C0F] p-3 font-mono text-xs leading-5 text-[#EAEAF0]">
-                  {analysis.kind === "result"
-                    ? analysis.rawJson
-                    : analysis.kind === "unconfigured"
-                      ? JSON.stringify(
-                          {
-                            status: "unconfigured",
-                            analyzer: analysis.analyzer.id,
-                            message: analysis.message,
-                          },
-                          null,
-                          2,
-                        )
-                      : analysis.kind === "error"
-                        ? analysis.rawJson ??
-                          JSON.stringify(
-                            {
-                              status: "error",
-                              analyzer: analysis.analyzer.id,
-                              message: analysis.message,
-                            },
-                            null,
-                            2,
-                          )
-                        : analysis.kind === "loading"
-                          ? JSON.stringify(
-                              {
-                                status: "running",
-                                analyzer: analysis.analyzer.id,
-                              },
-                              null,
-                              2,
-                            )
-                          : "{\n  \"status\": \"pending\"\n}"}
-                </pre>
-              </Panel>
+                    {field}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      <section
+        id="metrics"
+        className="border-t border-[#BAE6FD] bg-white py-16 sm:py-20"
+      >
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionIntro
+            eyebrow="Comparison"
+            title="Baseline and model artifacts stay in view."
+            description="The landing page still behaves like a working triage tool, with the current fixed-split and endpoint configuration surfaced below the demo."
+          />
+          <ComparisonPanel snapshots={metricSnapshots} />
+        </div>
+      </section>
     </main>
   )
 }
 
 function TopNav({ analysis }: { analysis: AnalysisState }) {
-  return (
-    <header className="sticky top-0 z-20 flex h-12 items-center justify-between border-b border-[#1C1D22] bg-[#0B0C0F] px-3 sm:px-4">
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-[6px] bg-[#AE4DFF] text-white">
-          <ShieldAlert className="size-4" aria-hidden="true" />
-        </div>
-        <div className="min-w-0">
-          <h1 className="truncate text-sm font-bold leading-tight text-[#EAEAF0] sm:text-base">
-            AI Security Log Triage Assistant
-          </h1>
-          <p className="hidden text-xs leading-tight text-[#8B8D97] sm:block">
-            Phase 7 demo workspace
-          </p>
-        </div>
-      </div>
+  const isRunning = analysis.kind === "loading"
 
-      <div className="flex items-center gap-2">
-        <StatusPill
-          label="Heuristic ready"
-          tone="info"
-          icon={<CheckCircle2 className="size-3.5" aria-hidden="true" />}
-        />
-        <StatusPill
-          label="Fixed split held"
-          tone="warn"
-          icon={<AlertTriangle className="size-3.5" aria-hidden="true" />}
-        />
-        {analysis.kind === "loading" ? (
-          <span className="hidden h-8 items-center gap-1.5 rounded-[6px] border border-[#35363D] bg-[#27282F] px-2 text-xs font-semibold text-[#8B8D97] sm:inline-flex">
-            <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
-            Running
+  return (
+    <header className="sticky top-0 z-40 border-b border-[#BAE6FD]/80 bg-white/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <button
+          type="button"
+          onClick={() => scrollToSection("top")}
+          className="flex min-w-0 items-center gap-3 rounded-[6px] outline-none transition focus-visible:ring-3 focus-visible:ring-[#0EA5E9]/25"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-[8px] bg-[#0EA5E9] text-white shadow-[0_12px_30px_rgba(14,165,233,0.30)]">
+            <ShieldAlert className="size-5" aria-hidden="true" />
           </span>
-        ) : null}
+          <span className="min-w-0 text-left">
+            <span className="block truncate text-sm font-bold text-[#082F49] sm:text-base">
+              AI Security Log Triage
+            </span>
+            <span className="hidden text-xs font-medium text-[#0C4A6E] sm:block">
+              Structured output POC
+            </span>
+          </span>
+        </button>
+
+        <nav
+          className="hidden items-center gap-1 rounded-[8px] border border-[#E0F2FE] bg-[#F0F9FF] p-1 md:flex"
+          aria-label="Primary"
+        >
+          <NavButton targetId="demo">Demo</NavButton>
+          <NavButton targetId="workflow">Contract</NavButton>
+          <NavButton targetId="metrics">Metrics</NavButton>
+        </nav>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <StatusPill
+            label="Heuristic ready"
+            tone="info"
+            icon={<CheckCircle2 className="size-3.5" aria-hidden="true" />}
+          />
+          {isRunning ? (
+            <StatusPill
+              label="Running"
+              tone="warn"
+              icon={<Loader2 className="size-3.5 animate-spin" aria-hidden="true" />}
+            />
+          ) : null}
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => scrollToSection("demo")}
+            className="hidden border-[#FED7AA] bg-[#F97316] text-white hover:bg-[#EA580C] sm:inline-flex"
+          >
+            <Play className="size-3.5" aria-hidden="true" />
+            Try demo
+          </Button>
+        </div>
       </div>
     </header>
   )
 }
 
-function AppSidebar({ selectedAnalyzer }: { selectedAnalyzer: string }) {
-  const items = [
-    {
-      label: "Triage",
-      icon: ShieldAlert,
-      active: true,
-      targetId: "triage-input",
-    },
-    { label: "Samples", icon: Braces, active: false, targetId: "samples" },
-    {
-      label: "Results",
-      icon: ShieldCheck,
-      active: false,
-      targetId: "result-panel",
-    },
-    { label: "JSON", icon: FileJson, active: false, targetId: "raw-json" },
-  ]
-
+function NavButton({
+  targetId,
+  children,
+}: {
+  targetId: string
+  children: ReactNode
+}) {
   return (
-    <aside className="sticky top-12 hidden h-[calc(100vh-48px)] w-16 shrink-0 flex-col border-r border-[#1C1D22] bg-[#0B0C0F] p-2 md:flex lg:w-60">
-      <div className="space-y-1">
-        {items.map((item) => {
-          const Icon = item.icon
-          return (
-            <button
-              key={item.label}
-              type="button"
-              title={item.label}
-              onClick={() => {
-                document.getElementById(item.targetId)?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                })
-              }}
+    <button
+      type="button"
+      onClick={() => scrollToSection(targetId)}
+      className="h-9 rounded-[6px] px-3 text-sm font-semibold text-[#0C4A6E] transition hover:bg-white hover:text-[#082F49] focus-visible:ring-3 focus-visible:ring-[#0EA5E9]/25"
+    >
+      {children}
+    </button>
+  )
+}
+
+function Hero() {
+  return (
+    <section id="top" className="relative overflow-hidden bg-[#F0F9FF]">
+      <div
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+        aria-hidden="true"
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,165,233,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(14,165,233,0.10)_1px,transparent_1px)] bg-[size:44px_44px]" />
+        <div className="absolute left-1/2 top-20 hidden w-[760px] -translate-x-4 rotate-1 space-y-3 opacity-90 lg:block">
+          {HERO_LOG_LINES.map((line, index) => (
+            <div
+              key={line}
               className={cn(
-                "flex min-h-11 w-full cursor-pointer items-center justify-center gap-3 rounded-[6px] px-3 text-sm font-semibold transition outline-none focus-visible:border-[#AE4DFF] focus-visible:ring-3 focus-visible:ring-[#AE4DFF]/30 lg:justify-start",
-                item.active
-                  ? "bg-[#AE4DFF]/15 text-white"
-                  : "text-[#8B8D97] hover:bg-[#1C1D22] hover:text-[#EAEAF0]",
+                "rounded-[8px] border px-4 py-3 font-mono text-xs shadow-[0_18px_55px_rgba(8,47,73,0.10)]",
+                index % 2 === 0
+                  ? "border-[#BAE6FD] bg-white/80 text-[#075985]"
+                  : "border-[#FED7AA] bg-[#FFF7ED]/85 text-[#9A3412]",
               )}
             >
-              <Icon
-                className={cn(
-                  "size-4 shrink-0",
-                  item.active ? "text-[#AE4DFF]" : "text-[#8B8D97]",
-                )}
-                aria-hidden="true"
-              />
-              <span className="hidden lg:inline">{item.label}</span>
-            </button>
-          )
-        })}
-      </div>
-
-      <div className="mt-auto hidden rounded-lg border border-[#35363D] bg-[#1C1D22] p-3 lg:block">
-        <div className="text-xs font-medium text-[#8B8D97]">Analyzer</div>
-        <div className="mt-1 text-sm font-semibold text-[#EAEAF0]">
-          {selectedAnalyzer}
+              {line}
+            </div>
+          ))}
         </div>
       </div>
-    </aside>
+
+      <div className="relative mx-auto w-full max-w-7xl px-4 pb-10 pt-16 sm:px-6 sm:pb-12 sm:pt-20 lg:px-8 lg:pb-14 lg:pt-24">
+        <div className="min-w-0 max-w-3xl">
+          <div className="inline-flex min-h-8 items-center gap-2 rounded-[6px] border border-[#BAE6FD] bg-white/80 px-3 text-sm font-semibold text-[#075985] shadow-[0_12px_36px_rgba(14,165,233,0.12)]">
+            <Activity className="size-4 text-[#0EA5E9]" aria-hidden="true" />
+            Security log triage POC
+          </div>
+          <h1 className="mt-6 max-w-full break-words text-4xl font-bold leading-[1.05] text-[#082F49] sm:max-w-2xl sm:text-5xl lg:text-6xl">
+            AI Security Log Triage Assistant
+          </h1>
+          <p className="mt-5 max-w-full break-words text-base leading-7 text-[#0C4A6E] sm:max-w-2xl sm:text-lg">
+            A focused SaaS-style demo for classifying one security event into a
+            stable label, severity, evidence list, reason, and next
+            investigation action.
+          </p>
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <Button
+              type="button"
+              size="lg"
+              onClick={() => scrollToSection("demo")}
+              className="w-full border-[#FED7AA] bg-[#F97316] text-white shadow-[0_18px_35px_rgba(249,115,22,0.24)] hover:bg-[#EA580C] sm:w-auto"
+            >
+              <Play className="size-4" aria-hidden="true" />
+              Analyze sample
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              variant="outline"
+              onClick={() => scrollToSection("metrics")}
+              className="w-full sm:w-auto"
+            >
+              View metrics
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-10 grid min-w-0 gap-3 sm:grid-cols-3 lg:max-w-3xl">
+          {HERO_STATS.map((stat) => (
+            <div
+              key={stat.label}
+              className="min-w-0 rounded-[8px] border border-[#BAE6FD] bg-white/80 p-4 shadow-[0_14px_42px_rgba(14,165,233,0.10)]"
+            >
+              <div className="text-2xl font-bold text-[#082F49]">
+                {stat.value}
+              </div>
+              <div className="mt-1 text-sm font-semibold text-[#075985]">
+                {stat.label}
+              </div>
+              <div className="mt-1 text-xs leading-5 text-[#0C4A6E]">
+                {stat.detail}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function TriageInputPanel({
+  analysis,
+  logInput,
+  selectedAnalyzerId,
+  selectedSampleId,
+  selectedAnalyzer,
+  onAnalyze,
+  onAnalyzerSelect,
+  onLogInputChange,
+  onSampleSelect,
+}: {
+  analysis: AnalysisState
+  logInput: string
+  selectedAnalyzerId: AnalyzerId
+  selectedSampleId: string
+  selectedAnalyzer: AnalyzerOption
+  onAnalyze: () => void
+  onAnalyzerSelect: (analyzerId: AnalyzerId) => void
+  onLogInputChange: (value: string) => void
+  onSampleSelect: (sample: SampleLog) => void
+}) {
+  return (
+    <ToolPanel id="triage-input" className="lg:sticky lg:top-20">
+      <PanelHeader
+        eyebrow="Live triage"
+        title="Input log"
+        icon={<Terminal className="size-4" aria-hidden="true" />}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              void navigator.clipboard?.writeText(logInput)
+            }}
+          >
+            <ClipboardPaste className="size-4" aria-hidden="true" />
+            Copy
+          </Button>
+        }
+      />
+
+      <label htmlFor="log-input" className="sr-only">
+        Security log input
+      </label>
+      <textarea
+        id="log-input"
+        value={logInput}
+        onChange={(event) => onLogInputChange(event.target.value)}
+        className="mt-4 min-h-48 w-full resize-y rounded-[8px] border border-[#BAE6FD] bg-[#F8FCFF] p-4 font-mono text-[13px] leading-6 text-[#082F49] outline-none transition placeholder:text-[#64748B] focus:border-[#0EA5E9] focus:ring-3 focus:ring-[#0EA5E9]/20"
+        spellCheck={false}
+      />
+
+      <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
+        <div>
+          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[#075985]">
+            <Layers2 className="size-4" aria-hidden="true" />
+            Analyzer
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {ANALYZERS.map((analyzer) => (
+              <button
+                key={analyzer.id}
+                type="button"
+                onClick={() => onAnalyzerSelect(analyzer.id)}
+                className={cn(
+                  "min-h-16 min-w-0 rounded-[8px] border p-3 text-left outline-none transition focus-visible:ring-3 focus-visible:ring-[#0EA5E9]/25",
+                  selectedAnalyzerId === analyzer.id
+                    ? "border-[#0EA5E9] bg-[#E0F2FE] shadow-[0_12px_32px_rgba(14,165,233,0.12)]"
+                    : "border-[#E0F2FE] bg-white hover:border-[#7DD3FC] hover:bg-[#F0F9FF]",
+                )}
+              >
+                <span className="flex items-center gap-2 text-sm font-bold text-[#082F49]">
+                  <CircleDot
+                    className={cn(
+                      "size-3.5 shrink-0",
+                      selectedAnalyzerId === analyzer.id
+                        ? "text-[#0EA5E9]"
+                        : "text-[#94A3B8]",
+                    )}
+                    aria-hidden="true"
+                  />
+                  {analyzer.label}
+                </span>
+                <span className="mt-1 block text-xs leading-5 text-[#0C4A6E]">
+                  {analyzer.detail}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <Button
+          type="button"
+          size="lg"
+          onClick={onAnalyze}
+          disabled={logInput.trim().length === 0 || analysis.kind === "loading"}
+          className="min-h-12 border-[#FED7AA] bg-[#F97316] px-5 text-white shadow-[0_18px_32px_rgba(249,115,22,0.22)] hover:bg-[#EA580C]"
+        >
+          {analysis.kind === "loading" ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <Play className="size-4" aria-hidden="true" />
+          )}
+          Analyze
+        </Button>
+      </div>
+
+      <div className="mt-6 border-t border-[#E0F2FE] pt-5">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-[#075985]">
+            <Braces className="size-4" aria-hidden="true" />
+            Sample logs
+          </div>
+          <span className="rounded-[6px] border border-[#E0F2FE] bg-[#F0F9FF] px-2 py-1 text-xs font-semibold text-[#075985]">
+            {SAMPLE_LOGS.length} labels
+          </span>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {SAMPLE_LOGS.map((sample) => (
+            <button
+              key={sample.id}
+              type="button"
+              onClick={() => onSampleSelect(sample)}
+              className={cn(
+                "min-h-24 rounded-[8px] border p-3 text-left outline-none transition focus-visible:ring-3 focus-visible:ring-[#0EA5E9]/25",
+                selectedSampleId === sample.id
+                  ? "border-[#0EA5E9] bg-[#E0F2FE]"
+                  : "border-[#E0F2FE] bg-white hover:border-[#7DD3FC] hover:bg-[#F0F9FF]",
+              )}
+            >
+              <span className="flex items-start gap-2 text-sm font-bold text-[#082F49]">
+                {sample.label === "normal" ? (
+                  <ShieldCheck
+                    className="mt-0.5 size-4 shrink-0 text-[#059669]"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <ShieldAlert
+                    className="mt-0.5 size-4 shrink-0 text-[#F97316]"
+                    aria-hidden="true"
+                  />
+                )}
+                {sample.name}
+              </span>
+              <span className="mt-2 block text-xs leading-5 text-[#0C4A6E]">
+                {TRIAGE_LABEL_METADATA[sample.label].displayName}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="mt-4 rounded-[8px] border border-[#E0F2FE] bg-[#F8FCFF] p-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#075985]">
+            <Gauge className="size-4" aria-hidden="true" />
+            Selected analyzer
+          </div>
+          <div className="mt-1 text-sm font-bold text-[#082F49]">
+            {selectedAnalyzer.label}
+          </div>
+        </div>
+      </div>
+    </ToolPanel>
+  )
+}
+
+function TriageResultPanel({
+  analysis,
+  logInput,
+  result,
+  labelTone,
+}: {
+  analysis: AnalysisState
+  logInput: string
+  result: TriageOutput | null
+  labelTone: "normal" | "suspicious" | null
+}) {
+  return (
+    <ToolPanel id="result-panel">
+      <PanelHeader
+        eyebrow="Structured output"
+        title="Result"
+        meta={
+          analysis.kind === "result"
+            ? `${analysis.elapsedMs.toFixed(2)} ms`
+            : "pending"
+        }
+        icon={<ShieldCheck className="size-4" aria-hidden="true" />}
+      />
+
+      <div className="mt-4">
+        {analysis.kind === "idle" ? <EmptyState /> : null}
+
+        {analysis.kind === "loading" ? (
+          <LoadingState analyzer={analysis.analyzer} />
+        ) : null}
+
+        {analysis.kind === "unconfigured" ? (
+          <UnconfiguredState
+            analyzer={analysis.analyzer}
+            message={analysis.message}
+          />
+        ) : null}
+
+        {analysis.kind === "error" ? (
+          <ErrorState
+            message={analysis.message}
+            validationIssues={analysis.validationIssues}
+          />
+        ) : null}
+
+        {analysis.kind === "result" && result ? (
+          <div className="space-y-4">
+            <div
+              className={cn(
+                "rounded-[8px] border p-4",
+                labelTone === "normal"
+                  ? "border-[#A7F3D0] bg-[#ECFDF5]"
+                  : "border-[#FED7AA] bg-[#FFF7ED]",
+              )}
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-[#075985]">
+                    Label
+                  </div>
+                  <div className="mt-1 break-words text-2xl font-bold leading-tight text-[#082F49]">
+                    {TRIAGE_LABEL_METADATA[result.label].displayName}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <ResultBadge tone={labelTone ?? "normal"}>
+                    {result.is_suspicious ? "Suspicious" : "Normal"}
+                  </ResultBadge>
+                  <ResultBadge tone={getSeverityTone(result.severity)}>
+                    {result.severity}
+                  </ResultBadge>
+                </div>
+              </div>
+            </div>
+
+            <FieldBlock
+              title="Evidence marker"
+              icon={<Code2 className="size-4" aria-hidden="true" />}
+            >
+              <div className="overflow-x-auto whitespace-pre-wrap break-words rounded-[8px] border border-[#BAE6FD] bg-[#F8FCFF] p-3 font-mono text-[13px] leading-6 text-[#082F49]">
+                {highlightEvidence(logInput, result.evidence)}
+              </div>
+            </FieldBlock>
+
+            <FieldBlock
+              title="Evidence"
+              icon={<Radar className="size-4" aria-hidden="true" />}
+            >
+              <div className="flex flex-wrap gap-2">
+                {result.evidence.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-[6px] border border-[#BAE6FD] bg-[#E0F2FE] px-2.5 py-1.5 font-mono text-xs font-semibold leading-5 text-[#075985]"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </FieldBlock>
+
+            <FieldBlock
+              title="Reason"
+              icon={<Activity className="size-4" aria-hidden="true" />}
+            >
+              {result.reason}
+            </FieldBlock>
+            <FieldBlock
+              title="Recommended action"
+              icon={<ArrowRight className="size-4" aria-hidden="true" />}
+            >
+              {result.recommended_action}
+            </FieldBlock>
+
+            {analysis.validationIssues.length > 0 ? (
+              <div className="rounded-[8px] border border-[#FCA5A5] bg-[#FEF2F2] p-3 text-sm leading-6 text-[#991B1B]">
+                {analysis.validationIssues.map((issue) => (
+                  <div key={`${issue.path}-${issue.message}`}>
+                    {issue.path}: {issue.message}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 rounded-[8px] border border-[#A7F3D0] bg-[#ECFDF5] p-3 text-sm font-bold text-[#047857]">
+                <CheckCircle2 className="size-4" aria-hidden="true" />
+                Schema-valid output
+              </div>
+            )}
+          </div>
+        ) : null}
+      </div>
+    </ToolPanel>
+  )
+}
+
+function RawJsonPanel({ analysis }: { analysis: AnalysisState }) {
+  return (
+    <ToolPanel id="raw-json">
+      <PanelHeader
+        eyebrow="Raw JSON"
+        title="Output payload"
+        icon={<FileJson className="size-4" aria-hidden="true" />}
+      />
+      <pre className="mt-4 min-h-72 overflow-auto rounded-[8px] border border-[#BAE6FD] bg-[#082F49] p-4 font-mono text-xs leading-5 text-[#E0F2FE]">
+        {analysis.kind === "result"
+          ? analysis.rawJson
+          : analysis.kind === "unconfigured"
+            ? JSON.stringify(
+                {
+                  status: "unconfigured",
+                  analyzer: analysis.analyzer.id,
+                  message: analysis.message,
+                },
+                null,
+                2,
+              )
+            : analysis.kind === "error"
+              ? analysis.rawJson ??
+                JSON.stringify(
+                  {
+                    status: "error",
+                    analyzer: analysis.analyzer.id,
+                    message: analysis.message,
+                  },
+                  null,
+                  2,
+                )
+              : analysis.kind === "loading"
+                ? JSON.stringify(
+                    {
+                      status: "running",
+                      analyzer: analysis.analyzer.id,
+                    },
+                    null,
+                    2,
+                  )
+                : "{\n  \"status\": \"pending\"\n}"}
+      </pre>
+    </ToolPanel>
   )
 }
 
@@ -669,71 +927,100 @@ function buildMetricSnapshots(
 
 function ComparisonPanel({ snapshots }: { snapshots: MetricSnapshot[] }) {
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <div className="text-xs font-semibold text-[#8B8D97]">Comparison</div>
-          <h2 className="text-base font-semibold text-[#EAEAF0]">
-            Current artifacts
-          </h2>
-        </div>
-        <span className="rounded-full border border-[#35363D] px-2 py-1 text-xs text-[#8B8D97]">
-          docs + env
-        </span>
-      </div>
-      <div className="grid gap-3 xl:grid-cols-3">
-        {snapshots.map((snapshot) => (
-          <article
-            key={snapshot.name}
-            className="min-w-0 rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-semibold text-[#EAEAF0]">
-                  {snapshot.name}
-                </h3>
-                <p className="mt-1 text-xs leading-5 text-[#8B8D97]">
-                  {snapshot.split}
-                </p>
-              </div>
-              <StatusDot status={snapshot.status} />
+    <div className="mt-8 grid gap-4 lg:grid-cols-3">
+      {snapshots.map((snapshot) => (
+        <article
+          key={snapshot.name}
+          className="min-w-0 rounded-[8px] border border-[#BAE6FD] bg-white p-5 shadow-[0_18px_52px_rgba(14,165,233,0.10)]"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h3 className="text-base font-bold text-[#082F49]">
+                {snapshot.name}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-[#0C4A6E]">
+                {snapshot.split}
+              </p>
             </div>
-            <dl className="mt-4 grid grid-cols-2 gap-2">
-              {snapshot.metrics.map((metric) => (
-                <div
-                  key={`${snapshot.name}-${metric.label}`}
-                  className="min-w-0 rounded-[6px] border border-[#35363D] bg-[#111216] p-2"
+            <StatusDot status={snapshot.status} />
+          </div>
+          <dl className="mt-5 grid grid-cols-2 gap-2">
+            {snapshot.metrics.map((metric) => (
+              <div
+                key={`${snapshot.name}-${metric.label}`}
+                className="min-w-0 rounded-[8px] border border-[#E0F2FE] bg-[#F8FCFF] p-3"
+              >
+                <dt className="text-xs font-semibold text-[#0C4A6E]">
+                  {metric.label}
+                </dt>
+                <dd
+                  className={cn(
+                    "mt-1 break-words text-sm font-bold",
+                    metric.tone === "good" && "text-[#047857]",
+                    metric.tone === "warn" && "text-[#C2410C]",
+                    metric.tone === "neutral" && "text-[#082F49]",
+                  )}
                 >
-                  <dt className="text-xs text-[#8B8D97]">{metric.label}</dt>
-                  <dd
-                    className={cn(
-                      "mt-1 break-words text-sm font-semibold",
-                      metric.tone === "good" && "text-[#4F8EF7]",
-                      metric.tone === "warn" && "text-[#F59E0B]",
-                      metric.tone === "neutral" && "text-[#EAEAF0]",
-                    )}
-                  >
-                    {metric.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <p className="mt-3 break-words font-mono text-xs leading-5 text-[#8B8D97]">
-              {snapshot.source}
-            </p>
-          </article>
-        ))}
-      </div>
+                  {metric.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-4 break-words font-mono text-xs leading-5 text-[#64748B]">
+            {snapshot.source}
+          </p>
+        </article>
+      ))}
     </div>
+  )
+}
+
+function SectionIntro({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string
+  title: string
+  description: string
+}) {
+  return (
+    <div className="max-w-3xl">
+      <div className="text-sm font-bold text-[#0369A1]">{eyebrow}</div>
+      <h2 className="mt-2 text-3xl font-bold leading-tight text-[#082F49] sm:text-4xl">
+        {title}
+      </h2>
+      <p className="mt-3 text-base leading-7 text-[#0C4A6E]">{description}</p>
+    </div>
+  )
+}
+
+function WorkflowCard({
+  icon,
+  title,
+  text,
+}: {
+  icon: ReactNode
+  title: string
+  text: string
+}) {
+  return (
+    <article className="rounded-[8px] border border-[#BAE6FD] bg-white p-5 shadow-[0_18px_52px_rgba(14,165,233,0.10)]">
+      <div className="flex size-10 items-center justify-center rounded-[8px] bg-[#E0F2FE] text-[#0284C7]">
+        {icon}
+      </div>
+      <h3 className="mt-4 text-lg font-bold text-[#082F49]">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-[#0C4A6E]">{text}</p>
+    </article>
   )
 }
 
 function EmptyState() {
   return (
-    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-dashed border-[#35363D] bg-[#111216] p-6 text-center">
-      <Braces className="size-8 text-[#5A5C66]" aria-hidden="true" />
-      <div className="mt-3 text-sm font-semibold text-[#8B8D97]">
-        No analysis yet
+    <div className="flex min-h-72 flex-col items-center justify-center rounded-[8px] border border-dashed border-[#BAE6FD] bg-[#F8FCFF] p-6 text-center">
+      <Braces className="size-8 text-[#7DD3FC]" aria-hidden="true" />
+      <div className="mt-3 text-sm font-bold text-[#075985]">
+        Awaiting analysis
       </div>
     </div>
   )
@@ -741,9 +1028,9 @@ function EmptyState() {
 
 function LoadingState({ analyzer }: { analyzer: AnalyzerOption }) {
   return (
-    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-dashed border-[#35363D] bg-[#111216] p-6 text-center">
-      <Loader2 className="size-8 animate-spin text-[#AE4DFF]" aria-hidden="true" />
-      <div className="mt-3 text-sm font-semibold text-[#8B8D97]">
+    <div className="flex min-h-72 flex-col items-center justify-center rounded-[8px] border border-dashed border-[#BAE6FD] bg-[#F8FCFF] p-6 text-center">
+      <Loader2 className="size-8 animate-spin text-[#0EA5E9]" aria-hidden="true" />
+      <div className="mt-3 text-sm font-bold text-[#075985]">
         Running {analyzer.label}
       </div>
     </div>
@@ -758,12 +1045,12 @@ function UnconfiguredState({
   message?: string
 }) {
   return (
-    <div className="flex min-h-72 flex-col items-center justify-center rounded-lg border border-[#F59E0B]/40 bg-[#F59E0B]/10 p-6 text-center">
-      <AlertTriangle className="size-8 text-[#F59E0B]" aria-hidden="true" />
-      <div className="mt-3 text-base font-semibold text-[#FDE68A]">
+    <div className="flex min-h-72 flex-col items-center justify-center rounded-[8px] border border-[#FED7AA] bg-[#FFF7ED] p-6 text-center">
+      <AlertTriangle className="size-8 text-[#F97316]" aria-hidden="true" />
+      <div className="mt-3 text-base font-bold text-[#9A3412]">
         {analyzer.label} is not configured
       </div>
-      <div className="mt-2 max-w-sm text-sm leading-6 text-[#FCD34D]">
+      <div className="mt-2 max-w-sm text-sm leading-6 text-[#9A3412]">
         {message ?? "No endpoint configured."}
       </div>
     </div>
@@ -778,14 +1065,14 @@ function ErrorState({
   validationIssues?: TriageParseIssue[]
 }) {
   return (
-    <div className="min-h-72 rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/10 p-6">
-      <div className="flex items-center gap-2 text-base font-semibold text-[#FCA5A5]">
-        <AlertTriangle className="size-5 text-[#EF4444]" aria-hidden="true" />
+    <div className="min-h-72 rounded-[8px] border border-[#FCA5A5] bg-[#FEF2F2] p-6">
+      <div className="flex items-center gap-2 text-base font-bold text-[#991B1B]">
+        <AlertTriangle className="size-5 text-[#DC2626]" aria-hidden="true" />
         Analyzer error
       </div>
-      <p className="mt-3 text-sm leading-6 text-[#FECACA]">{message}</p>
+      <p className="mt-3 text-sm leading-6 text-[#991B1B]">{message}</p>
       {validationIssues && validationIssues.length > 0 ? (
-        <div className="mt-4 space-y-1 text-sm leading-6 text-[#FECACA]">
+        <div className="mt-4 space-y-1 text-sm leading-6 text-[#991B1B]">
           {validationIssues.map((issue) => (
             <div key={`${issue.path}-${issue.message}`}>
               {issue.path}: {issue.message}
@@ -797,7 +1084,7 @@ function ErrorState({
   )
 }
 
-function Panel({
+function ToolPanel({
   children,
   className,
   id,
@@ -810,7 +1097,7 @@ function Panel({
     <section
       id={id}
       className={cn(
-        "scroll-mt-16 rounded-lg border border-[#35363D] bg-[#1C1D22] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]",
+        "min-w-0 scroll-mt-24 rounded-[8px] border border-[#BAE6FD] bg-white p-4 shadow-[0_18px_60px_rgba(14,165,233,0.12)] sm:p-5",
         className,
       )}
     >
@@ -819,7 +1106,7 @@ function Panel({
   )
 }
 
-function SectionHeader({
+function PanelHeader({
   eyebrow,
   title,
   meta,
@@ -834,15 +1121,15 @@ function SectionHeader({
 }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex min-w-0 items-center gap-2">
+      <div className="flex min-w-0 items-center gap-3">
         {icon ? (
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-[6px] border border-[#35363D] bg-[#27282F] text-[#8B8D97]">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-[8px] border border-[#BAE6FD] bg-[#E0F2FE] text-[#0284C7]">
             {icon}
           </span>
         ) : null}
         <div className="min-w-0">
-          <div className="text-xs font-semibold text-[#8B8D97]">{eyebrow}</div>
-          <h2 className="truncate text-base font-semibold leading-tight text-[#EAEAF0]">
+          <div className="text-sm font-bold text-[#0369A1]">{eyebrow}</div>
+          <h2 className="truncate text-xl font-bold leading-tight text-[#082F49]">
             {title}
           </h2>
         </div>
@@ -850,7 +1137,7 @@ function SectionHeader({
       {meta || action ? (
         <div className="flex w-full shrink-0 items-center justify-between gap-2 sm:w-auto sm:justify-end">
           {meta ? (
-            <span className="hidden text-xs text-[#8B8D97] sm:inline">
+            <span className="rounded-[6px] border border-[#E0F2FE] bg-[#F0F9FF] px-2 py-1 text-xs font-bold text-[#075985]">
               {meta}
             </span>
           ) : null}
@@ -863,15 +1150,20 @@ function SectionHeader({
 
 function FieldBlock({
   title,
+  icon,
   children,
 }: {
   title: string
+  icon: ReactNode
   children: ReactNode
 }) {
   return (
-    <div className="border-t border-[#35363D] pt-3">
-      <div className="mb-2 text-xs font-semibold text-[#8B8D97]">{title}</div>
-      <div className="text-sm leading-6 text-[#EAEAF0]">{children}</div>
+    <div className="border-t border-[#E0F2FE] pt-4">
+      <div className="mb-2 flex items-center gap-2 text-sm font-bold text-[#075985]">
+        {icon}
+        {title}
+      </div>
+      <div className="text-sm leading-6 text-[#082F49]">{children}</div>
     </div>
   )
 }
@@ -888,9 +1180,9 @@ function StatusPill({
   return (
     <span
       className={cn(
-        "hidden h-8 items-center justify-center gap-1.5 rounded-[6px] border px-2 text-xs font-semibold sm:inline-flex",
-        tone === "info" && "border-[#4F8EF7]/40 bg-[#4F8EF7]/10 text-[#AECBFF]",
-        tone === "warn" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
+        "hidden h-8 items-center justify-center gap-1.5 rounded-[6px] border px-2 text-xs font-bold sm:inline-flex",
+        tone === "info" && "border-[#BAE6FD] bg-[#E0F2FE] text-[#075985]",
+        tone === "warn" && "border-[#FED7AA] bg-[#FFF7ED] text-[#9A3412]",
       )}
     >
       {icon}
@@ -909,13 +1201,13 @@ function ResultBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-8 items-center rounded-[4px] border px-2 text-sm font-semibold capitalize",
-        tone === "normal" && "border-[#8B8D97]/40 bg-[#8B8D97]/10 text-[#C7C8D0]",
-        tone === "suspicious" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
-        tone === "low" && "border-[#8B8D97]/40 bg-[#8B8D97]/10 text-[#C7C8D0]",
-        tone === "medium" && "border-[#4F8EF7]/40 bg-[#4F8EF7]/10 text-[#AECBFF]",
-        tone === "high" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
-        tone === "critical" && "border-[#EF4444]/40 bg-[#EF4444]/10 text-[#FCA5A5]",
+        "inline-flex min-h-8 items-center rounded-[6px] border px-2.5 text-sm font-bold capitalize",
+        tone === "normal" && "border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]",
+        tone === "suspicious" && "border-[#FED7AA] bg-[#FFF7ED] text-[#C2410C]",
+        tone === "low" && "border-[#E2E8F0] bg-[#F8FAFC] text-[#475569]",
+        tone === "medium" && "border-[#BAE6FD] bg-[#E0F2FE] text-[#075985]",
+        tone === "high" && "border-[#FED7AA] bg-[#FFF7ED] text-[#C2410C]",
+        tone === "critical" && "border-[#FCA5A5] bg-[#FEF2F2] text-[#991B1B]",
       )}
     >
       {children}
@@ -931,11 +1223,11 @@ function StatusDot({
   return (
     <span
       className={cn(
-        "inline-flex h-7 items-center rounded-[4px] border px-2 text-xs font-semibold capitalize",
-        status === "ready" && "border-[#4F8EF7]/40 bg-[#4F8EF7]/10 text-[#AECBFF]",
-        status === "exploratory" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
-        status === "held" && "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#FCD34D]",
-        status === "unconfigured" && "border-[#35363D] bg-[#27282F] text-[#8B8D97]",
+        "inline-flex min-h-7 items-center rounded-[6px] border px-2 text-xs font-bold capitalize",
+        status === "ready" && "border-[#A7F3D0] bg-[#ECFDF5] text-[#047857]",
+        status === "exploratory" && "border-[#FED7AA] bg-[#FFF7ED] text-[#C2410C]",
+        status === "held" && "border-[#FED7AA] bg-[#FFF7ED] text-[#C2410C]",
+        status === "unconfigured" && "border-[#E2E8F0] bg-[#F8FAFC] text-[#475569]",
       )}
     >
       {status}
@@ -969,7 +1261,7 @@ function highlightEvidence(logLine: string, evidence: string[]) {
     parts.push(
       <mark
         key={`${range.start}-${range.end}-${index}`}
-        className="rounded-[4px] bg-[#F59E0B]/25 px-1 text-[#FDE68A] ring-1 ring-[#F59E0B]/40"
+        className="rounded-[4px] bg-[#FDBA74]/45 px-1 text-[#7C2D12] ring-1 ring-[#F97316]/35"
       >
         {logLine.slice(range.start, range.end)}
       </mark>,
@@ -992,4 +1284,11 @@ function getSeverityTone(
   severity: TriageOutput["severity"],
 ): "low" | "medium" | "high" | "critical" {
   return severity
+}
+
+function scrollToSection(id: string) {
+  document.getElementById(id)?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  })
 }

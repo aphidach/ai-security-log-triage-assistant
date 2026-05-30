@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-plus-jakarta);
   --font-mono: var(--font-code);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -50,38 +50,38 @@
 
 :root {
   --font-code: "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
-  --background: #0b0c0f;
-  --foreground: #eaeaf0;
-  --card: #1c1d22;
-  --card-foreground: #eaeaf0;
-  --popover: #27282f;
-  --popover-foreground: #eaeaf0;
-  --primary: #ae4dff;
+  --background: #f7fbff;
+  --foreground: #082f49;
+  --card: #ffffff;
+  --card-foreground: #082f49;
+  --popover: #ffffff;
+  --popover-foreground: #082f49;
+  --primary: #0ea5e9;
   --primary-foreground: #ffffff;
-  --secondary: #27282f;
-  --secondary-foreground: #eaeaf0;
-  --muted: #27282f;
-  --muted-foreground: #8b8d97;
-  --accent: #27282f;
-  --accent-foreground: #eaeaf0;
-  --destructive: #ef4444;
-  --border: #35363d;
-  --input: #35363d;
-  --ring: #ae4dff;
-  --chart-1: #ae4dff;
-  --chart-2: #4f8ef7;
-  --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #8b8d97;
+  --secondary: #fff7ed;
+  --secondary-foreground: #9a3412;
+  --muted: #f0f9ff;
+  --muted-foreground: #0c4a6e;
+  --accent: #e0f2fe;
+  --accent-foreground: #075985;
+  --destructive: #dc2626;
+  --border: #bae6fd;
+  --input: #bae6fd;
+  --ring: #0ea5e9;
+  --chart-1: #0ea5e9;
+  --chart-2: #f97316;
+  --chart-3: #10b981;
+  --chart-4: #dc2626;
+  --chart-5: #64748b;
   --radius: 0.5rem;
-  --sidebar: #0b0c0f;
-  --sidebar-foreground: #eaeaf0;
-  --sidebar-primary: #ae4dff;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #082f49;
+  --sidebar-primary: #0ea5e9;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1c1d22;
-  --sidebar-accent-foreground: #eaeaf0;
-  --sidebar-border: #1c1d22;
-  --sidebar-ring: #ae4dff;
+  --sidebar-accent: #f0f9ff;
+  --sidebar-accent-foreground: #075985;
+  --sidebar-border: #bae6fd;
+  --sidebar-ring: #0ea5e9;
 }
 
 .dark {
@@ -129,7 +129,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    color-scheme: dark;
+    color-scheme: light;
   }
   html {
     @apply font-sans;
@@ -143,7 +143,20 @@
     cursor: not-allowed;
   }
   ::selection {
-    background: rgb(174 77 255 / 0.35);
-    color: #ffffff;
+    background: rgb(14 165 233 / 0.25);
+    color: #082f49;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
