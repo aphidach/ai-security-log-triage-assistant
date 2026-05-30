@@ -13,6 +13,7 @@ GGUF_OUT_DIR="${GGUF_OUT_DIR:-$DEFAULT_OUT_DIR}"
 GGUF_BASENAME="${GGUF_BASENAME:-qwen3-5-0-8b-security-triage-v4-7}"
 GGUF_OUTTYPE="${GGUF_OUTTYPE:-f16}"
 GGUF_QUANTIZATIONS="${GGUF_QUANTIZATIONS:-q4_k_m}"
+GGUF_CONVERT_ARGS="${GGUF_CONVERT_ARGS:---no-mtp}"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 
 LLAMA_CPP_DIR="${LLAMA_CPP_DIR/#\~/$HOME}"
@@ -35,6 +36,10 @@ Environment variables:
   GGUF_OUTTYPE           Intermediate GGUF type: f16, bf16, f32, q8_0. Default: f16
   GGUF_QUANTIZATIONS     Comma-separated final quantizations. Default: q4_k_m
                           Use "none" to keep only the intermediate GGUF.
+  GGUF_CONVERT_ARGS      Extra convert_hf_to_gguf.py args. Default: --no-mtp
+                          Keep this for the v4-7 clean checkpoint because it
+                          has no MTP tensors; otherwise llama.cpp expects
+                          missing blk.24.* tensors at load time.
   PYTHON_BIN             Python executable. Default: python3
 
 Example:
@@ -110,10 +115,13 @@ echo "  model:     $MODEL_DIR"
 echo "  converter: $CONVERT_SCRIPT"
 echo "  outfile:   $BASE_GGUF"
 echo "  outtype:   $GGUF_OUTTYPE"
+echo "  args:      ${GGUF_CONVERT_ARGS:-<none>}"
 
+read -r -a CONVERT_ARG_LIST <<< "$GGUF_CONVERT_ARGS"
 "$PYTHON_BIN" "$CONVERT_SCRIPT" "$MODEL_DIR" \
   --outfile "$BASE_GGUF" \
-  --outtype "$GGUF_OUTTYPE"
+  --outtype "$GGUF_OUTTYPE" \
+  "${CONVERT_ARG_LIST[@]}"
 
 if [[ "$GGUF_QUANTIZATIONS" == "none" || -z "$GGUF_QUANTIZATIONS" ]]; then
   cat <<EOF
