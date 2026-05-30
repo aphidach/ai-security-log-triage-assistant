@@ -10,7 +10,8 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "AI Security Log Triage Assistant",
-  description: "Security log triage POC demo UI",
+  description:
+    "Dark SaaS landing page and working POC demo for structured security log triage.",
 };
 
 export default function RootLayout({
