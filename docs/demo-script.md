@@ -10,8 +10,8 @@
 - `frontend/app/page.tsx` สำหรับหน้าจอ demo, analyzer selector, result view และ endpoint/error state (source: frontend/app/page.tsx)
 - `frontend/app/api/triage/route.ts` สำหรับ API route ที่อ่าน OpenAI-compatible endpoint จาก env ฝั่ง server (source: frontend/app/api/triage/route.ts)
 - `frontend/lib/demo-data.ts` สำหรับ sample logs และ metric snapshots ที่ UI แสดง (source: frontend/lib/demo-data.ts)
-- `reports/baseline-eval.json` สำหรับ heuristic baseline metric บน fixed test split (source: reports/baseline-eval.json)
-- `reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json` สำหรับ v3.5 exploratory probe metric ที่ยังไม่ใช่ fixed split comparison (source: reports/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json)
+- `reports/baseline/baseline-eval.json` สำหรับ heuristic baseline metric บน fixed test split (source: reports/baseline/baseline-eval.json)
+- `reports/phase-6/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json` สำหรับ v3.5 exploratory probe metric ที่ยังไม่ใช่ fixed split comparison (source: reports/phase-6/openai-compatible-vllm-structured-outputs-v3-5-temp-03-2048-hard-contrast-memorization-probe.json)
 - `docs/Day6.md` สำหรับ Phase 6 closure และข้อจำกัดว่า fixed split ยัง held (source: docs/Day6.md)
 
 **Last updated**

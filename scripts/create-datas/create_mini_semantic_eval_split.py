@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SOURCE = ROOT / "data" / "splits" / "validation.jsonl"
 DEFAULT_OUT = ROOT / "data" / "splits" / "mini-semantic-eval.jsonl"
 DEFAULT_EXCLUDES = (

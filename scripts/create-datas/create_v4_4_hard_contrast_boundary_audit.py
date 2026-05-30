@@ -14,21 +14,23 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 TEMP_0_REPORT_PATH = (
     ROOT
     / "reports"
+    / "phase-8"
     / "openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json"
 )
 TEMP_0_3_REPORT_PATH = (
     ROOT
     / "reports"
+    / "phase-8"
     / "openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json"
 )
 SOURCE_SPLIT_PATH = ROOT / "data" / "generated" / "v3-hard-contrast-security-triage.jsonl"
-OUTPUT_JSON_PATH = ROOT / "reports" / "phase-8-v4-4-hard-contrast-boundary-audit.json"
-OUTPUT_MD_PATH = ROOT / "reports" / "phase-8-v4-4-hard-contrast-boundary-audit.md"
+OUTPUT_JSON_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-4-hard-contrast-boundary-audit.json"
+OUTPUT_MD_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-4-hard-contrast-boundary-audit.md"
 
 CREATED_DATE = "2026-05-23"
 

@@ -15,16 +15,17 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 SOURCE_REPORT_PATH = (
     ROOT
     / "reports"
+    / "phase-6"
     / "openai-compatible-vllm-structured-outputs-v3-5-temp-0-2048-hard-contrast-memorization-probe.json"
 )
 SOURCE_SPLIT_PATH = ROOT / "data" / "generated" / "v3-hard-contrast-security-triage.jsonl"
-OUTPUT_JSON_PATH = ROOT / "reports" / "phase-8-v4-sqli-boundary-failure-slice.json"
-OUTPUT_MD_PATH = ROOT / "reports" / "phase-8-v4-sqli-boundary-failure-slice.md"
+OUTPUT_JSON_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-sqli-boundary-failure-slice.json"
+OUTPUT_MD_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-sqli-boundary-failure-slice.md"
 
 CREATED_DATE = "2026-05-22"
 
@@ -273,7 +274,7 @@ def write_markdown(report: JsonObject) -> None:
         f"- `{report['source_report_path']}` for v3.5 temp 0 2048 runtime probe predictions and metrics.",
         f"- `{report['source_split_path']}` for source log lines and expected outputs.",
         "- `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` for v3.5 closure context.",
-        "- `reports/comparison.md` for Phase 7 historical context, not tuning examples.",
+        "- `reports/phase-7/comparison.md` for Phase 7 historical context, not tuning examples.",
         "",
         "**Last updated**",
         "",

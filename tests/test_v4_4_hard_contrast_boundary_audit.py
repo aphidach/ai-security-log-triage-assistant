@@ -11,8 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 V44_DOC = ROOT / "docs" / "output-structure-fix" / "phase-8-v4-4-hard-contrast-boundary-audit-plan.md"
-V44_REPORT_JSON = ROOT / "reports" / "phase-8-v4-4-hard-contrast-boundary-audit.json"
-V44_REPORT_MD = ROOT / "reports" / "phase-8-v4-4-hard-contrast-boundary-audit.md"
+V44_REPORT_JSON = ROOT / "reports" / "phase-8" / "phase-8-v4-4-hard-contrast-boundary-audit.json"
+V44_REPORT_MD = ROOT / "reports" / "phase-8" / "phase-8-v4-4-hard-contrast-boundary-audit.md"
 
 
 class V44HardContrastBoundaryAuditTest(unittest.TestCase):

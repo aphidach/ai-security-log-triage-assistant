@@ -8,8 +8,8 @@
 
 **Sources**
 
-- `reports/openai-compatible-eval.json` สำหรับ persisted smoke report ล่าสุดที่เขียนทับ path มาตรฐานของ `openai-compatible` adapter (source: reports/openai-compatible-eval.json)
-- `reports/openai-compatible-eval.md` สำหรับ markdown summary ของ smoke report ล่าสุด (source: reports/openai-compatible-eval.md)
+- `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` สำหรับ persisted smoke report ล่าสุดที่เขียนทับ path มาตรฐานของ `openai-compatible` adapter (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json)
+- `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.md` สำหรับ markdown summary ของ smoke report ล่าสุด (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.md)
 - `scripts/model_adapters/openai_compatible.py` สำหรับ OpenAI SDK adapter, `responses_parse` mode และ Pydantic validation model (source: scripts/model_adapters/openai_compatible.py)
 - `docs/output-contract-hardening.md` สำหรับ decision ที่ย้ายจาก LangChain parser path ไป OpenAI SDK + Pydantic runtime path (source: docs/output-contract-hardening.md)
 - `data/splits/smoke-output-contract.jsonl` สำหรับ deterministic 5-sample output-contract smoke split (source: data/splits/smoke-output-contract.jsonl)
@@ -36,7 +36,7 @@
 | Runtime prompt | `triage-json-v2` |
 | Primary runtime path tested today | OpenAI SDK `responses_parse` with Pydantic text format |
 | Smoke split | `data/splits/smoke-output-contract.jsonl` |
-| Report path | `reports/openai-compatible-eval.json`, `reports/openai-compatible-eval.md` |
+| Report path | `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json`, `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.md` |
 | Status | `rejected-for-output-contract` |
 
 ## Training Snapshot
@@ -63,7 +63,7 @@
 
 ## Runtime And Report Notes
 
-วันนี้มีจุดที่ต้องอ่าน report อย่างระวัง: path `reports/openai-compatible-eval.json` เป็น output path มาตรฐานของ adapter และอาจถูก overwrite ได้ง่ายถ้ารันหลาย mode ต่อกัน รอบ terminal ที่ผู้ใช้รายงานใช้ `responses_parse` จริงและได้ metric shape เดียวกันกับ persisted report ล่าสุด แต่ persisted JSON ที่อ่านจาก workspace ตอนจัดเอกสารนี้ยังแสดง metadata เป็น `json_schema_strict` (source: reports/openai-compatible-eval.json; user-provided terminal output, 2026-05-19)
+วันนี้มีจุดที่ต้องอ่าน report อย่างระวัง: path `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` เป็น output path มาตรฐานของ adapter และอาจถูก overwrite ได้ง่ายถ้ารันหลาย mode ต่อกัน รอบ terminal ที่ผู้ใช้รายงานใช้ `responses_parse` จริงและได้ metric shape เดียวกันกับ persisted report ล่าสุด แต่ persisted JSON ที่อ่านจาก workspace ตอนจัดเอกสารนี้ยังแสดง metadata เป็น `json_schema_strict` (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json; user-provided terminal output, 2026-05-19)
 
 | Run source | Requested mode | Requested model | Samples | JSON parse | Schema success | Invalid outputs | Note |
 | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
@@ -78,8 +78,8 @@ OPENAI_COMPATIBLE_MODEL=current \
 .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/smoke-output-contract.jsonl \
-  --out reports/openai-compatible-responses-parse-eval.json \
-  --comparison-out reports/openai-compatible-responses-parse-eval.md \
+  --out reports/structured-output/smoke/openai-compatible-responses-parse-eval.json \
+  --comparison-out reports/structured-output/smoke/openai-compatible-responses-parse-eval.md \
   --no-progress
 ```
 
@@ -116,9 +116,9 @@ OPENAI_COMPATIBLE_MODEL=current \
 | JSON contract | 4/5 samples fail JSON parsing; terminal `responses_parse` run reports Pydantic invalid JSON on markdown-fenced output (source: user-provided terminal output, 2026-05-19) | adapter/evaluator rightly reject output before semantic comparison |
 | Runtime enforcement | `responses_parse` validates after model response, but backend still allows markdown fence to be generated | ยังไม่ใช่ server-side constrained decoding สำหรับ endpoint นี้ |
 | Required fields | Some historical raw outputs omit `recommended_action` (source: docs/output-contract-hardening.md) | schema contract breaks even when JSON body is visible inside markdown fence |
-| Label taxonomy | Historical raw outputs invent labels such as `ssh_attempt_failed` and `ssh_bruteforce_attempt` (source: reports/openai-compatible-eval.json, docs/output-contract-hardening.md) | downstream UI/evaluator cannot trust label enum |
-| Severity | The only schema-valid sample predicts `high` while expected is `medium` (source: reports/openai-compatible-eval.json) | model over-escalates priority |
-| Evidence | The only schema-valid sample uses weak or hallucinated evidence such as `sshd.log`/`ssh2.log` rather than concrete substrings from the log (source: reports/openai-compatible-eval.json) | analyst value is low even when shape passes |
+| Label taxonomy | Historical raw outputs invent labels such as `ssh_attempt_failed` and `ssh_bruteforce_attempt` (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json, docs/output-contract-hardening.md) | downstream UI/evaluator cannot trust label enum |
+| Severity | The only schema-valid sample predicts `high` while expected is `medium` (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json) | model over-escalates priority |
+| Evidence | The only schema-valid sample uses weak or hallucinated evidence such as `sshd.log`/`ssh2.log` rather than concrete substrings from the log (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json) | analyst value is low even when shape passes |
 
 ## Decision
 
@@ -127,7 +127,7 @@ OPENAI_COMPATIBLE_MODEL=current \
 | Keep v2 rejected for output contract | Smoke validity is still 1/5, with 4 invalid outputs | Do not run fixed split as a model-comparison artifact yet |
 | Keep `responses_parse` as strict validation path | It gives clearer Pydantic errors and returns dict output when successful | Good for evaluator path, but not sufficient as constrained decoding on this backend |
 | Do not add a JSON extractor to the main evaluator path | Extracting JSON from markdown would hide production-facing contract failure | Keep extractor, if any, debug-only |
-| Separate report output paths by mode | `reports/openai-compatible-eval.json` can be overwritten by multiple runs | Future docs should cite mode-specific report files |
+| Separate report output paths by mode | `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` can be overwritten by multiple runs | Future docs should cite mode-specific report files |
 
 ## Next Experiment
 
@@ -141,14 +141,14 @@ OPENAI_COMPATIBLE_MODEL=current \
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 2026-05-19 | Codex | Created v2 model-output page for OpenAI SDK + Pydantic `responses_parse` smoke results | `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md`, `reports/openai-compatible-eval.json`, user terminal output | Done |
+| 2026-05-19 | Codex | Created v2 model-output page for OpenAI SDK + Pydantic `responses_parse` smoke results | `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md`, `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json`, user terminal output | Done |
 
 ## Decision Log
 
 | Date | Decision | Rationale | Impact |
 | --- | --- | --- | --- |
 | 2026-05-19 | Keep v2 in rejected state after `responses_parse` smoke | `responses_parse` still passes only 1/5 samples and fails 4/5 on invalid JSON/markdown fence behavior | Next work stays on runtime enforcement or v3 output-only training examples, not fixed split comparison |
-| 2026-05-19 | Preserve mode-specific reports in future runs | The standard report path can be overwritten by `json_schema` and `responses_parse` runs with similar metrics | Future analysis should use `reports/openai-compatible-responses-parse-eval.json` or equivalent |
+| 2026-05-19 | Preserve mode-specific reports in future runs | The standard report path can be overwritten by `json_schema` and `responses_parse` runs with similar metrics | Future analysis should use `reports/structured-output/smoke/openai-compatible-responses-parse-eval.json` or equivalent |
 
 ## Related pages
 

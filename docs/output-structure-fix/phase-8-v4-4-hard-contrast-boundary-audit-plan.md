@@ -7,9 +7,9 @@ v4.4 เป็น boundary audit ต่อจาก v4.3 Qwen3.5 hold decision �
 **Sources**
 
 - v4.3 Qwen3.5 capacity diagnostic decision (source: docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md)
-- v4.3 Qwen3.5 base-model hard-contrast temp 0 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json)
-- v4.3 Qwen3.5 base-model hard-contrast temp 0.3 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json)
-- v4.4 generated boundary audit artifacts (source: scripts/create_v4_4_hard_contrast_boundary_audit.py, source: reports/phase-8-v4-4-hard-contrast-boundary-audit.json, source: reports/phase-8-v4-4-hard-contrast-boundary-audit.md)
+- v4.3 Qwen3.5 base-model hard-contrast temp 0 report (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json)
+- v4.3 Qwen3.5 base-model hard-contrast temp 0.3 report (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json)
+- v4.4 generated boundary audit artifacts (source: scripts/create_v4_4_hard_contrast_boundary_audit.py, source: reports/phase-8/phase-8-v4-4-hard-contrast-boundary-audit.json, source: reports/phase-8/phase-8-v4-4-hard-contrast-boundary-audit.md)
 - hard-contrast source split used only for expected labels/evidence (source: data/generated/v3-hard-contrast-security-triage.jsonl)
 
 **Last updated**
@@ -21,8 +21,8 @@ v4.4 เป็น boundary audit ต่อจาก v4.3 Qwen3.5 hold decision �
 Audit complete; next decision pending. v4.4 created only audit reports:
 
 ```text
-reports/phase-8-v4-4-hard-contrast-boundary-audit.json
-reports/phase-8-v4-4-hard-contrast-boundary-audit.md
+reports/phase-8/phase-8-v4-4-hard-contrast-boundary-audit.json
+reports/phase-8/phase-8-v4-4-hard-contrast-boundary-audit.md
 ```
 
 No `data/splits/test.jsonl` run was opened. No v4.4 training split, generated supplement, LoRA config, or train allowlist entry should exist.
@@ -84,7 +84,7 @@ rtk .venv/bin/python - <<'PY'
 import json
 from pathlib import Path
 
-report = json.loads(Path("reports/phase-8-v4-4-hard-contrast-boundary-audit.json").read_text())
+report = json.loads(Path("reports/phase-8/phase-8-v4-4-hard-contrast-boundary-audit.json").read_text())
 print("union_label_failure_count:", report["union_label_failure_count"])
 print("persistent_label_failure_count:", report["persistent_label_failure_count"])
 for probe, summary in report["probe_summaries"].items():
@@ -126,7 +126,7 @@ Expected output is empty. The only v4.4 artifacts should be the audit script and
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 2026-05-23 | Codex | Created v4.4 hard-contrast boundary audit from the two v4.3 Qwen3.5 base-model hard-contrast reports | `scripts/create_v4_4_hard_contrast_boundary_audit.py`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.json`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.md` | Audit complete |
+| 2026-05-23 | Codex | Created v4.4 hard-contrast boundary audit from the two v4.3 Qwen3.5 base-model hard-contrast reports | `scripts/create_v4_4_hard_contrast_boundary_audit.py`, `reports/phase-8/phase-8-v4-4-hard-contrast-boundary-audit.json`, `reports/phase-8/phase-8-v4-4-hard-contrast-boundary-audit.md` | Audit complete |
 | 2026-05-23 | User/Codex | Clarified that the audited v4.3 Qwen3.5 reports are base-model reports, not trained Qwen reports | `docs/output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md` | Clarified |
 
 ## Decision Log

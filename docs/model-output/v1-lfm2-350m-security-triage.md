@@ -12,8 +12,8 @@
 - `ml/unsloth/merge_adapter.py` สำหรับ merge/GGUF export path หลัง train (source: ml/unsloth/merge_adapter.py)
 - `reports/openai-finetune-eval.json` สำหรับ smoke evaluation ของ OpenAI-compatible endpoint (source: reports/openai-finetune-eval.json)
 - `reports/openai-finetune-eval.md` สำหรับ metric summary ของ smoke evaluation (source: reports/openai-finetune-eval.md)
-- `reports/openai-compatible-eval.json` สำหรับ prompt v2 structured-output smoke evaluation ล่าสุดบน deterministic smoke split (source: reports/openai-compatible-eval.json)
-- `reports/openai-compatible-eval.md` สำหรับ metric summary ของ prompt v2 smoke evaluation ล่าสุด (source: reports/openai-compatible-eval.md)
+- `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` สำหรับ prompt v2 structured-output smoke evaluation ล่าสุดบน deterministic smoke split (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json)
+- `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.md` สำหรับ metric summary ของ prompt v2 smoke evaluation ล่าสุด (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.md)
 - `docs/Day6.md` สำหรับสถานะ Day 6 และ decision ว่า smoke/debug eval ยังไม่ใช่ final comparison (source: docs/Day6.md)
 - Unsloth Studio run note และ screenshot วันที่ 2026-05-19 สำหรับ artifact `unsloth_LFM2-350M_1779162226`, training files, hyperparameters และ LoRA 16-bit load profile (source: user-provided Codex thread note, 2026-05-19)
 
@@ -170,7 +170,7 @@ training:
 3. Merge/export tooling exists, including GGUF export, but merge/GGUF is only a packaging step. It does not fix schema adherence, hallucinated reasons, or taxonomy drift (source: ml/unsloth/merge_adapter.py, docs/Day6.md).
 4. vLLM base+LoRA serving reached a usable endpoint with `unsloth/LFM2-350M` as base and `lfm2-security-triage` as LoRA model name. The safer serving path for now is adapter-first, not the merged checkpoint path.
 5. API smoke evaluation through the OpenAI-compatible adapter produced a report, but the report is a failure artifact: 5/5 outputs were invalid under strict JSON parsing (source: reports/openai-finetune-eval.json, reports/openai-finetune-eval.md).
-6. A later prompt v2 smoke run used a newly trained Unsloth Studio artifact, `unsloth_LFM2-350M_1779162226` (`v2`), loaded as 16-bit LoRA on the same `unsloth/LFM2-350M` base. The evaluator report still records the served model alias as `lfm2-security-triage`, so the artifact-to-alias mapping comes from the operator run note rather than the report metadata itself. The run used `data/splits/smoke-output-contract.jsonl`, requested `json_schema_strict`, and did not fall back to `json_object`, but output contract quality was still poor: 4/5 outputs were invalid under strict JSON parsing and only 1/5 passed schema validation (source: reports/openai-compatible-eval.json; user-provided Codex thread note, 2026-05-19).
+6. A later prompt v2 smoke run used a newly trained Unsloth Studio artifact, `unsloth_LFM2-350M_1779162226` (`v2`), loaded as 16-bit LoRA on the same `unsloth/LFM2-350M` base. The evaluator report still records the served model alias as `lfm2-security-triage`, so the artifact-to-alias mapping comes from the operator run note rather than the report metadata itself. The run used `data/splits/smoke-output-contract.jsonl`, requested `json_schema_strict`, and did not fall back to `json_object`, but output contract quality was still poor: 4/5 outputs were invalid under strict JSON parsing and only 1/5 passed schema validation (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json; user-provided Codex thread note, 2026-05-19).
 
 ## API Smoke Evaluation
 
@@ -189,7 +189,7 @@ Important context: this smoke run used `data/raw/test.jsonl` with 5 samples, not
 
 ## Prompt V2 Structured-Output Smoke Evaluation
 
-รอบล่าสุดใช้ deterministic smoke split ที่ `data/splits/smoke-output-contract.jsonl` จำนวน 5 samples กับ model ใหม่จาก Unsloth Studio คือ `unsloth_LFM2-350M_1779162226` (`v2`) แต่ base ยังเป็น `unsloth/LFM2-350M` เดิม รอบ serve ใช้ LoRA load แบบ 16-bit และ adapter `openai-compatible` ชี้ไป runtime alias `lfm2-security-triage` ตาม report metadata โดย request ใช้ `response_format_requested=json_schema`, `response_format_mode=json_schema_strict` และ `response_format_attempted_modes=["json_schema_strict"]` ไม่มี fallback ไป `json_object` (source: reports/openai-compatible-eval.json; user-provided Codex thread note, 2026-05-19)
+รอบล่าสุดใช้ deterministic smoke split ที่ `data/splits/smoke-output-contract.jsonl` จำนวน 5 samples กับ model ใหม่จาก Unsloth Studio คือ `unsloth_LFM2-350M_1779162226` (`v2`) แต่ base ยังเป็น `unsloth/LFM2-350M` เดิม รอบ serve ใช้ LoRA load แบบ 16-bit และ adapter `openai-compatible` ชี้ไป runtime alias `lfm2-security-triage` ตาม report metadata โดย request ใช้ `response_format_requested=json_schema`, `response_format_mode=json_schema_strict` และ `response_format_attempted_modes=["json_schema_strict"]` ไม่มี fallback ไป `json_object` (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json; user-provided Codex thread note, 2026-05-19)
 
 | Run field | Value |
 | --- | --- |
@@ -232,16 +232,16 @@ Raw Output:  content='```json\n{\n  "label": "ssh_bruteforce_attempt",\n  "sever
 | `sample-000331` | `directory_traversal_attempt` | markdown-fenced JSON with `failed_login_bruteforce` | directory traversal ถูกอธิบายเป็น failed login |
 | `sample-000474` | `port_scan_or_recon` | markdown-fenced JSON with `ssh_bruteforce_attempt` | label นอก taxonomy, ขาด `recommended_action`, และเหตุผล drift ไป brute force |
 
-ข้อสรุปของรอบนี้คือ prompt v2 และ model artifact ใหม่ช่วยยืนยันว่า training pipeline รอบใหม่เดินถึง smoke evaluation แล้ว แต่ runtime path ยังไม่ได้ enforce structured output จริงในเชิงผลลัพธ์ เพราะยังเห็น markdown fence, label นอก enum และ field ขาด ทั้งที่ metadata ฝั่ง adapter ระบุว่าใช้ `json_schema_strict` แล้ว (source: reports/openai-compatible-eval.json)
+ข้อสรุปของรอบนี้คือ prompt v2 และ model artifact ใหม่ช่วยยืนยันว่า training pipeline รอบใหม่เดินถึง smoke evaluation แล้ว แต่ runtime path ยังไม่ได้ enforce structured output จริงในเชิงผลลัพธ์ เพราะยังเห็น markdown fence, label นอก enum และ field ขาด ทั้งที่ metadata ฝั่ง adapter ระบุว่าใช้ `json_schema_strict` แล้ว (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json)
 
 ## Observed Failure Modes
 
 | Area | What failed | Example or evidence | Impact |
 | --- | --- | --- | --- |
 | JSON contract | API output often starts with explanation text before JSON or contains no JSON object | `raw_prediction` contains prose such as "The log contains several suspicious activities" before any schema-like block (source: reports/openai-finetune-eval.json) | strict evaluator marks output invalid |
-| Structured output enforcement | Prompt v2 run requested `json_schema_strict`, but raw output still contained markdown-fenced JSON | `raw_prediction` for multiple prompt v2 samples starts with a markdown JSON code fence (source: reports/openai-compatible-eval.json) | endpoint/runtime appears not to enforce schema-constrained output despite request metadata |
+| Structured output enforcement | Prompt v2 run requested `json_schema_strict`, but raw output still contained markdown-fenced JSON | `raw_prediction` for multiple prompt v2 samples starts with a markdown JSON code fence (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json) | endpoint/runtime appears not to enforce schema-constrained output despite request metadata |
 | Required fields | Some outputs omit `recommended_action` | model output examples in manual test and smoke failures | schema contract breaks |
-| Label taxonomy | Output may invent labels outside the five-label taxonomy | `botnet_command_and_control` appears in the earlier smoke run; `ssh_attempt_failed` and `ssh_bruteforce_attempt` appear in the prompt v2 smoke run (source: reports/openai-finetune-eval.json, reports/openai-compatible-eval.json) | evaluator and UI cannot trust labels |
+| Label taxonomy | Output may invent labels outside the five-label taxonomy | `botnet_command_and_control` appears in the earlier smoke run; `ssh_attempt_failed` and `ssh_bruteforce_attempt` appear in the prompt v2 smoke run (source: reports/openai-finetune-eval.json, reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json) | evaluator and UI cannot trust labels |
 | Label casing | Output may use wrong casing such as `SQL_injection_attempt` | manual API test screenshot/run note | schema enum mismatch |
 | Evidence quality | Evidence can be generic instead of a concrete substring from the log | `["SQL injection attempt"]` rather than payload or path fragment | weak investigation value |
 | Reason grounding | Reason may describe attacks not present in the log | local SLEEP example mentions unrelated `UNION` style reasoning | model looks confident but misleading |
@@ -281,7 +281,7 @@ Raw Output:  content='```json\n{\n  "label": "ssh_bruteforce_attempt",\n  "sever
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-18 | Codex | Documented v1 model behavior, config, smoke-eval failure modes, and next experiment plan | `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
-| 2026-05-19 | Codex | Added prompt v2 structured-output smoke result and failure analysis | `reports/openai-compatible-eval.json`, `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
+| 2026-05-19 | Codex | Added prompt v2 structured-output smoke result and failure analysis | `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json`, `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
 | 2026-05-19 | Codex | Corrected latest prompt v2 smoke identity to the new Unsloth Studio artifact `unsloth_LFM2-350M_1779162226` and documented its LoRA 16-bit load/training profile | `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
 | 2026-05-19 | Codex | Clarified that the latest v2 `responses_parse` result now has its own model-output page | `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md`, `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
 

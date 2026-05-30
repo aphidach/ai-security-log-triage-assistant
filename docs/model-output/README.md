@@ -10,7 +10,7 @@
 - `docs/Day6.md` สำหรับสถานะ GPU training, smoke evaluation และ comparison gap ล่าสุด (source: docs/Day6.md)
 - `ml/unsloth/config.example.yaml` สำหรับ config path แรกของ LFM2-350M + LoRA (source: ml/unsloth/config.example.yaml)
 - `reports/openai-finetune-eval.json` สำหรับ smoke evaluation ของ OpenAI-compatible endpoint (source: reports/openai-finetune-eval.json)
-- `reports/openai-compatible-eval.json` สำหรับ prompt v2 structured-output smoke evaluation ล่าสุด (source: reports/openai-compatible-eval.json)
+- `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` สำหรับ prompt v2 structured-output smoke evaluation ล่าสุด (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json)
 - `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md` สำหรับ OpenAI SDK + Pydantic `responses_parse` smoke note ของ v2 artifact (source: docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md)
 - Unsloth Studio run note และ screenshot วันที่ 2026-05-19 สำหรับ artifact `unsloth_LFM2-350M_1779162226`, instruction tuning files และ LoRA 16-bit load profile (source: user-provided Codex thread note, 2026-05-19)
 
@@ -48,9 +48,9 @@ docs/model-output/vN-short-model-name.md
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-18 | Codex | Created model-output documentation area for versioned model behavior notes | `docs/model-output/README.md` | Done |
-| 2026-05-19 | Codex | Linked the latest prompt v2 structured-output smoke result from the v1 model-output notes | `docs/model-output/v1-lfm2-350m-security-triage.md`, `reports/openai-compatible-eval.json` | Done |
+| 2026-05-19 | Codex | Linked the latest prompt v2 structured-output smoke result from the v1 model-output notes | `docs/model-output/v1-lfm2-350m-security-triage.md`, `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` | Done |
 | 2026-05-19 | Codex | Clarified that the latest prompt v2 smoke belongs to the new Unsloth Studio artifact `unsloth_LFM2-350M_1779162226`, served as a LoRA run on the same LFM2-350M base | `docs/model-output/v1-lfm2-350m-security-triage.md` | Done |
-| 2026-05-19 | Codex | Added separate v2 model-output page for OpenAI SDK + Pydantic `responses_parse` smoke results | `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md`, `reports/openai-compatible-eval.json` | Done |
+| 2026-05-19 | Codex | Added separate v2 model-output page for OpenAI SDK + Pydantic `responses_parse` smoke results | `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md`, `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` | Done |
 
 ## Decision Log
 

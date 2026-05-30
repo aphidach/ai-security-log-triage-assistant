@@ -63,6 +63,11 @@ class TrainingConfigError(ValueError):
 
 
 def load_config(path: Path) -> JsonObject:
+    if not path.exists():
+        config_dir_path = path.parent / "config" / path.name
+        if config_dir_path.exists():
+            path = config_dir_path
+
     try:
         import yaml  # type: ignore[import-not-found]
     except ModuleNotFoundError:

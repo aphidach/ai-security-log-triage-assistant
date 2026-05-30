@@ -17,28 +17,31 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 V4_7_PROBE_PATH = ROOT / "data" / "splits" / "v4-7-auth-sqli-severity-calibration-probe.jsonl"
 V4_7_MODEL_REPORT_PATH = (
     ROOT
     / "reports"
+    / "phase-8"
     / "openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json"
 )
 V4_6_ON_V4_7_REPORT_PATH = (
     ROOT
     / "reports"
+    / "phase-8"
     / "openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json"
 )
-HEURISTIC_REPORT_PATH = ROOT / "reports" / "heuristic-v4-7-auth-sqli-severity-calibration-probe.json"
+HEURISTIC_REPORT_PATH = ROOT / "reports" / "phase-8" / "heuristic-v4-7-auth-sqli-severity-calibration-probe.json"
 BASE_MODEL_REPORT_PATH = (
     ROOT
     / "reports"
+    / "phase-8"
     / "openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json"
 )
-OUTPUT_JSON_PATH = ROOT / "reports" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json"
-OUTPUT_MD_PATH = ROOT / "reports" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.md"
-OUTPUT_HTML_PATH = ROOT / "reports" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html"
+OUTPUT_JSON_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json"
+OUTPUT_MD_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.md"
+OUTPUT_HTML_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html"
 
 CREATED_DATE = "2026-05-23"
 

@@ -6,14 +6,14 @@ v4.3 เป็น capacity/architecture diagnostic ต่อจาก v4.2 held 
 
 **Sources**
 
-- v4.1 hard-contrast reports สำหรับ LFM2 control behavior (source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
-- v4.2 prompt diagnostic result สำหรับเหตุผลที่ต้องไป capacity/architecture แทน prompt wording เพิ่ม (source: docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md, source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json)
+- v4.1 hard-contrast reports สำหรับ LFM2 control behavior (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
+- v4.2 prompt diagnostic result สำหรับเหตุผลที่ต้องไป capacity/architecture แทน prompt wording เพิ่ม (source: docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json)
 - hard-contrast probe split สำหรับ diagnostic input เท่านั้น (source: data/generated/v3-hard-contrast-security-triage.jsonl)
 - downloaded Hugging Face model card สำหรับ first candidate `unsloth/Qwen3.5-0.8B` (source: docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md, source: https://huggingface.co/unsloth/Qwen3.5-0.8B)
 - runtime prompt/config support ที่คง default prompt เป็น `triage-json-v2.1` (source: scripts/model_adapters/prompt_contract.py, source: scripts/model_adapters/openai_compatible.py)
-- v4.3 Qwen3.5 base-model smoke report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json, source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.md)
-- v4.3 Qwen3.5 base-model hard-contrast temp 0 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json, source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.md)
-- v4.3 Qwen3.5 base-model hard-contrast temp 0.3 report (source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json, source: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.md)
+- v4.3 Qwen3.5 base-model smoke report (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.md)
+- v4.3 Qwen3.5 base-model hard-contrast temp 0 report (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.md)
+- v4.3 Qwen3.5 base-model hard-contrast temp 0.3 report (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.md)
 
 **Last updated**
 
@@ -217,8 +217,8 @@ OPENAI_COMPATIBLE_TEMPERATURE=0 \
 rtk .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/smoke-output-contract.jsonl \
-  --out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-smoke.json" \
-  --comparison-out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-smoke.md"
+  --out "reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-smoke.json" \
+  --comparison-out "reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-smoke.md"
 ```
 
 ```text
@@ -233,8 +233,8 @@ is_suspicious_accuracy: 0.6
 evidence_partial_match: 1.0
 average_latency_ms: 6422.592034
 invalid_output_count: 0
-json_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json
-markdown_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.md
+json_report: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json
+markdown_report: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.md
 
 ```
 ### 7. Candidate Hard-Contrast Temp 0
@@ -254,8 +254,8 @@ OPENAI_COMPATIBLE_TEMPERATURE=0 \
 rtk .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split "$V43_SPLIT" \
-  --out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-2048-capacity-diagnostic-hard-contrast.json" \
-  --comparison-out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-2048-capacity-diagnostic-hard-contrast.md"
+  --out "reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-2048-capacity-diagnostic-hard-contrast.json" \
+  --comparison-out "reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-0-2048-capacity-diagnostic-hard-contrast.md"
 ```
 
 ```text
@@ -270,8 +270,8 @@ is_suspicious_accuracy: 0.54
 evidence_partial_match: 0.82
 average_latency_ms: 5845.253222
 invalid_output_count: 0
-json_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json
-markdown_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.md
+json_report: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json
+markdown_report: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.md
 
 ```
 ### 8. Candidate Hard-Contrast Temp 0.3
@@ -293,8 +293,8 @@ OPENAI_COMPATIBLE_EXTRA_BODY='{"min_p":0.15,"repetition_penalty":1.05}' \
 rtk .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split "$V43_SPLIT" \
-  --out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-03-2048-capacity-diagnostic-hard-contrast.json" \
-  --comparison-out "reports/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-03-2048-capacity-diagnostic-hard-contrast.md"
+  --out "reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-03-2048-capacity-diagnostic-hard-contrast.json" \
+  --comparison-out "reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-${CANDIDATE_MODEL_SLUG}-temp-03-2048-capacity-diagnostic-hard-contrast.md"
 ```
 
 ```text
@@ -309,8 +309,8 @@ is_suspicious_accuracy: 0.58
 evidence_partial_match: 0.86
 average_latency_ms: 5569.326359
 invalid_output_count: 0
-json_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json
-markdown_report: reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.md
+json_report: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json
+markdown_report: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.md
 ```
 ### 9. Metric Extraction
 
@@ -384,8 +384,8 @@ If a stronger candidate passes while v4.1 remains held, plan a capacity pilot. I
 | 2026-05-23 | Codex | Added `unsloth/Qwen3.5-0.8B` as the first v4.3 candidate intake and downloaded the model card | `docs/model-candidates/unsloth-qwen3.5-0.8b/model-card.md` | Candidate selected; probe not run |
 | 2026-05-23 | Codex | Expanded v4.3 into a copyable command runbook for preflight, server launch, endpoint smoke, hard-contrast probes, metric extraction, and post-gate train pilot smoke | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` | Runbook prepared |
 | 2026-05-23 | Codex | Changed v4.3 Qwen3.5 server and adapter commands to local port `8080` | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` | Runbook updated |
-| 2026-05-23 | User/Codex | Recorded all 3 v4.3 Qwen3.5 probe results and summarized the candidate decision | `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json`, `reports/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json` | Probed; held |
-| 2026-05-23 | Codex | Branched the held Qwen3.5 result into a v4.4 hard-contrast boundary audit | `docs/output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md`, `reports/phase-8-v4-4-hard-contrast-boundary-audit.json` | Follow-up audit complete |
+| 2026-05-23 | User/Codex | Recorded all 3 v4.3 Qwen3.5 probe results and summarized the candidate decision | `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-smoke.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-0-2048-capacity-diagnostic-hard-contrast.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-3-qwen3-5-0-8b-temp-03-2048-capacity-diagnostic-hard-contrast.json` | Probed; held |
+| 2026-05-23 | Codex | Branched the held Qwen3.5 result into a v4.4 hard-contrast boundary audit | `docs/output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md`, `reports/phase-8/phase-8-v4-4-hard-contrast-boundary-audit.json` | Follow-up audit complete |
 | 2026-05-23 | User/Codex | Clarified that v4.3 Qwen3.5 probes used the Hub base model, not a trained Qwen model | `docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md` | Clarified |
 | 2026-05-23 | Codex | Updated Qwen3.5 train pilot command notes to use the checked-in `FastVisionModel` pilot config | `ml/unsloth/qwen3-5-0-8b-security-triage-pilot.yaml`, `ml/unsloth/train_lora.py` | Pilot wiring prepared |
 | 2026-05-23 | Codex | Split the Qwen3.5 train pilot runbook to the dedicated vision trainer | `ml/unsloth/train_lora_vision_qwen.py`, `ml/unsloth/qwen3-5-0-8b-security-triage-pilot.yaml` | Pilot runner separated |

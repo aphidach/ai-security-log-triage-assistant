@@ -10,8 +10,8 @@ if [[ ! -x "$PYTHON_BIN" ]]; then
 fi
 
 PHASE5_SPLIT="${PHASE5_SPLIT:-data/splits/mini-semantic-eval.jsonl}"
-PHASE5_JSON_REPORT="${PHASE5_JSON_REPORT:-reports/openai-compatible-vllm-structured-outputs-mini-semantic-eval.json}"
-PHASE5_MARKDOWN_REPORT="${PHASE5_MARKDOWN_REPORT:-reports/openai-compatible-vllm-structured-outputs-mini-semantic-eval.md}"
+PHASE5_JSON_REPORT="${PHASE5_JSON_REPORT:-reports/structured-output/mini-semantic-eval/openai-compatible-vllm-structured-outputs-mini-semantic-eval.json}"
+PHASE5_MARKDOWN_REPORT="${PHASE5_MARKDOWN_REPORT:-reports/structured-output/mini-semantic-eval/openai-compatible-vllm-structured-outputs-mini-semantic-eval.md}"
 
 "$PYTHON_BIN" scripts/create_mini_semantic_eval_split.py \
   --source "${PHASE5_SOURCE_SPLIT:-data/splits/validation.jsonl}" \

@@ -9,7 +9,7 @@ Phase 4 เป็น gate ก่อนดู semantic quality ทุกครั
 - `docs/structured-output-fix-plan.md` สำหรับ contract gate (source: docs/structured-output-fix-plan.md)
 - `data/splits/smoke-output-contract.jsonl` สำหรับ smoke split (source: data/splits/smoke-output-contract.jsonl)
 - `data/schemas/triage-output.schema.json` สำหรับ schema gate (source: data/schemas/triage-output.schema.json)
-- `reports/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ passing contract gate result (source: reports/openai-compatible-vllm-structured-outputs-smoke.json)
+- `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ passing contract gate result (source: reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json)
 
 **Last updated**
 
@@ -39,8 +39,8 @@ OPENAI_COMPATIBLE_SCHEMA_PATH=data/schemas/triage-output.schema.json \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/smoke-output-contract.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-smoke.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-smoke.md
+  --out reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json \
+  --comparison-out reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.md
 ```
 
 Result:
@@ -70,7 +70,7 @@ The gate is about output contract only. The low label accuracy means the next ph
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-20 | Codex | Created Phase 4 detail stub | `docs/output-structure-fix/phase-4-contract-gate.md` | Drafted |
-| 2026-05-20 | User/Codex | Recorded passing vLLM `structured_outputs` contract gate | `reports/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-smoke.md` | Passed |
+| 2026-05-20 | User/Codex | Recorded passing vLLM `structured_outputs` contract gate | `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.md` | Passed |
 
 ## Related pages
 

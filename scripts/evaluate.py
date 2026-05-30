@@ -27,8 +27,8 @@ from scripts.model_adapters import (  # noqa: E402
 
 DEFAULT_SPLIT_PATH = ROOT / "data" / "splits" / "test.jsonl"
 DEFAULT_SCHEMA_PATH = ROOT / "data" / "schemas" / "triage-output.schema.json"
-DEFAULT_JSON_REPORT_PATH = ROOT / "reports" / "baseline-eval.json"
-DEFAULT_MARKDOWN_REPORT_PATH = ROOT / "reports" / "comparison.md"
+DEFAULT_JSON_REPORT_PATH = ROOT / "reports" / "baseline" / "baseline-eval.json"
+DEFAULT_MARKDOWN_REPORT_PATH = ROOT / "reports" / "baseline" / "comparison.md"
 ADAPTER_CHOICES = ("heuristic", "openai-compatible", "openai-finetune")
 
 

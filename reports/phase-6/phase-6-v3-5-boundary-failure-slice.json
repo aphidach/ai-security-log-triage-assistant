@@ -1,0 +1,546 @@
+{
+  "bucket_summary": [
+    {
+      "bucket": "normal_to_bruteforce",
+      "count": 2,
+      "diagnosis": "Single failed-login events are still being treated as repeated guessing.",
+      "ids": [
+        "v3-hard-000001",
+        "v3-hard-000003"
+      ],
+      "suggested_repair_pattern": "Add anti-gravity normal examples with failed_attempts=1, count=1, isolated 4625, single 401/403 responses, and no burst/correlation evidence.",
+      "title": "Normal -> brute force"
+    },
+    {
+      "bucket": "port_to_bruteforce",
+      "count": 2,
+      "diagnosis": "Reconnaissance signals are still pulled into brute force when wording is generic.",
+      "ids": [
+        "v3-hard-000042",
+        "v3-hard-000049"
+      ],
+      "suggested_repair_pattern": "Add port/recon positives with nmap fingerprint, service enumeration, horizontal scan, unique_hosts/unique_ports thresholds, and blocked/attempt wording.",
+      "title": "Port/recon -> brute force"
+    },
+    {
+      "bucket": "sqli_to_bruteforce",
+      "count": 4,
+      "diagnosis": "Login/API/status context still overrules clear SQL injection payloads.",
+      "ids": [
+        "v3-hard-000021",
+        "v3-hard-000023",
+        "v3-hard-000026",
+        "v3-hard-000029"
+      ],
+      "suggested_repair_pattern": "Add SQLi positives in login, API, search, and reset-password contexts with 401/403/400/500 status codes, keeping quote tautologies, UNION, SLEEP/WAITFOR, stacked queries, and comment markers prominent.",
+      "title": "SQLi -> brute force"
+    },
+    {
+      "bucket": "sqli_to_invalid",
+      "count": 1,
+      "diagnosis": "Quote-heavy SQLi evidence can still break JSON generation despite structured outputs.",
+      "ids": [
+        "v3-hard-000030"
+      ],
+      "suggested_repair_pattern": "Add quote-heavy SQLi examples and keep evidence as short exact substrings that require JSON escaping, then probe structured-output enforcement on the same shape.",
+      "title": "SQLi -> invalid"
+    },
+    {
+      "bucket": "sqli_to_normal",
+      "count": 1,
+      "diagnosis": "Schema-discovery or SQL vocabulary is still underweighted in request-parameter context.",
+      "ids": [
+        "v3-hard-000025"
+      ],
+      "suggested_repair_pattern": "Add information_schema and encoded SQLi positives paired with benign documentation/search hard negatives that contain SQL words without payload boundaries.",
+      "title": "SQLi -> normal"
+    },
+    {
+      "bucket": "sqli_to_traversal",
+      "count": 1,
+      "diagnosis": "SQL quote/comment syntax is still confused with file/path injection syntax.",
+      "ids": [
+        "v3-hard-000028"
+      ],
+      "suggested_repair_pattern": "Add contrast pairs where SQL comment markers such as admin'-- are adjacent to traversal paths such as ../../etc/passwd and encoded ../ sequences.",
+      "title": "SQLi -> traversal"
+    },
+    {
+      "bucket": "traversal_to_bruteforce",
+      "count": 1,
+      "diagnosis": "Status/blocking cues can still trigger the over-strong brute-force label.",
+      "ids": [
+        "v3-hard-000040"
+      ],
+      "suggested_repair_pattern": "Add traversal positives with 401/403/blocked wording and no authentication burst evidence.",
+      "title": "Traversal -> brute force"
+    },
+    {
+      "bucket": "traversal_to_normal",
+      "count": 2,
+      "diagnosis": "Sensitive path traversal tokens are underweighted when the log looks routine.",
+      "ids": [
+        "v3-hard-000031",
+        "v3-hard-000038"
+      ],
+      "suggested_repair_pattern": "Add traversal positives with ../, encoded traversal, /etc/passwd, /etc/shadow, win.ini, secrets.yml, %00, and php://filter while preserving benign relative-path hard negatives.",
+      "title": "Traversal -> normal"
+    },
+    {
+      "bucket": "traversal_to_port",
+      "count": 2,
+      "diagnosis": "Status, user-agent, curl, and generic probing cues distract from traversal paths.",
+      "ids": [
+        "v3-hard-000032",
+        "v3-hard-000034"
+      ],
+      "suggested_repair_pattern": "Add traversal positives with distracting curl/scanner-like user agents and blocked/404 status codes, keeping the sensitive path token prominent.",
+      "title": "Traversal -> port/recon"
+    }
+  ],
+  "created_date": "2026-05-22",
+  "dataset_implications": [
+    {
+      "bucket": "SQLi positives",
+      "details": "Use login/API/search/reset contexts with 401/403/400/500, quote tautologies, UNION SELECT, SLEEP/WAITFOR, stacked queries, comment markers, encoded payloads, and quote-heavy evidence.",
+      "target": "75 examples"
+    },
+    {
+      "bucket": "Traversal positives",
+      "details": "Use ../, encoded %2e%2e, /etc/passwd, /etc/shadow, win.ini, secrets.yml, %00, php://filter, and distracting status/user-agent cues.",
+      "target": "55 examples"
+    },
+    {
+      "bucket": "Normal hard negatives",
+      "details": "Use single auth failures, isolated 4625, benign SQL docs/search terms, benign relative paths, allowlisted inventory, and low-scope monitoring.",
+      "target": "45 examples"
+    },
+    {
+      "bucket": "Port/recon positives",
+      "details": "Use nmap fingerprint, service enumeration, horizontal scan, unique_hosts/unique_ports, and blocked/attempt wording that should not become brute force.",
+      "target": "25 examples"
+    },
+    {
+      "bucket": "No new brute-force positives",
+      "details": "v3.5 should reduce brute-force gravity rather than further strengthening the label.",
+      "target": "0 examples"
+    }
+  ],
+  "expected_label_distribution": {
+    "directory_traversal_attempt": 10,
+    "failed_login_bruteforce": 10,
+    "normal": 10,
+    "port_scan_or_recon": 10,
+    "sql_injection_attempt": 10
+  },
+  "failure_cases": [
+    {
+      "diagnosis": "Single failed-login events are still being treated as repeated guessing.",
+      "expected_evidence": [
+        "Failed password",
+        "failed_attempts=1"
+      ],
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "failure_bucket": "normal_to_bruteforce",
+      "failure_bucket_title": "Normal -> brute force",
+      "id": "v3-hard-000001",
+      "input_log": "May 18 09:00:01 auth-01 sshd[2011]: Failed password for webapp from 192.0.2.44 port 51422 ssh2; failed_attempts=1",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "Failed password",
+        "failed_attempts=1"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"Failed password\",\"failed_attempts=1\"],\"reason\":\"The SSH device repeated a",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add anti-gravity normal examples with failed_attempts=1, count=1, isolated 4625, single 401/403 responses, and no burst/correlation evidence."
+    },
+    {
+      "diagnosis": "Single failed-login events are still being treated as repeated guessing.",
+      "expected_evidence": [
+        "event_id=4625",
+        "count=1",
+        "status=failed_logon"
+      ],
+      "expected_label": "normal",
+      "expected_severity": "low",
+      "failure_bucket": "normal_to_bruteforce",
+      "failure_bucket_title": "Normal -> brute force",
+      "id": "v3-hard-000003",
+      "input_log": "2026-05-18T09:04:30+07:00 winlog event_id=4625 host=ws-07 target_user=jdoe src_ip=203.0.113.74 count=1 status=failed_logon",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "event_id=4625",
+        "count=1"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "medium",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"medium\",\"is_suspicious\":true,\"evidence\":[\"event_id=4625\",\"count=1\"],\"reason\":\"The event ID is repeated in a singl",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add anti-gravity normal examples with failed_attempts=1, count=1, isolated 4625, single 401/403 responses, and no burst/correlation evidence."
+    },
+    {
+      "diagnosis": "Login/API/status context still overrules clear SQL injection payloads.",
+      "expected_evidence": [
+        "username=' OR '1'='1",
+        "status=403"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "sqli_to_bruteforce",
+      "failure_bucket_title": "SQLi -> brute force",
+      "id": "v3-hard-000021",
+      "input_log": "2026-05-18T10:00:01+07:00 app=web route=/login method=POST src_ip=198.51.100.121 username=' OR '1'='1 status=403",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "username=' OR '1'='1",
+        "status=403"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"username=' OR '1'='1\",\"status=403\"],\"reason\":\"The username pattern is rep",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add SQLi positives in login, API, search, and reset-password contexts with 401/403/400/500 status codes, keeping quote tautologies, UNION, SLEEP/WAITFOR, stacked queries, and comment markers prominent."
+    },
+    {
+      "diagnosis": "Login/API/status context still overrules clear SQL injection payloads.",
+      "expected_evidence": [
+        "id=1 OR 1=1",
+        "status=400"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "sqli_to_bruteforce",
+      "failure_bucket_title": "SQLi -> brute force",
+      "id": "v3-hard-000023",
+      "input_log": "2026-05-18T10:04:17+07:00 api-gateway: GET /api/users?id=1 OR 1=1 src=192.0.2.132 status=400 upstream_ms=1200",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "id=1 OR 1=1",
+        "status=400"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"id=1 OR 1=1\",\"status=400\"],\"reason\":\"The API returned a 400 error for a s",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add SQLi positives in login, API, search, and reset-password contexts with 401/403/400/500 status codes, keeping quote tautologies, UNION, SLEEP/WAITFOR, stacked queries, and comment markers prominent."
+    },
+    {
+      "diagnosis": "Schema-discovery or SQL vocabulary is still underweighted in request-parameter context.",
+      "expected_evidence": [
+        "information_schema.tables",
+        "403"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "sqli_to_normal",
+      "failure_bucket_title": "SQLi -> normal",
+      "id": "v3-hard-000025",
+      "input_log": "192.0.2.111 - - [18/May/2026:10:08:22 +0700] \"GET /search?q=information_schema.tables HTTP/1.1\" 403 640 \"-\" \"Mozilla/5.0\"",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "information_schema.tables",
+        "403"
+      ],
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "raw_prediction_prefix": "{\"label\":\"normal\",\"severity\":\"low\",\"is_suspicious\":false,\"evidence\":[\"information_schema.tables\",\"403\"],\"reason\":\"The request contains a direct query to the tab",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add information_schema and encoded SQLi positives paired with benign documentation/search hard negatives that contain SQL words without payload boundaries."
+    },
+    {
+      "diagnosis": "Login/API/status context still overrules clear SQL injection payloads.",
+      "expected_evidence": [
+        "username=admin'--",
+        "status=401"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "sqli_to_bruteforce",
+      "failure_bucket_title": "SQLi -> brute force",
+      "id": "v3-hard-000026",
+      "input_log": "2026-05-18T10:10:15+07:00 app=web route=/login method=POST src_ip=203.0.113.155 username=admin'-- status=401",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "username=admin'--",
+        "status=401"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"username=admin'--\",\"status=401\"],\"reason\":\"The login request repeated a p",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add SQLi positives in login, API, search, and reset-password contexts with 401/403/400/500 status codes, keeping quote tautologies, UNION, SLEEP/WAITFOR, stacked queries, and comment markers prominent."
+    },
+    {
+      "diagnosis": "SQL quote/comment syntax is still confused with file/path injection syntax.",
+      "expected_evidence": [
+        "email=test@example.com' OR 'a'='a",
+        "status=403"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "sqli_to_traversal",
+      "failure_bucket_title": "SQLi -> traversal",
+      "id": "v3-hard-000028",
+      "input_log": "2026-05-18T10:14:39+07:00 app=web route=/reset-password method=POST src_ip=192.0.2.56 email=test@example.com' OR 'a'='a status=403",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "OR 'a'='a",
+        "status=403"
+      ],
+      "predicted_label": "directory_traversal_attempt",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"directory_traversal_attempt\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"OR 'a'='a\",\"status=403\"],\"reason\":\"The email contains a OR operator s",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add contrast pairs where SQL comment markers such as admin'-- are adjacent to traversal paths such as ../../etc/passwd and encoded ../ sequences."
+    },
+    {
+      "diagnosis": "Login/API/status context still overrules clear SQL injection payloads.",
+      "expected_evidence": [
+        "filter=1;DROP TABLE audit_log--",
+        "status=500"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "sqli_to_bruteforce",
+      "failure_bucket_title": "SQLi -> brute force",
+      "id": "v3-hard-000029",
+      "input_log": "2026-05-18T10:16:07+07:00 api-gateway: GET /api/report?filter=1;DROP TABLE audit_log-- src=203.0.113.167 status=500",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "DROP TABLE audit_log--",
+        "status=500"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"DROP TABLE audit_log--\",\"status=500\"],\"reason\":\"The API request repeated ",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add SQLi positives in login, API, search, and reset-password contexts with 401/403/400/500 status codes, keeping quote tautologies, UNION, SLEEP/WAITFOR, stacked queries, and comment markers prominent."
+    },
+    {
+      "diagnosis": "Quote-heavy SQLi evidence can still break JSON generation despite structured outputs.",
+      "expected_evidence": [
+        "q=\\\" OR \\\"1\\\"=\\\"1",
+        "400"
+      ],
+      "expected_label": "sql_injection_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "sqli_to_invalid",
+      "failure_bucket_title": "SQLi -> invalid",
+      "id": "v3-hard-000030",
+      "input_log": "203.0.113.77 - - [18/May/2026:10:18:25 +0700] \"GET /search?q=\\\" OR \\\"1\\\"=\\\"1 HTTP/1.1\" 400 530 \"-\" \"Mozilla/5.0\"",
+      "json_parse_success": false,
+      "predicted_evidence": [],
+      "predicted_label": "<invalid>",
+      "predicted_severity": null,
+      "raw_prediction_prefix": "{\"label\":\"sql_injection_attempt\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"OR \"                                                                       ",
+      "schema_success": false,
+      "suggested_repair_pattern": "Add quote-heavy SQLi examples and keep evidence as short exact substrings that require JSON escaping, then probe structured-output enforcement on the same shape."
+    },
+    {
+      "diagnosis": "Sensitive path traversal tokens are underweighted when the log looks routine.",
+      "expected_evidence": [
+        "../config.yml",
+        "403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "traversal_to_normal",
+      "failure_bucket_title": "Traversal -> normal",
+      "id": "v3-hard-000031",
+      "input_log": "198.51.100.72 - - [18/May/2026:11:00:05 +0700] \"GET /download?file=../config.yml HTTP/1.1\" 403 210 \"-\" \"curl/8.1\"",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "/download?file=../config.yml",
+        "403"
+      ],
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "raw_prediction_prefix": "{\"label\":\"normal\",\"severity\":\"low\",\"is_suspicious\":false,\"evidence\":[\"/download?file=../config.yml\",\"403\"],\"reason\":\"The request contains a common directory dow",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add traversal positives with ../, encoded traversal, /etc/passwd, /etc/shadow, win.ini, secrets.yml, %00, and php://filter while preserving benign relative-path hard negatives."
+    },
+    {
+      "diagnosis": "Status, user-agent, curl, and generic probing cues distract from traversal paths.",
+      "expected_evidence": [
+        "../../../etc/shadow",
+        "404"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "traversal_to_port",
+      "failure_bucket_title": "Traversal -> port/recon",
+      "id": "v3-hard-000032",
+      "input_log": "203.0.113.18 - - [18/May/2026:11:02:19 +0700] \"GET /download?file=../../../etc/shadow HTTP/1.1\" 404 1874 \"-\" \"curl/8.1\"",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "file=../../../etc/shadow",
+        "404"
+      ],
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "medium",
+      "raw_prediction_prefix": "{\"label\":\"port_scan_or_recon\",\"severity\":\"medium\",\"is_suspicious\":true,\"evidence\":[\"file=../../../etc/shadow\",\"404\"],\"reason\":\"The file contains a shadow direct",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add traversal positives with distracting curl/scanner-like user agents and blocked/404 status codes, keeping the sensitive path token prominent."
+    },
+    {
+      "diagnosis": "Status, user-agent, curl, and generic probing cues distract from traversal paths.",
+      "expected_evidence": [
+        "/files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini",
+        "403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "traversal_to_port",
+      "failure_bucket_title": "Traversal -> port/recon",
+      "id": "v3-hard-000034",
+      "input_log": "192.0.2.172 - - [18/May/2026:11:06:33 +0700] \"GET /files/%2e%2e%2f%2e%2e%2fwindows%2fwin.ini HTTP/1.1\" 403 700 \"-\" \"curl/8.1\"",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "%2e%2e%2fwindows%2fwin.ini",
+        "403"
+      ],
+      "predicted_label": "port_scan_or_recon",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"port_scan_or_recon\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"%2e%2e%2fwindows%2fwin.ini\",\"403\"],\"reason\":\"The request includes a Windows ex",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add traversal positives with distracting curl/scanner-like user agents and blocked/404 status codes, keeping the sensitive path token prominent."
+    },
+    {
+      "diagnosis": "Sensitive path traversal tokens are underweighted when the log looks routine.",
+      "expected_evidence": [
+        "../../../../var/log/auth.log",
+        "403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "traversal_to_normal",
+      "failure_bucket_title": "Traversal -> normal",
+      "id": "v3-hard-000038",
+      "input_log": "203.0.113.201 - - [18/May/2026:11:14:29 +0700] \"GET /download?file=../../../../var/log/auth.log HTTP/1.1\" 403 122 \"-\" \"curl/8.1\"",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "../../../../var/log/auth.log",
+        "403"
+      ],
+      "predicted_label": "normal",
+      "predicted_severity": "low",
+      "raw_prediction_prefix": "{\"label\":\"normal\",\"severity\":\"low\",\"is_suspicious\":false,\"evidence\":[\"../../../../var/log/auth.log\",\"403\"],\"reason\":\"The file path is within the default directo",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add traversal positives with ../, encoded traversal, /etc/passwd, /etc/shadow, win.ini, secrets.yml, %00, and php://filter while preserving benign relative-path hard negatives."
+    },
+    {
+      "diagnosis": "Status/blocking cues can still trigger the over-strong brute-force label.",
+      "expected_evidence": [
+        "/backup/../../secrets.yml",
+        "status=403"
+      ],
+      "expected_label": "directory_traversal_attempt",
+      "expected_severity": "high",
+      "failure_bucket": "traversal_to_bruteforce",
+      "failure_bucket_title": "Traversal -> brute force",
+      "id": "v3-hard-000040",
+      "input_log": "2026-05-18T11:18:40+07:00 app=web route=/backup/../../secrets.yml src_ip=198.51.100.116 status=403 bytes=0",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "status=403",
+        "secrets.yml"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"status=403\",\"secrets.yml\"],\"reason\":\"The status field contains a tautolog",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add traversal positives with 401/403/blocked wording and no authentication burst evidence."
+    },
+    {
+      "diagnosis": "Reconnaissance signals are still pulled into brute force when wording is generic.",
+      "expected_evidence": [
+        "nmap fingerprint",
+        "probed_ports=80,443,8080,8443"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "high",
+      "failure_bucket": "port_to_bruteforce",
+      "failure_bucket_title": "Port/recon -> brute force",
+      "id": "v3-hard-000042",
+      "input_log": "2026-05-18T12:02:18+07:00 ids: nmap fingerprint from 198.51.100.61 to 203.0.113.224; probed_ports=80,443,8080,8443; packets=92",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "ids=nmap fingerprint",
+        "probed_ports=80,443,8080,8443",
+        "packets=92"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"ids=nmap fingerprint\",\"probed_ports=80,443,8080,8443\",\"packets=92\"],\"reas",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add port/recon positives with nmap fingerprint, service enumeration, horizontal scan, unique_hosts/unique_ports thresholds, and blocked/attempt wording."
+    },
+    {
+      "diagnosis": "Reconnaissance signals are still pulled into brute force when wording is generic.",
+      "expected_evidence": [
+        "service enumeration",
+        "unique_ports=7",
+        "banners_requested=true"
+      ],
+      "expected_label": "port_scan_or_recon",
+      "expected_severity": "medium",
+      "failure_bucket": "port_to_bruteforce",
+      "failure_bucket_title": "Port/recon -> brute force",
+      "id": "v3-hard-000049",
+      "input_log": "2026-05-18T12:16:55+07:00 ids: service enumeration src=198.51.100.200 dst=203.0.113.11 unique_ports=7 banners_requested=true",
+      "json_parse_success": true,
+      "predicted_evidence": [
+        "service enumeration",
+        "unique_ports=7",
+        "banners_requested=true"
+      ],
+      "predicted_label": "failed_login_bruteforce",
+      "predicted_severity": "high",
+      "raw_prediction_prefix": "{\"label\":\"failed_login_bruteforce\",\"severity\":\"high\",\"is_suspicious\":true,\"evidence\":[\"service enumeration\",\"unique_ports=7\",\"banners_requested=true\"],\"reason\":",
+      "schema_success": true,
+      "suggested_repair_pattern": "Add port/recon positives with nmap fingerprint, service enumeration, horizontal scan, unique_hosts/unique_ports thresholds, and blocked/attempt wording."
+    }
+  ],
+  "fixed_test_split_used": false,
+  "label_failure_count": 16,
+  "metrics": {
+    "average_latency_ms": 623.666583,
+    "evidence_partial_match": 0.94,
+    "invalid_output_count": 1,
+    "is_suspicious_accuracy": 0.88,
+    "json_parse_success_rate": 0.98,
+    "label_accuracy": 0.68,
+    "schema_success_rate": 0.98,
+    "severity_accuracy": 0.72
+  },
+  "next_step": "Create the v3.5 boundary repair supplement from these buckets, then train and probe v3.5 on hard-contrast before any mini semantic or fixed test comparison.",
+  "predicted_label_distribution": {
+    "<invalid>": 1,
+    "directory_traversal_attempt": 6,
+    "failed_login_bruteforce": 19,
+    "normal": 11,
+    "port_scan_or_recon": 10,
+    "sql_injection_attempt": 3
+  },
+  "runtime_context": {
+    "base_url": "http://192.168.8.141:8080/v1",
+    "config_path": "config-adapter.yml",
+    "extra_body": null,
+    "max_retries": 0,
+    "max_tokens": 512,
+    "model": "lfm2-security-triage-v3-4",
+    "prompt_version": "triage-json-v2.1",
+    "request_options": {
+      "temperature": 0.0
+    },
+    "response_format_mode": "structured_outputs_json",
+    "response_format_requested": "structured_outputs"
+  },
+  "sample_count": 50,
+  "source_report_path": "reports/phase-6/openai-compatible-vllm-structured-outputs-v3-4-temp-0-hard-contrast-memorization-probe.json",
+  "source_split_path": "data/generated/v3-hard-contrast-security-triage.jsonl",
+  "summary": "v3.5 slices the v3.4 temperature=0 hard-contrast failures so the next repair can target SQLi, traversal, invalid JSON, and brute-force gravity without using the fixed test split."
+}

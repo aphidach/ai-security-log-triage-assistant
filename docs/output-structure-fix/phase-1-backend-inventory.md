@@ -9,9 +9,9 @@ Phase 1 ต้องตอบให้ได้ก่อนว่า smoke/probe
 **Sources**
 
 - `docs/structured-output-fix-plan.md` สำหรับ Phase 1 checklist และ pass condition (source: docs/structured-output-fix-plan.md)
-- `reports/structured-output-run-artifacts.md` สำหรับ current endpoint metadata และ 1/5 smoke baseline (source: reports/structured-output-run-artifacts.md)
-- `reports/openai-compatible-unsloth-studio-json-schema-smoke.json` สำหรับ per-sample adapter metadata และ raw output (source: reports/openai-compatible-unsloth-studio-json-schema-smoke.json)
-- `reports/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ vLLM smoke result ที่ผ่าน output contract (source: reports/openai-compatible-vllm-structured-outputs-smoke.json)
+- `reports/structured-output/runtime/structured-output-run-artifacts.md` สำหรับ current endpoint metadata และ 1/5 smoke baseline (source: reports/structured-output/runtime/structured-output-run-artifacts.md)
+- `reports/structured-output/smoke/openai-compatible-unsloth-studio-json-schema-smoke.json` สำหรับ per-sample adapter metadata และ raw output (source: reports/structured-output/smoke/openai-compatible-unsloth-studio-json-schema-smoke.json)
+- `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ vLLM smoke result ที่ผ่าน output contract (source: reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json)
 - `scripts/model_adapters/openai_compatible.py` สำหรับ adapter modes `json_schema`, `structured_outputs`, `guided_json`, `responses_parse` (source: scripts/model_adapters/openai_compatible.py)
 - `scripts/probe_openai_structured_output.py` สำหรับ direct probe path ที่จะต่อยอดใน Phase 2 (source: scripts/probe_openai_structured_output.py)
 - vLLM supported models docs ระบุ `Lfm2ForCausalLM` และ `LiquidAI/LFM2-350M` (source: https://docs.vllm.ai/en/stable/models/supported_models/)
@@ -394,7 +394,7 @@ Our adapter already has modes for these names:
 
 ## Inventory Report Template
 
-Fill `reports/structured-output-backend-inventory.md` with:
+Fill `reports/structured-output/runtime/structured-output-backend-inventory.md` with:
 
 | Field | Current Endpoint | vLLM Candidate |
 | --- | --- | --- |
@@ -410,7 +410,7 @@ Fill `reports/structured-output-backend-inventory.md` with:
 
 ## Phase 1 Pass Condition
 
-Phase 1 passes only when `reports/structured-output-backend-inventory.md` lets us answer:
+Phase 1 passes only when `reports/structured-output/runtime/structured-output-backend-inventory.md` lets us answer:
 
 - exact backend and version
 - exact base model and LoRA adapter path
@@ -423,8 +423,8 @@ Phase 1 passes only when `reports/structured-output-backend-inventory.md` lets u
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 2026-05-20 | Codex | Created Phase 1 working note and seeded current endpoint inventory from preserved smoke artifact | `docs/output-structure-fix/phase-1-backend-inventory.md`, `reports/structured-output-run-artifacts.md` | In progress |
-| 2026-05-20 | User/Codex | Recorded successful vLLM `structured_outputs` smoke run on `http://192.168.8.141:8080/v1` | `reports/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output-backend-inventory.md` | Passed for vLLM path |
+| 2026-05-20 | Codex | Created Phase 1 working note and seeded current endpoint inventory from preserved smoke artifact | `docs/output-structure-fix/phase-1-backend-inventory.md`, `reports/structured-output/runtime/structured-output-run-artifacts.md` | In progress |
+| 2026-05-20 | User/Codex | Recorded successful vLLM `structured_outputs` smoke run on `http://192.168.8.141:8080/v1` | `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output/runtime/structured-output-backend-inventory.md` | Passed for vLLM path |
 
 ## Decision Log
 

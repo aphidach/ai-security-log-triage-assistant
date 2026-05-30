@@ -10,7 +10,7 @@ Phase 3 ทดสอบ runtime/mode candidate ด้วย smoke split แล�
 - `reports/README.md` สำหรับ report path convention (source: reports/README.md)
 - `data/splits/smoke-output-contract.jsonl` สำหรับ smoke split (source: data/splits/smoke-output-contract.jsonl)
 - `data/schemas/triage-output.schema.json` สำหรับ output schema (source: data/schemas/triage-output.schema.json)
-- `reports/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ vLLM `structured_outputs` smoke result (source: reports/openai-compatible-vllm-structured-outputs-smoke.json)
+- `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ vLLM `structured_outputs` smoke result (source: reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json)
 
 **Last updated**
 
@@ -24,12 +24,12 @@ Passed for the vLLM `structured_outputs` candidate. Phase 2 adversarial probe ha
 
 | Candidate | Mode | Report path | Status |
 | --- | --- | --- | --- |
-| Current endpoint | `responses-parse` | `reports/openai-compatible-current-responses-parse-smoke.json` | Pending |
-| Current endpoint | `json-schema` | `reports/openai-compatible-current-json-schema-smoke.json` | Pending |
-| vLLM | `structured-outputs` | `reports/openai-compatible-vllm-structured-outputs-smoke.json` | Passed output contract; semantic accuracy still low |
-| SGLang | `structured-outputs` or XGrammar equivalent | `reports/openai-compatible-sglang-structured-outputs-smoke.json` | Optional |
+| Current endpoint | `responses-parse` | `reports/structured-output/smoke/openai-compatible-current-responses-parse-smoke.json` | Pending |
+| Current endpoint | `json-schema` | `reports/structured-output/smoke/openai-compatible-current-json-schema-smoke.json` | Pending |
+| vLLM | `structured-outputs` | `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json` | Passed output contract; semantic accuracy still low |
+| SGLang | `structured-outputs` or XGrammar equivalent | `reports/structured-output/smoke/openai-compatible-sglang-structured-outputs-smoke.json` | Optional |
 
-The report-level matrix is preserved in `reports/structured-output-capability-matrix.md`.
+The report-level matrix is preserved in `reports/structured-output/runtime/structured-output-capability-matrix.md`.
 
 ## vLLM Smoke Result
 
@@ -74,7 +74,7 @@ Interpretation:
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-20 | Codex | Created Phase 3 detail stub | `docs/output-structure-fix/phase-3-runtime-capability-matrix.md` | Drafted |
-| 2026-05-20 | User/Codex | Added vLLM `structured_outputs` smoke result with 5/5 JSON and schema success | `reports/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/openai-compatible-vllm-structured-outputs-smoke.md` | Passed output contract |
+| 2026-05-20 | User/Codex | Added vLLM `structured_outputs` smoke result with 5/5 JSON and schema success | `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.md` | Passed output contract |
 
 ## Related pages
 

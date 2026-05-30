@@ -7,9 +7,9 @@ v4.5 เป็นรอบแรกที่ Qwen3.5 ถูกบันทึก
 **Sources**
 
 - Qwen3.5 LoRA pilot config (source: ml/unsloth/qwen3-5-0-8b-security-triage-pilot.yaml)
-- Qwen3.5 LoRA training result capture (source: reports/phase-8-v4-5-qwen35-lora-training-result.json, source: reports/phase-8-v4-5-qwen35-lora-training-result.md)
+- Qwen3.5 LoRA training result capture (source: reports/phase-8/phase-8-v4-5-qwen35-lora-training-result.json, source: reports/phase-8/phase-8-v4-5-qwen35-lora-training-result.md)
 - OpenAI-compatible runtime config with `max_tokens: 512`, structured outputs, and model alias `qwen3.6-8B-triage-v1` (source: config-adapter.yml)
-- v4.5 hard-contrast evaluation reports (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v1-temp-0-hard-contrast-memorization-probe.md)
+- v4.5 hard-contrast evaluation reports (source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v1-temp-0-hard-contrast-memorization-probe.md)
 - Hard-contrast probe split used for diagnostic evaluation only (source: data/generated/v3-hard-contrast-security-triage.jsonl)
 - Earlier Qwen3.5 base-model hold and boundary audit for contrast (source: docs/output-structure-fix/phase-8-v4-3-capacity-architecture-diagnostic-plan.md, source: docs/output-structure-fix/phase-8-v4-4-hard-contrast-boundary-audit-plan.md)
 
@@ -69,8 +69,8 @@ OPENAI_COMPATIBLE_CONFIG_PATH=config-adapter.yml \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v1-temp-0-hard-contrast-memorization-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v1-temp-0-hard-contrast-memorization-probe.md
 ```
 
 Runtime metadata recorded by the evaluator:
@@ -159,7 +159,7 @@ Follow-up status: v4.6 completed this normal/severity calibration path. It impro
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 2026-05-23 | User/Codex | Captured Qwen3.5 LoRA pilot training completion and hard-contrast evaluation result | `reports/phase-8-v4-5-qwen35-lora-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json` | Trained/probed; calibration held |
+| 2026-05-23 | User/Codex | Captured Qwen3.5 LoRA pilot training completion and hard-contrast evaluation result | `reports/phase-8/phase-8-v4-5-qwen35-lora-training-result.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json` | Trained/probed; calibration held |
 | 2026-05-23 | User/Codex | Linked v4.5 follow-up to the completed v4.6 calibration result | `docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md` | Follow-up completed; fixed split still held |
 
 ## Decision Log

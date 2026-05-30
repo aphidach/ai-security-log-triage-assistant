@@ -12,13 +12,13 @@
 - `docs/Day6.md` สำหรับสถานะ Day 6 ล่าสุดและ decision ว่าต้องพิสูจน์ constrained decoding ก่อน fixed split (source: docs/Day6.md)
 - `docs/output-contract-hardening.md` สำหรับสิ่งที่แก้แล้วใน prompt `triage-json-v2`, OpenAI SDK adapter, schema sanitizer และ smoke split (source: docs/output-contract-hardening.md)
 - `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md` สำหรับ v2 smoke failure mode ที่ `responses_parse` ยังผ่านเพียง 1/5 (source: docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md)
-- `reports/openai-compatible-unsloth-studio-json-schema-smoke.json` สำหรับ persisted smoke artifact ที่ถูก preserve ตาม report path convention: JSON/schema success `0.2`, invalid output `4` จาก 5 samples (source: reports/openai-compatible-unsloth-studio-json-schema-smoke.json)
-- `reports/structured-output-run-artifacts.md` สำหรับ Phase 0 evidence register, artifact checksums, split checksums และ sample evidence summary (source: reports/structured-output-run-artifacts.md)
-- `reports/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ vLLM `structured_outputs` smoke result ที่ผ่าน output contract: JSON/schema success `1.0`, invalid output `0` (source: reports/openai-compatible-vllm-structured-outputs-smoke.json)
-- `reports/structured-output-probe-unsloth-studio-json-schema-smoke.json` สำหรับ Unsloth Studio baseline probe: JSON/schema success `0.2`, markdown fence `4/5` (source: reports/structured-output-probe-unsloth-studio-json-schema-smoke.json)
-- `reports/structured-output-probe-vllm-structured-outputs-smoke.json` สำหรับ vLLM baseline probe: JSON/schema success `1.0`, markdown fence `0/5` (source: reports/structured-output-probe-vllm-structured-outputs-smoke.json)
-- `reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json` และ `reports/structured-output-probe-vllm-structured-outputs-adversarial.json` สำหรับ Phase 2 adversarial format comparison (source: reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json; source: reports/structured-output-probe-vllm-structured-outputs-adversarial.json)
-- `reports/frozen-splits.sha256` สำหรับ checksum ของ fixed test split และ smoke output-contract split (source: reports/frozen-splits.sha256)
+- `reports/structured-output/smoke/openai-compatible-unsloth-studio-json-schema-smoke.json` สำหรับ persisted smoke artifact ที่ถูก preserve ตาม report path convention: JSON/schema success `0.2`, invalid output `4` จาก 5 samples (source: reports/structured-output/smoke/openai-compatible-unsloth-studio-json-schema-smoke.json)
+- `reports/structured-output/runtime/structured-output-run-artifacts.md` สำหรับ Phase 0 evidence register, artifact checksums, split checksums และ sample evidence summary (source: reports/structured-output/runtime/structured-output-run-artifacts.md)
+- `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json` สำหรับ vLLM `structured_outputs` smoke result ที่ผ่าน output contract: JSON/schema success `1.0`, invalid output `0` (source: reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json)
+- `reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-smoke.json` สำหรับ Unsloth Studio baseline probe: JSON/schema success `0.2`, markdown fence `4/5` (source: reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-smoke.json)
+- `reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.json` สำหรับ vLLM baseline probe: JSON/schema success `1.0`, markdown fence `0/5` (source: reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.json)
+- `reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-adversarial.json` และ `reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.json` สำหรับ Phase 2 adversarial format comparison (source: reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-adversarial.json; source: reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.json)
+- `reports/checksums/frozen-splits.sha256` สำหรับ checksum ของ fixed test split และ smoke output-contract split (source: reports/checksums/frozen-splits.sha256)
 - `scripts/probe_openai_structured_output.py` สำหรับ direct structured-output probe path ที่ต้องต่อยอด (source: scripts/probe_openai_structured_output.py)
 - `scripts/model_adapters/openai_compatible.py` สำหรับ adapter modes ปัจจุบัน เช่น `responses_parse`, `json_schema`, `structured_outputs`, `guided_json`, `json_object` (source: scripts/model_adapters/openai_compatible.py)
 - `scripts/evaluate.py` สำหรับ evaluator และ report output path ที่ต้องแยกตาม mode/runtime (source: scripts/evaluate.py)
@@ -71,7 +71,7 @@
 Checklist:
 
 - [x] Freeze `data/splits/test.jsonl` และไม่ใช้กับ prompt/runtime tuning ระหว่างแก้ output contract
-- [x] เก็บ smoke artifact ปัจจุบันจาก `reports/openai-compatible-eval-model-v2-output-v1.json` / `.md` เป็น mode-specific path ก่อนรันใหม่
+- [x] เก็บ smoke artifact ปัจจุบันจาก `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` / `.md` เป็น mode-specific path ก่อนรันใหม่
 - [x] ตั้ง convention report path เช่น `reports/openai-compatible-{runtime}-{mode}-smoke.json`
 - [x] บันทึก raw output ของทั้ง 5 smoke samples ทุก run เพื่อดูว่า fail เพราะ markdown fence, prose, missing field หรือ invalid enum
 - [x] ใส่ metadata ทุก report ให้มี backend, backend version, model alias, response model, adapter mode, schema mode และ launch note เท่าที่มี
@@ -102,11 +102,11 @@ reports/{adapter}-{runtime}-{mode}-mini-semantic-eval.md
 
 Deliverables:
 
-- `reports/openai-compatible-unsloth-studio-json-schema-smoke.json`
-- `reports/openai-compatible-unsloth-studio-json-schema-smoke.md`
+- `reports/structured-output/smoke/openai-compatible-unsloth-studio-json-schema-smoke.json`
+- `reports/structured-output/smoke/openai-compatible-unsloth-studio-json-schema-smoke.md`
 - `reports/README.md`
-- `reports/frozen-splits.sha256`
-- `reports/structured-output-run-artifacts.md`
+- `reports/checksums/frozen-splits.sha256`
+- `reports/structured-output/runtime/structured-output-run-artifacts.md`
 
 Pass condition:
 
@@ -118,7 +118,7 @@ Pass condition:
 
 รายละเอียด: [[output-structure-fix/phase-1-backend-inventory]]
 
-หมายเหตุ: `reports/structured-output-backend-inventory.md` มี vLLM backend version, base model, LoRA adapter path, served alias, request mode และ smoke result แล้ว ส่วน current endpoint เดิมยังไม่รู้ exact backend แต่เก็บไว้เป็น failing baseline
+หมายเหตุ: `reports/structured-output/runtime/structured-output-backend-inventory.md` มี vLLM backend version, base model, LoRA adapter path, served alias, request mode และ smoke result แล้ว ส่วน current endpoint เดิมยังไม่รู้ exact backend แต่เก็บไว้เป็น failing baseline
 
 Checklist:
 
@@ -131,7 +131,7 @@ Checklist:
 
 Deliverables:
 
-- `reports/structured-output-backend-inventory.md`
+- `reports/structured-output/runtime/structured-output-backend-inventory.md`
 - `docs/output-structure-fix/phase-1-backend-inventory.md`
 - ส่วน `Runtime Metadata` ใน smoke report ทุกไฟล์
 
@@ -150,7 +150,7 @@ Checklist:
 - [x] เพิ่ม option ใน `scripts/probe_openai_structured_output.py` เพื่อใส่ adversarial format instruction เช่นขอให้ตอบใน markdown fence
 - [x] เพิ่ม option ให้ probe หลาย sample จาก `data/splits/smoke-output-contract.jsonl` ในคำสั่งเดียว แต่ยังบันทึก per-sample raw output
 - [x] ให้ probe print `requested_model`, `response_model`, `mode`, `provider schema mode`, latency และ validation result
-- [x] เพิ่ม run mode ที่บังคับ output path แยก ไม่เขียนทับ `reports/openai-compatible-eval.json`
+- [x] เพิ่ม run mode ที่บังคับ output path แยก ไม่เขียนทับ `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json`
 - [x] เพิ่ม debug-only JSON extraction report ถ้าจำเป็น แต่ห้ามเอา extraction result ไปนับเป็น main metric
 
 Phase 2 result:
@@ -165,10 +165,10 @@ Phase 2 result:
 Deliverables:
 
 - patch ใน `scripts/probe_openai_structured_output.py`
-- `reports/structured-output-probe-unsloth-studio-json-schema-smoke.json`
-- `reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json`
-- `reports/structured-output-probe-vllm-structured-outputs-smoke.json`
-- `reports/structured-output-probe-vllm-structured-outputs-adversarial.json`
+- `reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-smoke.json`
+- `reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-adversarial.json`
+- `reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.json`
+- `reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.json`
 
 Pass condition:
 
@@ -196,7 +196,7 @@ Phase 2 interpretation:
 
 Deliverables:
 
-- `reports/structured-output-capability-matrix.md`
+- `reports/structured-output/runtime/structured-output-capability-matrix.md`
 - mode-specific JSON/MD report อย่างน้อยสำหรับ current endpoint และหนึ่ง constrained-decoding candidate
 
 Pass condition:
@@ -222,8 +222,8 @@ OPENAI_COMPATIBLE_SCHEMA_PATH=data/schemas/triage-output.schema.json \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/smoke-output-contract.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-smoke.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-smoke.md \
+  --out reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json \
+  --comparison-out reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.md \
   --no-progress
 ```
 
@@ -282,8 +282,8 @@ Deliverables:
 
 Result:
 
-- `reports/openai-compatible-vllm-structured-outputs-mini-semantic-eval.json`
-- `reports/openai-compatible-vllm-structured-outputs-mini-semantic-eval.md`
+- `reports/structured-output/mini-semantic-eval/openai-compatible-vllm-structured-outputs-mini-semantic-eval.json`
+- `reports/structured-output/mini-semantic-eval/openai-compatible-vllm-structured-outputs-mini-semantic-eval.md`
 - Mini eval JSON/schema success stayed at `0.88`, not `1.0`, because 3 `port_scan_or_recon` samples timed out.
 - Label accuracy was `0.24`; predictions over-concentrated on `failed_login_bruteforce`.
 - Do not move to Phase 7 fixed split yet.
@@ -331,14 +331,14 @@ Run:
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/test.jsonl \
-  --out reports/finetuned-eval.json \
-  --comparison-out reports/comparison.md
+  --out reports/phase-7/finetuned-eval.json \
+  --comparison-out reports/phase-7/comparison.md
 ```
 
 Deliverables:
 
-- `reports/finetuned-eval.json`
-- updated `reports/comparison.md`
+- `reports/phase-7/finetuned-eval.json`
+- updated `reports/phase-7/comparison.md`
 - Day 6 error analysis ราย label
 
 Pass condition:
@@ -363,12 +363,12 @@ Pass condition:
 | --- | --- | --- | --- | --- |
 | 2026-05-20 | Codex | Created structured output fix plan from the recommended next plan | `docs/structured-output-fix-plan.md` | Done |
 | 2026-05-20 | Codex | Set the report path convention for structured-output smoke and mini semantic eval runs | `reports/README.md`, `docs/structured-output-fix-plan.md` | Done |
-| 2026-05-20 | Codex | Completed Phase 0 evidence preservation with canonical smoke artifacts, split checksums, and a run artifact register | `reports/openai-compatible-unsloth-studio-json-schema-smoke.json`, `reports/openai-compatible-unsloth-studio-json-schema-smoke.md`, `reports/frozen-splits.sha256`, `reports/structured-output-run-artifacts.md` | Done |
-| 2026-05-20 | Codex | Started Phase 1 by creating phase-detail notes and backend inventory report template | `docs/output-structure-fix/`, `reports/structured-output-backend-inventory.md` | In progress |
-| 2026-05-20 | User/Codex | Recorded vLLM `structured_outputs` smoke contract pass and moved active work to Phase 5 | `reports/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output-capability-matrix.md`, `docs/output-structure-fix/` | Passed contract gate |
-| 2026-05-20 | User/Codex | Completed Phase 2 runtime probe comparison for Unsloth Studio and vLLM | `reports/structured-output-probe-*.json`, `docs/output-structure-fix/phase-2-probe-hardening.md` | Complete |
+| 2026-05-20 | Codex | Completed Phase 0 evidence preservation with canonical smoke artifacts, split checksums, and a run artifact register | `reports/structured-output/smoke/openai-compatible-unsloth-studio-json-schema-smoke.json`, `reports/structured-output/smoke/openai-compatible-unsloth-studio-json-schema-smoke.md`, `reports/checksums/frozen-splits.sha256`, `reports/structured-output/runtime/structured-output-run-artifacts.md` | Done |
+| 2026-05-20 | Codex | Started Phase 1 by creating phase-detail notes and backend inventory report template | `docs/output-structure-fix/`, `reports/structured-output/runtime/structured-output-backend-inventory.md` | In progress |
+| 2026-05-20 | User/Codex | Recorded vLLM `structured_outputs` smoke contract pass and moved active work to Phase 5 | `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json`, `reports/structured-output/runtime/structured-output-capability-matrix.md`, `docs/output-structure-fix/` | Passed contract gate |
+| 2026-05-20 | User/Codex | Completed Phase 2 runtime probe comparison for Unsloth Studio and vLLM | `reports/structured-output/probes/structured-output-probe-*.json`, `docs/output-structure-fix/phase-2-probe-hardening.md` | Complete |
 | 2026-05-22 | User/Codex | Closed Phase 6 after v3.5 repair run and kept fixed split held | `docs/Day6.md`, `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md`, `docs/output-structure-fix/phase-6-v3-5-boundary-repair-plan.md` | Closed with limitations |
-| 2026-05-22 | Codex | Ran Phase 7 fixed split comparison and generated final summary artifacts | `reports/comparison.md`, `reports/phase-7-fixed-split-summary.html`, `docs/output-structure-fix/phase-7-fixed-split-comparison.md` | Executed; decision `hold` |
+| 2026-05-22 | Codex | Ran Phase 7 fixed split comparison and generated final summary artifacts | `reports/phase-7/comparison.md`, `reports/phase-7/phase-7-fixed-split-summary.html`, `docs/output-structure-fix/phase-7-fixed-split-comparison.md` | Executed; decision `hold` |
 
 ## Decision Log
 

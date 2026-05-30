@@ -8,14 +8,14 @@ Phase 7 เป็น fixed split evaluation gate สำหรับวัด v3.
 
 - `docs/structured-output-fix-plan.md` สำหรับ Phase 7 prerequisites (source: docs/structured-output-fix-plan.md)
 - `data/splits/test.jsonl` สำหรับ fixed holdout split (source: data/splits/test.jsonl)
-- `reports/frozen-splits.sha256` สำหรับ checksum ของ fixed split (source: reports/frozen-splits.sha256)
+- `reports/checksums/frozen-splits.sha256` สำหรับ checksum ของ fixed split (source: reports/checksums/frozen-splits.sha256)
 - `reports/README.md` สำหรับ fixed split report path (source: reports/README.md)
 - `docs/Day6.md` สำหรับ Phase 6 closure และ v3.5 limitation ที่ยังไม่ใช่ model promotion (source: docs/Day6.md)
-- `reports/phase-6-v3-5-boundary-training-result.md` สำหรับ candidate status, runtime probe metrics และ fixed split hold status (source: reports/phase-6-v3-5-boundary-training-result.md)
-- `reports/phase-7-v3-5-temp-03-2048-smoke-guard.json` สำหรับ smoke guard ก่อนเปิด fixed split (source: reports/phase-7-v3-5-temp-03-2048-smoke-guard.json)
-- `reports/phase-7-heuristic-fixed-split-eval.json` สำหรับ heuristic fixed split baseline (source: reports/phase-7-heuristic-fixed-split-eval.json)
-- `reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json` สำหรับ v3.5 as-is fixed split evaluation (source: reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json)
-- `reports/comparison.md` และ `reports/phase-7-fixed-split-summary.html` สำหรับ final comparison และ stakeholder summary (source: reports/comparison.md, source: reports/phase-7-fixed-split-summary.html)
+- `reports/phase-6/phase-6-v3-5-boundary-training-result.md` สำหรับ candidate status, runtime probe metrics และ fixed split hold status (source: reports/phase-6/phase-6-v3-5-boundary-training-result.md)
+- `reports/phase-7/phase-7-v3-5-temp-03-2048-smoke-guard.json` สำหรับ smoke guard ก่อนเปิด fixed split (source: reports/phase-7/phase-7-v3-5-temp-03-2048-smoke-guard.json)
+- `reports/phase-7/phase-7-heuristic-fixed-split-eval.json` สำหรับ heuristic fixed split baseline (source: reports/phase-7/phase-7-heuristic-fixed-split-eval.json)
+- `reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.json` สำหรับ v3.5 as-is fixed split evaluation (source: reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.json)
+- `reports/phase-7/comparison.md` และ `reports/phase-7/phase-7-fixed-split-summary.html` สำหรับ final comparison และ stakeholder summary (source: reports/phase-7/comparison.md, source: reports/phase-7/phase-7-fixed-split-summary.html)
 
 **Last updated**
 
@@ -36,7 +36,7 @@ Executed. Phase 7 เปิด fixed `data/splits/test.jsonl` แล้วหน
 
 ## Execution Result
 
-Phase 7 ran on 2026-05-22 with fixed split checksum `b838f07b902890a8dc9159cd1d2a413e9d7c7ae4eeff5754d9c947a35e4cdb3b`, matching `reports/frozen-splits.sha256`.
+Phase 7 ran on 2026-05-22 with fixed split checksum `b838f07b902890a8dc9159cd1d2a413e9d7c7ae4eeff5754d9c947a35e4cdb3b`, matching `reports/checksums/frozen-splits.sha256`.
 
 Decision: `hold`. v3.5 is useful as an as-is triage behavior measurement and demo artifact, but it is not promoted over the heuristic baseline. The fixed split result must not be used to tune v3.5; future repair work needs a separately named experiment.
 
@@ -44,11 +44,11 @@ Decision: `hold`. v3.5 is useful as an as-is triage behavior measurement and dem
 
 | Step | Artifact | Outcome |
 | --- | --- | --- |
-| Preflight | `data/splits/test.jsonl`, `reports/frozen-splits.sha256` | Schema parsed; fixed split count `75`; checksum matched frozen record |
-| Smoke guard | `reports/phase-7-v3-5-temp-03-2048-smoke-guard.json` | JSON/schema `1.0 / 1.0`, invalid `0`, label accuracy `0.8` |
-| Heuristic fixed split | `reports/phase-7-heuristic-fixed-split-eval.json` | label accuracy `1.0`, JSON/schema `1.0 / 1.0`, invalid `0` |
-| v3.5 fixed split | `reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json` | label accuracy `0.84`, JSON/schema `1.0 / 1.0`, invalid `0` |
-| Final comparison | `reports/comparison.md`, `reports/phase-7-fixed-split-summary.html` | Final decision `hold`; report includes 5 concrete v3.5 error examples |
+| Preflight | `data/splits/test.jsonl`, `reports/checksums/frozen-splits.sha256` | Schema parsed; fixed split count `75`; checksum matched frozen record |
+| Smoke guard | `reports/phase-7/phase-7-v3-5-temp-03-2048-smoke-guard.json` | JSON/schema `1.0 / 1.0`, invalid `0`, label accuracy `0.8` |
+| Heuristic fixed split | `reports/phase-7/phase-7-heuristic-fixed-split-eval.json` | label accuracy `1.0`, JSON/schema `1.0 / 1.0`, invalid `0` |
+| v3.5 fixed split | `reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.json` | label accuracy `0.84`, JSON/schema `1.0 / 1.0`, invalid `0` |
+| Final comparison | `reports/phase-7/comparison.md`, `reports/phase-7/phase-7-fixed-split-summary.html` | Final decision `hold`; report includes 5 concrete v3.5 error examples |
 
 ### Fixed Split Metrics
 
@@ -82,7 +82,7 @@ Decision: `hold`. v3.5 is useful as an as-is triage behavior measurement and dem
 | `is_suspicious_mismatch` | `5` |
 | `evidence_partial_mismatch` | `2` |
 
-Concrete examples are recorded in `reports/comparison.md` and `reports/phase-7-fixed-split-summary.html`, including SQLi classified as traversal/recon, single failed-login normal logs escalated to brute force, and one brute-force web login sample classified as normal.
+Concrete examples are recorded in `reports/phase-7/comparison.md` and `reports/phase-7/phase-7-fixed-split-summary.html`, including SQLi classified as traversal/recon, single failed-login normal logs escalated to brute force, and one brute-force web login sample classified as normal.
 
 ## Phase 7 Decision
 
@@ -98,7 +98,7 @@ extra_body: {"min_p":0.15,"repetition_penalty":1.05}
 status: as-is evaluation candidate, not promotion
 ```
 
-Rationale: v3.5 2048 temp 0.3 is the best recorded hard-contrast runtime probe: `label_accuracy=0.88`, JSON/schema `1.0 / 1.0`, invalid output `0`, but SQLi remains below the old strict gate. This is enough to evaluate as-is if the user accepts that fixed split results will be final evidence, not tuning feedback (source: reports/phase-6-v3-5-boundary-training-result.md)
+Rationale: v3.5 2048 temp 0.3 is the best recorded hard-contrast runtime probe: `label_accuracy=0.88`, JSON/schema `1.0 / 1.0`, invalid output `0`, but SQLi remains below the old strict gate. This is enough to evaluate as-is if the user accepts that fixed split results will be final evidence, not tuning feedback (source: reports/phase-6/phase-6-v3-5-boundary-training-result.md)
 
 ## Copy CLI Runbook
 
@@ -112,7 +112,7 @@ These commands do not evaluate the fixed split. They only check files and show t
 rtk .venv/bin/python -m json.tool data/schemas/triage-output.schema.json >/dev/null
 rtk wc -l data/splits/test.jsonl
 rtk shasum -a 256 data/splits/test.jsonl
-rtk cat reports/frozen-splits.sha256
+rtk cat reports/checksums/frozen-splits.sha256
 ```
 
 ### 1. Candidate Smoke Guard
@@ -131,8 +131,8 @@ rtk env \
   .venv/bin/python scripts/evaluate.py \
     --adapter openai-compatible \
     --split data/splits/smoke-output-contract.jsonl \
-    --out reports/phase-7-v3-5-temp-03-2048-smoke-guard.json \
-    --comparison-out reports/phase-7-v3-5-temp-03-2048-smoke-guard.md
+    --out reports/phase-7/phase-7-v3-5-temp-03-2048-smoke-guard.json \
+    --comparison-out reports/phase-7/phase-7-v3-5-temp-03-2048-smoke-guard.md
 ```
 
 Expected gate before continuing:
@@ -149,8 +149,8 @@ This is the first Phase 7 fixed split run.
 rtk .venv/bin/python scripts/evaluate.py \
   --adapter heuristic \
   --split data/splits/test.jsonl \
-  --out reports/phase-7-heuristic-fixed-split-eval.json \
-  --comparison-out reports/phase-7-heuristic-fixed-split-eval.md
+  --out reports/phase-7/phase-7-heuristic-fixed-split-eval.json \
+  --comparison-out reports/phase-7/phase-7-heuristic-fixed-split-eval.md
 ```
 
 ### 3. Open Fixed Split: V3.5 As-Is Candidate
@@ -169,8 +169,8 @@ rtk env \
   .venv/bin/python scripts/evaluate.py \
     --adapter openai-compatible \
     --split data/splits/test.jsonl \
-    --out reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json \
-    --comparison-out reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.md
+    --out reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.json \
+    --comparison-out reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.md
 ```
 
 ### 4. Extract Metrics For Comparison
@@ -183,8 +183,8 @@ import json
 from pathlib import Path
 
 paths = [
-    Path("reports/phase-7-heuristic-fixed-split-eval.json"),
-    Path("reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json"),
+    Path("reports/phase-7/phase-7-heuristic-fixed-split-eval.json"),
+    Path("reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.json"),
 ]
 for path in paths:
     data = json.loads(path.read_text())
@@ -201,10 +201,10 @@ PY
 
 ```bash
 rtk ls -lh \
-  reports/phase-7-heuristic-fixed-split-eval.json \
-  reports/phase-7-heuristic-fixed-split-eval.md \
-  reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json \
-  reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.md
+  reports/phase-7/phase-7-heuristic-fixed-split-eval.json \
+  reports/phase-7/phase-7-heuristic-fixed-split-eval.md \
+  reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.json \
+  reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.md
 ```
 
 ### 6. Write Final Comparison Report
@@ -212,7 +212,7 @@ rtk ls -lh \
 Use the two fixed split JSON reports above as sources. The final report path should be:
 
 ```text
-reports/comparison.md
+reports/phase-7/comparison.md
 ```
 
 The report should include:
@@ -246,7 +246,7 @@ Do not call the result a compromise detector. Use triage wording only.
 | --- | --- | --- | --- | --- |
 | 2026-05-20 | Codex | Created Phase 7 detail stub | `docs/output-structure-fix/phase-7-fixed-split-comparison.md` | Drafted |
 | 2026-05-22 | Codex | Added copyable Phase 7 fixed split CLI runbook | `docs/output-structure-fix/phase-7-fixed-split-comparison.md` | Runbook prepared |
-| 2026-05-22 | Codex | Ran Phase 7 fixed split evaluation and recorded final comparison artifacts | `reports/phase-7-heuristic-fixed-split-eval.json`, `reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json`, `reports/comparison.md`, `reports/phase-7-fixed-split-summary.html` | Executed; decision `hold` |
+| 2026-05-22 | Codex | Ran Phase 7 fixed split evaluation and recorded final comparison artifacts | `reports/phase-7/phase-7-heuristic-fixed-split-eval.json`, `reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.json`, `reports/phase-7/comparison.md`, `reports/phase-7/phase-7-fixed-split-summary.html` | Executed; decision `hold` |
 
 ## Decision Log
 

@@ -6,16 +6,16 @@ v4.1 เป็น repair รอบแคบต่อจาก v4 ที่ถู
 
 **Sources**
 
-- `reports/phase-8-v4-sqli-boundary-training-result.json` สำหรับผล v4 training/probe และ decision `held` (source: reports/phase-8-v4-sqli-boundary-training-result.json)
-- `reports/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json` และ temp 0.3 report สำหรับ v4 hard-contrast failure source (source: reports/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-temp-03-2048-hard-contrast-memorization-probe.json)
-- `scripts/create_v4_1_sqli_failure_slice.py`, `reports/phase-8-v4-1-sqli-boundary-failure-slice.json` และ `.md` สำหรับ v4.1 failure buckets (source: scripts/create_v4_1_sqli_failure_slice.py, source: reports/phase-8-v4-1-sqli-boundary-failure-slice.json)
+- `reports/phase-8/phase-8-v4-sqli-boundary-training-result.json` สำหรับผล v4 training/probe และ decision `held` (source: reports/phase-8/phase-8-v4-sqli-boundary-training-result.json)
+- `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json` และ temp 0.3 report สำหรับ v4 hard-contrast failure source (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-temp-03-2048-hard-contrast-memorization-probe.json)
+- `scripts/create_v4_1_sqli_failure_slice.py`, `reports/phase-8/phase-8-v4-1-sqli-boundary-failure-slice.json` และ `.md` สำหรับ v4.1 failure buckets (source: scripts/create_v4_1_sqli_failure_slice.py, source: reports/phase-8/phase-8-v4-1-sqli-boundary-failure-slice.json)
 - `scripts/create_v4_1_sqli_boundary_repair_dataset.py`, `data/generated/v4-1-sqli-boundary-repair-security-triage.jsonl`, `data/splits/train-v4-1-sqli-boundary-repair.jsonl` และ `data/splits/validation-v4-1-sqli-boundary-repair.jsonl` สำหรับ deterministic supplement และ split artifacts (source: scripts/create_v4_1_sqli_boundary_repair_dataset.py)
 - `ml/unsloth/config.v4-1.yaml` สำหรับ v4.1 training config (source: ml/unsloth/config.v4-1.yaml)
 - `tests/test_v4_1_sqli_boundary_repair_workflow.py` สำหรับ regression checks (source: tests/test_v4_1_sqli_boundary_repair_workflow.py)
-- `reports/phase-8-v4-1-sqli-boundary-training-result.json` และ `.md` สำหรับ training metrics และ hard-contrast gate decision (source: reports/phase-8-v4-1-sqli-boundary-training-result.json)
-- `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json` และ temp 0.3 report สำหรับ v4.1 hard-contrast probe results (source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
+- `reports/phase-8/phase-8-v4-1-sqli-boundary-training-result.json` และ `.md` สำหรับ training metrics และ hard-contrast gate decision (source: reports/phase-8/phase-8-v4-1-sqli-boundary-training-result.json)
+- `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json` และ temp 0.3 report สำหรับ v4.1 hard-contrast probe results (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
 - `docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md` สำหรับ next diagnostic หลัง v4.1 held (source: docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md)
-- `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json` และ temp 0.3 report สำหรับ v4.2 prompt diagnostic result (source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json)
+- `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json` และ temp 0.3 report สำหรับ v4.2 prompt diagnostic result (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json)
 
 **Last updated**
 
@@ -30,8 +30,8 @@ Trained and hard-contrast probed; held. v4.1 trained from base `unsloth/LFM2-350
 `scripts/create_v4_1_sqli_failure_slice.py` อ่านเฉพาะ v4 temp 0/temp 0.3 hard-contrast reports และ source hard-contrast split ไม่อ่าน fixed test split แล้วเขียน:
 
 ```text
-reports/phase-8-v4-1-sqli-boundary-failure-slice.json
-reports/phase-8-v4-1-sqli-boundary-failure-slice.md
+reports/phase-8/phase-8-v4-1-sqli-boundary-failure-slice.json
+reports/phase-8/phase-8-v4-1-sqli-boundary-failure-slice.md
 ```
 
 union label failures มี `8` ids:
@@ -105,8 +105,8 @@ OPENAI_COMPATIBLE_TEMPERATURE=0 \
 .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.md
 ```
 
 Acceptance gates for both temp 0 and temp 0.3: JSON/schema `1.0`, invalid `0`, label accuracy `>=0.90`, SQLi `>=8/10`, SQLi predicted as traversal `<=2/10`, normal `>=8/10`, traversal `>=9/10`, port/recon `>=9/10`, predicted brute-force `<=14/50`
@@ -147,9 +147,9 @@ v4.1 improves the SQLi boundary over v4 (`4/10`) and reduces SQLi-to-traversal m
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-22 | Codex | Created v4.1 failure slice, deterministic supplement, config, split artifacts, and regression tests | `scripts/create_v4_1_sqli_failure_slice.py`, `scripts/create_v4_1_sqli_boundary_repair_dataset.py`, `ml/unsloth/config.v4-1.yaml`, `tests/test_v4_1_sqli_boundary_repair_workflow.py` | Prepared |
-| 2026-05-22 | User/Codex | Recorded v4.1 training completion and ran temp 0/temp 0.3 hard-contrast probes | `reports/phase-8-v4-1-sqli-boundary-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
-| 2026-05-22 | Codex | Prepared v4.2 SQLi-priority prompt diagnostic as the next step after v4.1 held | `docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md`, `reports/phase-8-v4-2-sqli-priority-diagnostic-slice.json` | Prepared |
-| 2026-05-22 | Codex | Recorded v4.2 prompt diagnostic result after v4.1 held | `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json` | Held |
+| 2026-05-22 | User/Codex | Recorded v4.1 training completion and ran temp 0/temp 0.3 hard-contrast probes | `reports/phase-8/phase-8-v4-1-sqli-boundary-training-result.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json` | Held |
+| 2026-05-22 | Codex | Prepared v4.2 SQLi-priority prompt diagnostic as the next step after v4.1 held | `docs/output-structure-fix/phase-8-v4-2-sqli-priority-diagnostic-plan.md`, `reports/phase-8/phase-8-v4-2-sqli-priority-diagnostic-slice.json` | Prepared |
+| 2026-05-22 | Codex | Recorded v4.2 prompt diagnostic result after v4.1 held | `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json` | Held |
 
 ## Decision Log
 

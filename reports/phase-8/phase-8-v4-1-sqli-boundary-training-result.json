@@ -1,0 +1,92 @@
+{
+  "acceptance_decision": "held",
+  "config_path": "ml/unsloth/config.v4-1.yaml",
+  "created_date": "2026-05-22",
+  "fixed_test_split_used": false,
+  "hard_contrast_probes": {
+    "temp_0": {
+      "failure_buckets": {
+        "normal_to_failed_login_bruteforce": 2,
+        "sql_injection_attempt_to_directory_traversal_attempt": 2,
+        "sql_injection_attempt_to_normal": 1,
+        "sql_injection_attempt_to_port_scan_or_recon": 1
+      },
+      "gate_decision": "failed",
+      "gate_failures": [
+        "label_accuracy 0.88 < 0.90",
+        "sql_injection_attempt 6/10 < 8/10"
+      ],
+      "json_report": "reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json",
+      "metrics": {
+        "average_latency_ms": 507.935424,
+        "evidence_partial_match": 0.98,
+        "invalid_output_count": 0,
+        "is_suspicious_accuracy": 0.94,
+        "json_parse_success_rate": 1.0,
+        "label_accuracy": 0.88,
+        "schema_success_rate": 1.0,
+        "severity_accuracy": 0.8
+      },
+      "per_label_correct": {
+        "directory_traversal_attempt": "10/10",
+        "failed_login_bruteforce": "10/10",
+        "normal": "8/10",
+        "port_scan_or_recon": "10/10",
+        "sql_injection_attempt": "6/10"
+      },
+      "predicted_bruteforce": "12/50",
+      "sqli_predicted_traversal": "2/10"
+    },
+    "temp_0_3": {
+      "failure_buckets": {
+        "normal_to_failed_login_bruteforce": 2,
+        "sql_injection_attempt_to_directory_traversal_attempt": 1,
+        "sql_injection_attempt_to_normal": 1,
+        "sql_injection_attempt_to_port_scan_or_recon": 1
+      },
+      "gate_decision": "failed",
+      "gate_failures": [
+        "sql_injection_attempt 7/10 < 8/10"
+      ],
+      "json_report": "reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json",
+      "metrics": {
+        "average_latency_ms": 616.358565,
+        "evidence_partial_match": 0.96,
+        "invalid_output_count": 0,
+        "is_suspicious_accuracy": 0.94,
+        "json_parse_success_rate": 1.0,
+        "label_accuracy": 0.9,
+        "schema_success_rate": 1.0,
+        "severity_accuracy": 0.78
+      },
+      "per_label_correct": {
+        "directory_traversal_attempt": "10/10",
+        "failed_login_bruteforce": "10/10",
+        "normal": "8/10",
+        "port_scan_or_recon": "10/10",
+        "sql_injection_attempt": "7/10"
+      },
+      "predicted_bruteforce": "12/50",
+      "sqli_predicted_traversal": "1/10"
+    }
+  },
+  "mini_semantic_eval_run": false,
+  "model_alias": "lfm2-security-triage-v4-1",
+  "next_step": "Stop data-only Phase 8 repair here and plan a capacity/architecture diagnostic before any v4.2.",
+  "output_dir": "ml/unsloth/outputs/lfm2-350m-v4-1-2048-sqli-boundary-repair-security-triage-lora",
+  "serve": {
+    "base_model": "unsloth/LFM2-350M",
+    "lora_alias": "lfm2-security-triage-v4-1",
+    "vllm_base_url": "http://192.168.8.141:8080/v1"
+  },
+  "train_records": 1220,
+  "training_metrics": {
+    "epoch": 3.9901639344262296,
+    "total_flos": 5212426293030912.0,
+    "train_loss": 0.5194365828985074,
+    "train_runtime": 459.4452,
+    "train_samples_per_second": 10.622,
+    "train_steps_per_second": 1.328
+  },
+  "validation_records": 75
+}

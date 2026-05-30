@@ -1,135 +1,52 @@
 # Reports
 
 This directory stores evaluation outputs for the AI Security Log Triage Assistant.
+The root is intentionally small for public browsing; report artifacts are grouped
+by workflow instead of living in one flat folder.
+
+## Directory Map
+
+| Folder | Purpose |
+| --- | --- |
+| `baseline/` | Local heuristic baseline outputs that can run without model keys. |
+| `checksums/` | Split checksums and other small integrity records. |
+| `structured-output/` | Runtime contract work before model-quality evaluation. |
+| `structured-output/smoke/` | Smoke reports for structured-output modes. |
+| `structured-output/probes/` | Direct backend capability probes and adversarial format probes. |
+| `structured-output/mini-semantic-eval/` | Early 25-sample semantic checks after contract gates. |
+| `structured-output/runtime/` | Backend inventory, capability matrix, and artifact registry notes. |
+| `phase-6/` | LFM2/v3 repair reports, hard-contrast probes, failure slices, and infographics. |
+| `phase-7/` | Fixed split comparison artifacts and final Phase 7 hold decision. |
+| `phase-8/` | SQLi repair, Qwen3.5 diagnostics, calibration probes, training summaries, and HTML reports. |
 
 ## Naming Convention
 
-Use mode-specific report paths for output-contract experiments so repeated smoke runs do not overwrite each other.
-
-Canonical smoke format:
+Keep new artifacts under the workflow folder that owns the decision:
 
 ```text
-reports/{adapter}-{runtime}-{mode}-smoke.json
-reports/{adapter}-{runtime}-{mode}-smoke.md
+reports/structured-output/smoke/{adapter}-{runtime}-{mode}-smoke.json
+reports/structured-output/probes/structured-output-probe-{runtime}-{mode}-{probe}.json
+reports/phase-6/{adapter}-{runtime}-{mode}-{model-version}-{probe}.json
+reports/phase-7/phase-7-{candidate-or-baseline}-{eval-kind}.json
+reports/phase-8/phase-8-{experiment}-{artifact-kind}.json
 ```
 
-Canonical mini semantic eval format:
+Use lowercase kebab-case for new files. Preserve historical model/version tokens
+when moving old artifacts so past docs remain traceable.
 
-```text
-reports/{adapter}-{runtime}-{mode}-mini-semantic-eval.json
-reports/{adapter}-{runtime}-{mode}-mini-semantic-eval.md
-```
+## Canonical Artifacts
 
-Semantic error taxonomy infographic:
-
-```text
-reports/phase-{n}-semantic-error-taxonomy-infographic.html
-```
-
-Model-run mini semantic infographic:
-
-```text
-reports/phase-{n}-{model-version}-mini-semantic-eval-infographic.html
-```
-
-Hard-contrast memorization probe:
-
-```text
-reports/{adapter}-{runtime}-{mode}-{model-version}-hard-contrast-memorization-probe.json
-reports/{adapter}-{runtime}-{mode}-{model-version}-hard-contrast-memorization-probe.md
-reports/phase-{n}-{model-version}-hard-contrast-memorization-probe-infographic.html
-```
-
-Runtime-probe variants may add a short setting token before `hard-contrast`, for example:
-
-```text
-reports/{adapter}-{runtime}-{mode}-{model-version}-temp-03-hard-contrast-memorization-probe.json
-reports/{adapter}-{runtime}-{mode}-{model-version}-temp-03-hard-contrast-memorization-probe.md
-reports/phase-{n}-{model-version}-temp-03-hard-contrast-memorization-probe-infographic.html
-```
-
-Boundary failure slices:
-
-```text
-reports/phase-{n}-{model-version}-boundary-failure-slice.json
-reports/phase-{n}-{model-version}-boundary-failure-slice.md
-```
-
-Boundary audits:
-
-```text
-reports/phase-{n}-{model-version}-boundary-audit.json
-reports/phase-{n}-{model-version}-boundary-audit.md
-```
-
-Diagnostic audits:
-
-```text
-reports/phase-{n}-{model-version}-diagnostic-audit.json
-reports/phase-{n}-{model-version}-diagnostic-audit.md
-reports/phase-{n}-{model-version}-diagnostic-audit-report.html
-```
-
-Calibration slices:
-
-```text
-reports/phase-{n}-{model-version}-normal-calibration-slice.json
-reports/phase-{n}-{model-version}-normal-calibration-slice.md
-```
-
-Calibration result summary:
-
-```text
-reports/phase-{n}-{model-version}-normal-severity-calibration-report.html
-reports/phase-{n}-{model-version}-auth-sqli-severity-calibration-report.html
-```
-
-Training result captures:
-
-```text
-reports/phase-{n}-{model-version}-training-result.json
-reports/phase-{n}-{model-version}-training-result.md
-```
-
-Canonical fixed split format:
-
-```text
-reports/finetuned-eval.json
-reports/comparison.md
-```
-
-Phase-specific fixed split format:
-
-```text
-reports/phase-7-heuristic-fixed-split-eval.json
-reports/phase-7-heuristic-fixed-split-eval.md
-reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.json
-reports/phase-7-v3-5-temp-03-2048-fixed-split-eval.md
-reports/phase-7-fixed-split-summary.html
-```
-
-Phase 0 evidence files:
-
-```text
-reports/frozen-splits.sha256
-reports/structured-output-run-artifacts.md
-```
-
-Runtime capability matrix:
-
-```text
-reports/structured-output-capability-matrix.md
-```
-
-## Tokens
-
-| Token | Meaning | Examples |
-| --- | --- | --- |
-| `{adapter}` | Evaluator adapter name | `openai-compatible`, `openai-finetune`, `heuristic` |
-| `{runtime}` | Serving backend or runtime profile | `current`, `vllm`, `sglang`, `lmstudio`, `ollama`, `tgi`, `unsloth-studio` |
-| `{mode}` | Structured-output request mode | `responses-parse`, `json-schema`, `structured-outputs`, `guided-json`, `json-object`, `plain` |
-
-Use lowercase kebab-case. Spell `output` correctly in notes and metadata, but omit it from the filename unless it is part of a model version label. Avoid names like `eval.json` for smoke experiments because they are easy to overwrite.
+| Artifact | Path |
+| --- | --- |
+| Heuristic baseline JSON | `reports/baseline/baseline-eval.json` |
+| Split checksums | `reports/checksums/frozen-splits.sha256` |
+| Structured-output artifact register | `reports/structured-output/runtime/structured-output-run-artifacts.md` |
+| Runtime capability matrix | `reports/structured-output/runtime/structured-output-capability-matrix.md` |
+| vLLM structured-output smoke | `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json` |
+| Phase 5 mini semantic eval | `reports/structured-output/mini-semantic-eval/openai-compatible-vllm-structured-outputs-mini-semantic-eval.json` |
+| Phase 7 comparison | `reports/phase-7/comparison.md` |
+| Phase 7 fixed split summary | `reports/phase-7/phase-7-fixed-split-summary.html` |
+| Latest v4.8 diagnostic audit | `reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json` |
 
 ## Examples
 
@@ -137,22 +54,17 @@ Use lowercase kebab-case. Spell `output` correctly in notes and metadata, but om
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/smoke-output-contract.jsonl \
-  --out reports/openai-compatible-current-responses-parse-smoke.json \
-  --comparison-out reports/openai-compatible-current-responses-parse-smoke.md
-```
-
-```bash
-python3 scripts/evaluate.py \
-  --adapter openai-compatible \
-  --split data/splits/smoke-output-contract.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-smoke.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-smoke.md
+  --out reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json \
+  --comparison-out reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.md
 ```
 
 ```bash
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/test.jsonl \
-  --out reports/finetuned-eval.json \
-  --comparison-out reports/comparison.md
+  --out reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.json \
+  --comparison-out reports/phase-7/phase-7-v3-5-temp-03-2048-fixed-split-eval.md
 ```
+
+Do not write new public artifacts to generic paths such as `reports/eval.json` or
+`reports/openai-compatible-eval.json`; those names are too easy to overwrite.

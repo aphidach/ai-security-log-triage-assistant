@@ -157,8 +157,8 @@ python3 scripts/evaluate.py \
 ค่า default ของ `heuristic` จะเขียน:
 
 ```text
-reports/baseline-eval.json
-reports/comparison.md
+reports/baseline/baseline-eval.json
+reports/phase-7/comparison.md
 ```
 
 ถ้าต้องการตรวจ metric โดยไม่เขียน report:
@@ -185,8 +185,8 @@ python3 scripts/evaluate.py \
 python3 scripts/evaluate.py \
   --adapter heuristic \
   --split data/splits/test.jsonl \
-  --out reports/baseline-eval.json \
-  --comparison-out reports/comparison.md
+  --out reports/baseline/baseline-eval.json \
+  --comparison-out reports/phase-7/comparison.md
 ```
 
 adapter ที่รองรับตอนนี้:
@@ -285,8 +285,8 @@ OPENAI_COMPATIBLE_CONFIG_PATH=config-adapter.yml \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-v3-3-hard-contrast-runtime-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-v3-3-hard-contrast-runtime-probe.md
+  --out reports/phase-6/openai-compatible-vllm-structured-outputs-v3-3-hard-contrast-runtime-probe.json \
+  --comparison-out reports/phase-6/openai-compatible-vllm-structured-outputs-v3-3-hard-contrast-runtime-probe.md
 ```
 
 ถ้าเป็น canonical comparison ให้คง `temperature: 0` ก่อน ส่วนค่าแนว model card เช่น `temperature: 0.3`, `min_p: 0.15`, `repetition_penalty: 1.05` ให้รันเป็น runtime probe แยก report เพื่อย้อนดูผลได้ชัดเจน
@@ -325,8 +325,8 @@ OPENAI_FINETUNE_CONFIG_PATH
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/smoke-output-contract.jsonl \
-  --out reports/openai-compatible-smoke.json \
-  --comparison-out reports/openai-compatible-smoke.md
+  --out reports/structured-output/smoke/openai-compatible-smoke.json \
+  --comparison-out reports/structured-output/smoke/openai-compatible-smoke.md
 ```
 
 รัน fine-tuned endpoint ผ่าน evaluator:
@@ -335,8 +335,8 @@ python3 scripts/evaluate.py \
 python3 scripts/evaluate.py \
   --adapter openai-finetune \
   --split data/splits/smoke-output-contract.jsonl \
-  --out reports/openai-finetune-smoke.json \
-  --comparison-out reports/openai-finetune-smoke.md
+  --out reports/structured-output/smoke/openai-finetune-smoke.json \
+  --comparison-out reports/structured-output/smoke/openai-finetune-smoke.md
 ```
 
 เริ่มจาก smoke split ก่อนเสมอ ถ้า JSON/schema ยังไม่ผ่าน อย่าเพิ่งรัน fixed test split เต็ม เพราะจะปนปัญหา output contract กับ semantic accuracy
@@ -388,8 +388,8 @@ python3 scripts/probe_openai_structured_output.py \
   --env-prefix OPENAI_COMPATIBLE \
   --mode structured_outputs \
   --all-smoke \
-  --out reports/structured-output-probe-vllm-structured-outputs-smoke.md \
-  --json-out reports/structured-output-probe-vllm-structured-outputs-smoke.json \
+  --out reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.md \
+  --json-out reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.json \
   --force
 ```
 
@@ -401,8 +401,8 @@ python3 scripts/probe_openai_structured_output.py \
   --mode structured_outputs \
   --all-smoke \
   --adversarial-format markdown_fence \
-  --out reports/structured-output-probe-vllm-structured-outputs-adversarial.md \
-  --json-out reports/structured-output-probe-vllm-structured-outputs-adversarial.json \
+  --out reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.md \
+  --json-out reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.json \
   --force
 ```
 
@@ -446,8 +446,8 @@ OPENAI_COMPATIBLE_BASE_URL=http://localhost:8000/v1 \
 OPENAI_COMPATIBLE_API_KEY=local \
 OPENAI_COMPATIBLE_MODEL=lfm2-security-triage \
 OPENAI_COMPATIBLE_RESPONSE_FORMAT=structured_outputs \
-PHASE5_JSON_REPORT=reports/openai-compatible-mini-semantic-eval.json \
-PHASE5_MARKDOWN_REPORT=reports/openai-compatible-mini-semantic-eval.md \
+PHASE5_JSON_REPORT=reports/structured-output/mini-semantic-eval/openai-compatible-mini-semantic-eval.json \
+PHASE5_MARKDOWN_REPORT=reports/structured-output/mini-semantic-eval/openai-compatible-mini-semantic-eval.md \
 scripts/run_phase5_mini_semantic_eval.sh
 ```
 

@@ -10,10 +10,10 @@ Phase 2 จะเพิ่ม probe ให้แยกได้ว่า backend
 - `scripts/probe_openai_structured_output.py` สำหรับ probe path ปัจจุบัน (source: scripts/probe_openai_structured_output.py)
 - `data/splits/smoke-output-contract.jsonl` สำหรับ 5-sample smoke gate (source: data/splits/smoke-output-contract.jsonl)
 - `reports/README.md` สำหรับ report path convention (source: reports/README.md)
-- `reports/structured-output-probe-unsloth-studio-json-schema-smoke.json` สำหรับ Unsloth Studio baseline probe result (source: reports/structured-output-probe-unsloth-studio-json-schema-smoke.json)
-- `reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json` สำหรับ Unsloth Studio adversarial probe result (source: reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json)
-- `reports/structured-output-probe-vllm-structured-outputs-smoke.json` สำหรับ vLLM baseline probe result (source: reports/structured-output-probe-vllm-structured-outputs-smoke.json)
-- `reports/structured-output-probe-vllm-structured-outputs-adversarial.json` สำหรับ vLLM adversarial probe result (source: reports/structured-output-probe-vllm-structured-outputs-adversarial.json)
+- `reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-smoke.json` สำหรับ Unsloth Studio baseline probe result (source: reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-smoke.json)
+- `reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-adversarial.json` สำหรับ Unsloth Studio adversarial probe result (source: reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-adversarial.json)
+- `reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.json` สำหรับ vLLM baseline probe result (source: reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.json)
+- `reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.json` สำหรับ vLLM adversarial probe result (source: reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.json)
 
 **Last updated**
 
@@ -106,8 +106,8 @@ uv pip install -r requirements.txt
   --split data/splits/smoke-output-contract.jsonl \
   --all-smoke \
   --timeout-seconds 60 \
-  --out reports/structured-output-probe-unsloth-studio-json-schema-smoke.md \
-  --json-out reports/structured-output-probe-unsloth-studio-json-schema-smoke.json
+  --out reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-smoke.md \
+  --json-out reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-smoke.json
 ```
 
 ถ้า Unsloth Studio ตอบ `401 Invalid token payload` ให้เปลี่ยน `--api-key local` เป็น token/key เดียวกับที่ใช้รัน smoke สำเร็จก่อนหน้า หรือใช้ environment variable ที่ runtime นั้นต้องการ
@@ -125,8 +125,8 @@ uv pip install -r requirements.txt
   --split data/splits/smoke-output-contract.jsonl \
   --all-smoke \
   --timeout-seconds 60 \
-  --out reports/structured-output-probe-vllm-structured-outputs-smoke.md \
-  --json-out reports/structured-output-probe-vllm-structured-outputs-smoke.json
+  --out reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.md \
+  --json-out reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-smoke.json
 ```
 
 ### 3. Unsloth Studio Adversarial Probe
@@ -143,8 +143,8 @@ uv pip install -r requirements.txt
   --all-smoke \
   --adversarial-format markdown_fence \
   --timeout-seconds 60 \
-  --out reports/structured-output-probe-unsloth-studio-json-schema-adversarial.md \
-  --json-out reports/structured-output-probe-unsloth-studio-json-schema-adversarial.json
+  --out reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-adversarial.md \
+  --json-out reports/structured-output/probes/structured-output-probe-unsloth-studio-json-schema-adversarial.json
 ```
 
 ### 4. vLLM Adversarial Probe
@@ -161,8 +161,8 @@ uv pip install -r requirements.txt
   --all-smoke \
   --adversarial-format markdown_fence \
   --timeout-seconds 60 \
-  --out reports/structured-output-probe-vllm-structured-outputs-adversarial.md \
-  --json-out reports/structured-output-probe-vllm-structured-outputs-adversarial.json
+  --out reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.md \
+  --json-out reports/structured-output/probes/structured-output-probe-vllm-structured-outputs-adversarial.json
 ```
 
 ## What To Compare
@@ -244,7 +244,7 @@ For semantic-quality work, use vLLM baseline mode without adversarial formatting
 | --- | --- | --- | --- | --- |
 | 2026-05-20 | Codex | Created Phase 2 detail stub | `docs/output-structure-fix/phase-2-probe-hardening.md` | Drafted |
 | 2026-05-20 | Codex | Added manual runbook for comparing Unsloth Studio and vLLM probes | `docs/output-structure-fix/phase-2-probe-hardening.md`, `scripts/probe_openai_structured_output.py` | Ready |
-| 2026-05-20 | User/Codex | Recorded Phase 2 probe results for Unsloth Studio and vLLM baseline/adversarial runs | `reports/structured-output-probe-*.json`, `reports/structured-output-probe-*.md` | Complete |
+| 2026-05-20 | User/Codex | Recorded Phase 2 probe results for Unsloth Studio and vLLM baseline/adversarial runs | `reports/structured-output/probes/structured-output-probe-*.json`, `reports/structured-output/probes/structured-output-probe-*.md` | Complete |
 
 ## Decision Log
 

@@ -8,7 +8,7 @@
 
 **Sources**
 
-- `reports/openai-compatible-eval.json` สำหรับ smoke metric ล่าสุด: JSON/schema success `0.2`, invalid output `4/5`, evidence/severity match `0.0` (source: reports/openai-compatible-eval.json)
+- `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json` สำหรับ smoke metric ล่าสุด: JSON/schema success `0.2`, invalid output `4/5`, evidence/severity match `0.0` (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json)
 - `docs/output-contract-hardening.md` สำหรับสิ่งที่แก้ไปแล้วใน prompt `triage-json-v2`, OpenAI SDK adapter, schema sanitizer และ smoke split (source: docs/output-contract-hardening.md)
 - `docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md` สำหรับ v2 failure mode: `responses_parse` ยังไม่บังคับ generation ให้เป็น JSON object ล้วน (source: docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md)
 - OpenAI Structured Outputs docs สำหรับ `json_schema`, `text.format`, JSON mode limitations, schema tips และ Pydantic/Zod helper path: https://platform.openai.com/docs/guides/structured-outputs
@@ -36,7 +36,7 @@
 
 ## Current Diagnosis
 
-สถานะ repo ล่าสุดคือ smoke output-contract split 5 records ยังผ่าน JSON parse และ schema เพียง 1 record โดย `invalid_output_count=4`, `label_accuracy=0.2`, `severity_accuracy=0.0`, `evidence_partial_match=0.0` (source: reports/openai-compatible-eval.json)
+สถานะ repo ล่าสุดคือ smoke output-contract split 5 records ยังผ่าน JSON parse และ schema เพียง 1 record โดย `invalid_output_count=4`, `label_accuracy=0.2`, `severity_accuracy=0.0`, `evidence_partial_match=0.0` (source: reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json)
 
 เราปรับไปแล้วหลายชั้น: prompt `triage-json-v2`, OpenAI SDK adapter, Pydantic `responses_parse`, schema sanitizer, deterministic smoke split และ direct probe แต่ผลยังไม่ดีขึ้น จึงน่าจะไม่ใช่แค่ LangChain wrapper หรือ prompt wording ชั้นบนสุด (source: docs/output-contract-hardening.md, source: docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md)
 
@@ -128,7 +128,7 @@
 ## Recommended Next Plan
 
 1. Freeze `data/splits/test.jsonl`; do not run final fixed-split comparison while smoke contract is still 1/5 (source: docs/Day6.md)
-2. Create mode-specific reports so results stop overwriting `reports/openai-compatible-eval.json`, for example `reports/openai-compatible-vllm-structured-outputs-smoke.json`
+2. Create mode-specific reports so results stop overwriting `reports/structured-output/smoke/openai-compatible-eval-model-v2-output-v1.json`, for example `reports/structured-output/smoke/openai-compatible-vllm-structured-outputs-smoke.json`
 3. Add or extend the direct probe to include an adversarial format prompt that asks for markdown fence; a true constrained decoder should still return only the JSON object
 4. Identify the actual serving backend, version, launch command, model alias, response model, and whether it supports token-level schema constraints
 5. Test vLLM current `structured_outputs` syntax first if the backend is vLLM; otherwise test SGLang XGrammar as the cleanest constrained decoding alternative

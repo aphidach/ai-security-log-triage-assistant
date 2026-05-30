@@ -11,9 +11,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-V48_REPORT_JSON = ROOT / "reports" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json"
-V48_REPORT_MD = ROOT / "reports" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.md"
-V48_REPORT_HTML = ROOT / "reports" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html"
+V48_REPORT_JSON = ROOT / "reports" / "phase-8" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json"
+V48_REPORT_MD = ROOT / "reports" / "phase-8" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.md"
+V48_REPORT_HTML = ROOT / "reports" / "phase-8" / "phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html"
 
 
 def file_sha256(path: Path) -> str:
@@ -41,7 +41,7 @@ class V48Qwen35AuthSqliDiagnosticAuditTest(unittest.TestCase):
         self.assertEqual(comparator["requested_alias"], "qwen3.6-8B-triage-v2")
         self.assertEqual(
             comparator["source_report"],
-            "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json",
+            "reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json",
         )
 
         self.assertEqual(report["headline_metrics"]["v4_6_model"]["label_accuracy"], 0.433333)

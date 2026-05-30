@@ -2,12 +2,12 @@
 
 **Summary**
 
-หน้าเอกสารนี้บันทึก v3 hard-contrast dataset supplement ที่สร้างหลัง Phase 6.1 พบว่า output contract ผ่านแล้ว แต่ mini semantic eval ยังเกิด prediction collapse ไปทาง `failed_login_bruteforce` หนักเกินไป ชุดนี้จึงเน้นตัวอย่างคู่เปรียบเทียบและ hard negatives สำหรับแก้ label boundary ไม่ใช่เพิ่ม synthetic data แบบสุ่ม (source: reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json, reports/phase-6-semantic-error-taxonomy-infographic.html)
+หน้าเอกสารนี้บันทึก v3 hard-contrast dataset supplement ที่สร้างหลัง Phase 6.1 พบว่า output contract ผ่านแล้ว แต่ mini semantic eval ยังเกิด prediction collapse ไปทาง `failed_login_bruteforce` หนักเกินไป ชุดนี้จึงเน้นตัวอย่างคู่เปรียบเทียบและ hard negatives สำหรับแก้ label boundary ไม่ใช่เพิ่ม synthetic data แบบสุ่ม (source: reports/phase-6/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json, reports/phase-6/phase-6-semantic-error-taxonomy-infographic.html)
 
 **Sources**
 
-- `reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` สำหรับ metric และ predicted-label collapse หลัง Phase 6.1 (source: reports/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json)
-- `reports/phase-6-semantic-error-taxonomy-infographic.html` สำหรับ semantic error taxonomy และ v3 backlog (source: reports/phase-6-semantic-error-taxonomy-infographic.html)
+- `reports/phase-6/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json` สำหรับ metric และ predicted-label collapse หลัง Phase 6.1 (source: reports/phase-6/openai-compatible-vllm-structured-outputs-phase6-1-mini-semantic-eval.json)
+- `reports/phase-6/phase-6-semantic-error-taxonomy-infographic.html` สำหรับ semantic error taxonomy และ v3 backlog (source: reports/phase-6/phase-6-semantic-error-taxonomy-infographic.html)
 - `docs/output-structure-fix/phase-6-v3-or-runtime-decision.md` สำหรับ Phase 6 decision rules และ v3 training data plan (source: docs/output-structure-fix/phase-6-v3-or-runtime-decision.md)
 - `docs/label-imbalance-and-prediction-collapse.md` สำหรับแนวทาง hard contrast examples และกติกาไม่ downsample `failed_login_bruteforce` ทันที (source: docs/label-imbalance-and-prediction-collapse.md)
 - `scripts/create_v3_hard_contrast_dataset.py` สำหรับ generator ของชุดข้อมูลนี้ (source: scripts/create_v3_hard_contrast_dataset.py)

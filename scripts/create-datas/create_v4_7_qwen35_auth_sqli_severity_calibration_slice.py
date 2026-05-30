@@ -13,20 +13,22 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 V4_6_HARD_REPORT_PATH = (
     ROOT
     / "reports"
+    / "phase-8"
     / "openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json"
 )
 V4_6_CALIBRATION_REPORT_PATH = (
     ROOT
     / "reports"
+    / "phase-8"
     / "openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json"
 )
-OUTPUT_JSON_PATH = ROOT / "reports" / "phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json"
-OUTPUT_MD_PATH = ROOT / "reports" / "phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.md"
+OUTPUT_JSON_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json"
+OUTPUT_MD_PATH = ROOT / "reports" / "phase-8" / "phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.md"
 
 CREATED_DATE = "2026-05-23"
 

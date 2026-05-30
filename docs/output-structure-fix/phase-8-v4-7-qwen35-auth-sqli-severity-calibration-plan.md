@@ -2,18 +2,18 @@
 
 **Summary**
 
-v4.7 เป็น calibration run แบบแคบต่อจาก v4.6 เป้าหมายคือซ่อม failure ที่ยังเหลือโดยไม่เปิด fixed split: benign auth ยังถูก over-alert เป็น brute force, SQLi บน login/auth route ถูกทายเป็น brute force, brute-force severity `medium` ยังลอยเป็น `high`, port/recon medium หนึ่งเคสลอยเป็น `high`, และ traversal หนึ่งเคสยัง miss evidence partial match (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json)
+v4.7 เป็น calibration run แบบแคบต่อจาก v4.6 เป้าหมายคือซ่อม failure ที่ยังเหลือโดยไม่เปิด fixed split: benign auth ยังถูก over-alert เป็น brute force, SQLi บน login/auth route ถูกทายเป็น brute force, brute-force severity `medium` ยังลอยเป็น `high`, port/recon medium หนึ่งเคสลอยเป็น `high`, และ traversal หนึ่งเคสยัง miss evidence partial match (source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json)
 
-หลัง train/probe แล้ว v4.7 ทำ hard-contrast headline ดีขึ้นเป็น label accuracy `0.92`, severity accuracy `0.92`, JSON/schema `1.0`, invalid `0`, และ evidence partial match `1.0` แต่ไม่ผ่าน calibration gate เพราะ probe เฉพาะ v4.7 เหลือ label accuracy `0.366667`, severity accuracy `0.60`, normal-auth label `0/15`, SQLi-auth-context `1/5`, และ brute-force `medium` severity `0/7` (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json)
+หลัง train/probe แล้ว v4.7 ทำ hard-contrast headline ดีขึ้นเป็น label accuracy `0.92`, severity accuracy `0.92`, JSON/schema `1.0`, invalid `0`, และ evidence partial match `1.0` แต่ไม่ผ่าน calibration gate เพราะ probe เฉพาะ v4.7 เหลือ label accuracy `0.366667`, severity accuracy `0.60`, normal-auth label `0/15`, SQLi-auth-context `1/5`, และ brute-force `medium` severity `0/7` (source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json)
 
 **Sources**
 
-- v4.7 failure slice artifacts (source: scripts/create_v4_7_qwen35_auth_sqli_severity_calibration_slice.py, source: reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json, source: reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.md)
+- v4.7 failure slice artifacts (source: scripts/create_v4_7_qwen35_auth_sqli_severity_calibration_slice.py, source: reports/phase-8/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json, source: reports/phase-8/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.md)
 - v4.7 calibration dataset artifacts (source: scripts/create_v4_7_qwen35_auth_sqli_severity_calibration_dataset.py, source: data/generated/v4-7-qwen35-auth-sqli-severity-calibration-security-triage.jsonl, source: data/splits/train-v4-7-qwen35-auth-sqli-severity-calibration.jsonl, source: data/splits/validation-v4-7-qwen35-auth-sqli-severity-calibration.jsonl, source: data/splits/v4-7-auth-sqli-severity-calibration-probe.jsonl)
 - v4.7 Qwen training config (source: ml/unsloth/qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration.yaml)
-- v4.7 non-fixed evaluation reports (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json)
-- v4.7 HTML summary report (source: reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-report.html)
-- v4.8 follow-up diagnostic audit (source: docs/output-structure-fix/phase-8-v4-8-qwen35-auth-sqli-diagnostic-plan.md, source: reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json)
+- v4.7 non-fixed evaluation reports (source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json)
+- v4.7 HTML summary report (source: reports/phase-8/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-report.html)
+- v4.8 follow-up diagnostic audit (source: docs/output-structure-fix/phase-8-v4-8-qwen35-auth-sqli-diagnostic-plan.md, source: reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json)
 - v4.7 regression tests (source: tests/test_v4_7_qwen35_auth_sqli_severity_calibration_workflow.py)
 - v4.6 result page for prior checkpoint and hold decision (source: docs/output-structure-fix/phase-8-v4-6-qwen35-normal-severity-calibration-plan.md)
 
@@ -42,8 +42,8 @@ Decision: held before fixed split. No `data/splits/test.jsonl` run was opened or
 Artifacts:
 
 ```text
-reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json
-reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.md
+reports/phase-8/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json
+reports/phase-8/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.md
 ```
 
 Bucket summary:
@@ -186,8 +186,8 @@ OPENAI_COMPATIBLE_MODEL=qwen3.6-8B-triage-v3 \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/v4-7-auth-sqli-severity-calibration-probe.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.md
 ```
 
 ```
@@ -202,8 +202,8 @@ is_suspicious_accuracy: 0.666667
 evidence_partial_match: 1.0
 average_latency_ms: 6592.079815
 invalid_output_count: 0
-json_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json
-markdown_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.md
+json_report: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json
+markdown_report: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.md
 
 ```
 
@@ -213,8 +213,8 @@ OPENAI_COMPATIBLE_MODEL=qwen3.6-8B-triage-v3 \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.md
 ```
 
 ```bash
@@ -229,8 +229,8 @@ is_suspicious_accuracy: 0.98
 evidence_partial_match: 1.0
 average_latency_ms: 6783.558132
 invalid_output_count: 0
-json_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json
-markdown_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.md
+json_report: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json
+markdown_report: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.md
 
 ```
 
@@ -275,7 +275,7 @@ Label breakdown:
 HTML report:
 
 ```text
-reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-report.html
+reports/phase-8/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-report.html
 ```
 
 ## Gate Before Fixed Split
@@ -321,9 +321,9 @@ python3 -m py_compile \
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 2026-05-23 | Codex | Prepared v4.7 Qwen auth/SQLi/severity calibration workflow from v4.6 non-fixed failures | `reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json`, `data/splits/train-v4-7-qwen35-auth-sqli-severity-calibration.jsonl`, `ml/unsloth/qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration.yaml` | Prepared; training pending |
-| 2026-05-23 | User/Codex | Recorded v4.7 training completion, non-fixed probe metrics, gate read, and HTML report | `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-report.html` | Probed; fixed split held |
-| 2026-05-23 | Codex | Started v4.8 follow-up diagnostic audit from the v4.7 calibration failure shape | `docs/output-structure-fix/phase-8-v4-8-qwen35-auth-sqli-diagnostic-plan.md`, `reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json` | Diagnostic follow-up created |
+| 2026-05-23 | Codex | Prepared v4.7 Qwen auth/SQLi/severity calibration workflow from v4.6 non-fixed failures | `reports/phase-8/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-slice.json`, `data/splits/train-v4-7-qwen35-auth-sqli-severity-calibration.jsonl`, `ml/unsloth/qwen3-5-0-8b-security-triage-v4-7-auth-sqli-severity-calibration.yaml` | Prepared; training pending |
+| 2026-05-23 | User/Codex | Recorded v4.7 training completion, non-fixed probe metrics, gate read, and HTML report | `reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-8/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-report.html` | Probed; fixed split held |
+| 2026-05-23 | Codex | Started v4.8 follow-up diagnostic audit from the v4.7 calibration failure shape | `docs/output-structure-fix/phase-8-v4-8-qwen35-auth-sqli-diagnostic-plan.md`, `reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json` | Diagnostic follow-up created |
 
 ## Decision Log
 

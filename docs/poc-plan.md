@@ -405,7 +405,7 @@ demo ควรเป็นเครื่องมือใช้งานจร
 
 - ทำ UI
 - เพิ่มหน้า comparison
-- เขียน `reports/comparison.md`
+- เขียน `reports/phase-7/comparison.md`
 - polish README
 
 ผลลัพธ์:

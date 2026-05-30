@@ -6,13 +6,13 @@ v4.6 เป็น calibration run ต่อจาก v4.5 trained-Qwen LoRA prob
 
 **Sources**
 
-- v4.5 trained-Qwen probe result (source: docs/output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe.md, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json)
-- v4.6 calibration slice artifacts (source: scripts/create_v4_6_qwen35_normal_calibration_slice.py, source: reports/phase-8-v4-6-qwen35-normal-calibration-slice.json, source: reports/phase-8-v4-6-qwen35-normal-calibration-slice.md)
+- v4.5 trained-Qwen probe result (source: docs/output-structure-fix/phase-8-v4-5-qwen35-lora-hard-contrast-probe.md, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B—v1temp-0-hard-contrast-memorization-probe.json)
+- v4.6 calibration slice artifacts (source: scripts/create_v4_6_qwen35_normal_calibration_slice.py, source: reports/phase-8/phase-8-v4-6-qwen35-normal-calibration-slice.json, source: reports/phase-8/phase-8-v4-6-qwen35-normal-calibration-slice.md)
 - v4.6 calibration dataset artifacts (source: scripts/create_v4_6_qwen35_normal_calibration_dataset.py, source: data/generated/v4-6-qwen35-normal-severity-calibration-security-triage.jsonl, source: data/splits/train-v4-6-qwen35-normal-severity-calibration.jsonl, source: data/splits/validation-v4-6-qwen35-normal-severity-calibration.jsonl, source: data/splits/v4-6-normal-severity-calibration-probe.jsonl)
 - v4.6 Qwen training config (source: ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml)
-- v4.6 Qwen training result capture (source: reports/phase-8-v4-6-qwen35-lora-training-result.json, source: reports/phase-8-v4-6-qwen35-lora-training-result.md)
-- v4.6 calibration and hard-contrast evaluation reports (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json)
-- Stakeholder-readable v4.6 HTML report (source: reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html)
+- v4.6 Qwen training result capture (source: reports/phase-8/phase-8-v4-6-qwen35-lora-training-result.json, source: reports/phase-8/phase-8-v4-6-qwen35-lora-training-result.md)
+- v4.6 calibration and hard-contrast evaluation reports (source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json)
+- Stakeholder-readable v4.6 HTML report (source: reports/phase-8/phase-8-v4-6-qwen35-normal-severity-calibration-report.html)
 - v4.6 regression tests (source: tests/test_v4_6_qwen35_normal_calibration_workflow.py)
 
 **Last updated**
@@ -62,8 +62,8 @@ So v4.6 should not add more broad SQLi data. The useful next step is to restore 
 Artifacts:
 
 ```text
-reports/phase-8-v4-6-qwen35-normal-calibration-slice.json
-reports/phase-8-v4-6-qwen35-normal-calibration-slice.md
+reports/phase-8/phase-8-v4-6-qwen35-normal-calibration-slice.json
+reports/phase-8/phase-8-v4-6-qwen35-normal-calibration-slice.md
 ```
 
 Headline:
@@ -168,8 +168,8 @@ The learning rate is slightly lower than v4.5 (`0.00008` vs `0.0001`) because th
 The v4.6 training-complete capture is stored as:
 
 ```text
-reports/phase-8-v4-6-qwen35-lora-training-result.json
-reports/phase-8-v4-6-qwen35-lora-training-result.md
+reports/phase-8/phase-8-v4-6-qwen35-lora-training-result.json
+reports/phase-8/phase-8-v4-6-qwen35-lora-training-result.md
 ```
 
 | Metric | Value |
@@ -239,8 +239,8 @@ OPENAI_COMPATIBLE_CONFIG_PATH=config-adapter.yml \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/v4-6-normal-severity-calibration-probe.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.md
 ```
 
 
@@ -256,8 +256,8 @@ is_suspicious_accuracy: 0.84
 evidence_partial_match: 1.0
 average_latency_ms: 6040.52215
 invalid_output_count: 0
-json_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json
-markdown_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.md
+json_report: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json
+markdown_report: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.md
 
 ```
 
@@ -268,8 +268,8 @@ OPENAI_COMPATIBLE_CONFIG_PATH=config-adapter.yml \
 python3 scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.md
 ```
 
 ```bash
@@ -284,8 +284,8 @@ is_suspicious_accuracy: 0.96
 evidence_partial_match: 0.98
 average_latency_ms: 6613.680663
 invalid_output_count: 0
-json_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json
-markdown_report: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.md
+json_report: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json
+markdown_report: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.md
 ```
 
 ## Evaluation Result
@@ -356,7 +356,7 @@ But the remaining errors matter. Normal hard negatives are still over-alerted as
 HTML summary:
 
 ```text
-reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html
+reports/phase-8/phase-8-v4-6-qwen35-normal-severity-calibration-report.html
 ```
 
 ## Gate Before Fixed Split
@@ -397,8 +397,8 @@ python3 -m py_compile scripts/create_v4_6_qwen35_normal_calibration_slice.py scr
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 2026-05-23 | Codex | Prepared v4.6 Qwen normal/severity calibration workflow from v4.5 failure slice | `reports/phase-8-v4-6-qwen35-normal-calibration-slice.json`, `data/splits/train-v4-6-qwen35-normal-severity-calibration.jsonl`, `ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml` | Prepared; training pending |
-| 2026-05-23 | User/Codex | Recorded v4.6 Qwen training completion, calibration probe, hard-contrast probe, and HTML summary | `reports/phase-8-v4-6-qwen35-lora-training-result.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json`, `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-8-v4-6-qwen35-normal-severity-calibration-report.html` | Trained/probed; fixed split held |
+| 2026-05-23 | Codex | Prepared v4.6 Qwen normal/severity calibration workflow from v4.5 failure slice | `reports/phase-8/phase-8-v4-6-qwen35-normal-calibration-slice.json`, `data/splits/train-v4-6-qwen35-normal-severity-calibration.jsonl`, `ml/unsloth/qwen3-5-0-8b-security-triage-v4-6-normal-severity-calibration.yaml` | Prepared; training pending |
+| 2026-05-23 | User/Codex | Recorded v4.6 Qwen training completion, calibration probe, hard-contrast probe, and HTML summary | `reports/phase-8/phase-8-v4-6-qwen35-lora-training-result.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-normal-severity-calibration-probe.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-temp-0-hard-contrast-memorization-probe.json`, `reports/phase-8/phase-8-v4-6-qwen35-normal-severity-calibration-report.html` | Trained/probed; fixed split held |
 
 ## Decision Log
 

@@ -110,8 +110,8 @@ OPENAI_COMPATIBLE_EXTRA_BODY='{"min_p":0.15,"repetition_penalty":1.05}' \
 .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-v3-3-hard-contrast-runtime-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-v3-3-hard-contrast-runtime-probe.md \
+  --out reports/phase-6/openai-compatible-vllm-structured-outputs-v3-3-hard-contrast-runtime-probe.json \
+  --comparison-out reports/phase-6/openai-compatible-vllm-structured-outputs-v3-3-hard-contrast-runtime-probe.md \
   --no-progress
 ```
 
@@ -128,8 +128,8 @@ OPENAI_COMPATIBLE_TEMPERATURE=0 \
 .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.md
 ```
 
 report metadata จะบันทึก `prompt_version` เพื่อแยก v4.2 prompt-probe ออกจาก v4.1 checkpoint run เดิม

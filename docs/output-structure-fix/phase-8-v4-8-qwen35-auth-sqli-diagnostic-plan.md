@@ -2,15 +2,15 @@
 
 **Summary**
 
-v4.8 เริ่มเป็น diagnostic-first follow-up จาก v4.7 ไม่ใช่ training run ทันที เพราะ v4.7 hard-contrast headline ดีขึ้นเป็น label/severity `0.92` แต่ calibration probe ที่ตั้งใจซ่อมกลับตกเหลือ label accuracy `0.366667`, normal-auth `0/15`, SQLi-auth-context `1/5`, และ brute-force medium severity `0/7` (source: docs/output-structure-fix/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-plan.md, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json)
+v4.8 เริ่มเป็น diagnostic-first follow-up จาก v4.7 ไม่ใช่ training run ทันที เพราะ v4.7 hard-contrast headline ดีขึ้นเป็น label/severity `0.92` แต่ calibration probe ที่ตั้งใจซ่อมกลับตกเหลือ label accuracy `0.366667`, normal-auth `0/15`, SQLi-auth-context `1/5`, และ brute-force medium severity `0/7` (source: docs/output-structure-fix/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-plan.md, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json)
 
-รอบนี้จึงสร้าง audit report บน probe เดิมเพื่อเทียบ v4.6, v4.7, heuristic baseline และ base Qwen3.5 ก่อนสร้าง v4.8 train data ใด ๆ ผลหลังเติม comparator ครบคือ heuristic ได้ label `0.666667`, v4.6 ได้ `0.433333`, v4.7 ได้ `0.366667`, และ base Qwen3.5 ได้ `0.366667`; v4.7 ดีขึ้นจาก v4.6 ด้าน severity/suspicious แต่ label accuracy ถอยลง และทั้งสอง trained adapters ยังแพ้ heuristic ชัดใน normal-auth/SQLi-auth buckets (source: reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/heuristic-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json)
+รอบนี้จึงสร้าง audit report บน probe เดิมเพื่อเทียบ v4.6, v4.7, heuristic baseline และ base Qwen3.5 ก่อนสร้าง v4.8 train data ใด ๆ ผลหลังเติม comparator ครบคือ heuristic ได้ label `0.666667`, v4.6 ได้ `0.433333`, v4.7 ได้ `0.366667`, และ base Qwen3.5 ได้ `0.366667`; v4.7 ดีขึ้นจาก v4.6 ด้าน severity/suspicious แต่ label accuracy ถอยลง และทั้งสอง trained adapters ยังแพ้ heuristic ชัดใน normal-auth/SQLi-auth buckets (source: reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/phase-8/heuristic-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json)
 
 **Sources**
 
-- v4.7 hold decision and probe result (source: docs/output-structure-fix/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-plan.md, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json)
-- v4.8 diagnostic audit script and reports (source: scripts/create_v4_8_qwen35_auth_sqli_diagnostic_audit.py, source: reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json, source: reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.md, source: reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html)
-- Comparator reports on the same non-fixed probe (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/heuristic-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json)
+- v4.7 hold decision and probe result (source: docs/output-structure-fix/phase-8-v4-7-qwen35-auth-sqli-severity-calibration-plan.md, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-auth-sqli-severity-calibration-probe.json)
+- v4.8 diagnostic audit script and reports (source: scripts/create_v4_8_qwen35_auth_sqli_diagnostic_audit.py, source: reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json, source: reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.md, source: reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html)
+- Comparator reports on the same non-fixed probe (source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/phase-8/heuristic-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json)
 - v4.8 regression tests (source: tests/test_v4_8_qwen35_auth_sqli_diagnostic_audit.py)
 
 **Last updated**
@@ -25,21 +25,21 @@ Artifacts:
 
 ```text
 scripts/create_v4_8_qwen35_auth_sqli_diagnostic_audit.py
-reports/heuristic-v4-7-auth-sqli-severity-calibration-probe.json
-reports/heuristic-v4-7-auth-sqli-severity-calibration-probe.md
-reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json
-reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.md
-reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json
-reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.md
-reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json
-reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.md
-reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html
+reports/phase-8/heuristic-v4-7-auth-sqli-severity-calibration-probe.json
+reports/phase-8/heuristic-v4-7-auth-sqli-severity-calibration-probe.md
+reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json
+reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.md
+reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json
+reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.md
+reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json
+reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.md
+reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html
 tests/test_v4_8_qwen35_auth_sqli_diagnostic_audit.py
 ```
 
 ## Comparator Status
 
-v4.6-on-v4.7-probe comparison is now complete with alias `qwen3.6-8B-triage-v2`; it produced label accuracy `0.433333`, severity accuracy `0.40`, JSON/schema `1.0 / 1.0`, invalid `0`, and average latency `5957.112975 ms` (source: reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json).
+v4.6-on-v4.7-probe comparison is now complete with alias `qwen3.6-8B-triage-v2`; it produced label accuracy `0.433333`, severity accuracy `0.40`, JSON/schema `1.0 / 1.0`, invalid `0`, and average latency `5957.112975 ms` (source: reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json, source: reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json).
 
 ## Diagnostic Metrics
 
@@ -52,7 +52,7 @@ All rows use the same non-fixed split: `data/splits/v4-7-auth-sqli-severity-cali
 | heuristic baseline | `0.666667` | `0.666667` | `0.666667` | `1.0` | `1.0 / 1.0` | `0` | `0.058292` |
 | base Qwen3.5 | `0.366667` | `0.20` | `0.433333` | `0.70` | `0.966667 / 0.966667` | `1` | `8768.592156` |
 
-Read: v4.7 is `-0.066666` label accuracy behind v4.6 and `-0.30` behind the local heuristic on this exact probe. Compared with v4.6, v4.7 improves severity and suspicious boolean accuracy, but it overcorrects normal-auth label behavior even further. Compared with base Qwen3.5, both trained adapters fix output/schema and evidence reliability, but both keep the wrong auth/SQLi boundary shape (source: reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json).
+Read: v4.7 is `-0.066666` label accuracy behind v4.6 and `-0.30` behind the local heuristic on this exact probe. Compared with v4.6, v4.7 improves severity and suspicious boolean accuracy, but it overcorrects normal-auth label behavior even further. Compared with base Qwen3.5, both trained adapters fix output/schema and evidence reliability, but both keep the wrong auth/SQLi boundary shape (source: reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json).
 
 ## Bucket Summary
 
@@ -95,8 +95,8 @@ Regenerate the heuristic comparator:
 rtk python3 scripts/evaluate.py \
   --adapter heuristic \
   --split data/splits/v4-7-auth-sqli-severity-calibration-probe.jsonl \
-  --out reports/heuristic-v4-7-auth-sqli-severity-calibration-probe.json \
-  --comparison-out reports/heuristic-v4-7-auth-sqli-severity-calibration-probe.md \
+  --out reports/phase-8/heuristic-v4-7-auth-sqli-severity-calibration-probe.json \
+  --comparison-out reports/phase-8/heuristic-v4-7-auth-sqli-severity-calibration-probe.md \
   --no-progress
 ```
 
@@ -108,8 +108,8 @@ rtk env OPENAI_COMPATIBLE_CONFIG_PATH=config-adapter.yml \
   .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/v4-7-auth-sqli-severity-calibration-probe.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.md \
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-base-temp-0-v4-7-auth-sqli-severity-calibration-probe.md \
   --no-progress
 ```
 
@@ -121,8 +121,8 @@ rtk env OPENAI_COMPATIBLE_CONFIG_PATH=config-adapter.yml \
   .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/splits/v4-7-auth-sqli-severity-calibration-probe.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.md \
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.md \
   --no-progress
 ```
 
@@ -142,8 +142,8 @@ rtk python3 -m unittest tests/test_v4_8_qwen35_auth_sqli_diagnostic_audit.py
 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 2026-05-23 | Codex | Created v4.8 diagnostic audit from v4.7 calibration probe comparators | `scripts/create_v4_8_qwen35_auth_sqli_diagnostic_audit.py`, `reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json`, `reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html` | Diagnostic complete |
-| 2026-05-23 | User/Codex | Added v4.6-on-v4.7 comparator to the v4.8 diagnostic audit | `reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json`, `reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json`, `reports/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html` | Comparator complete |
+| 2026-05-23 | Codex | Created v4.8 diagnostic audit from v4.7 calibration probe comparators | `scripts/create_v4_8_qwen35_auth_sqli_diagnostic_audit.py`, `reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json`, `reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html` | Diagnostic complete |
+| 2026-05-23 | User/Codex | Added v4.6-on-v4.7 comparator to the v4.8 diagnostic audit | `reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-6-on-v4-7-auth-sqli-severity-calibration-probe.json`, `reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit.json`, `reports/phase-8/phase-8-v4-8-qwen35-auth-sqli-diagnostic-audit-report.html` | Comparator complete |
 
 ## Decision Log
 

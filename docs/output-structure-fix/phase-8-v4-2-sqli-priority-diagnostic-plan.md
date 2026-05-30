@@ -6,12 +6,12 @@ v4.2 เป็น runtime prompt/architecture diagnostic ต่อจาก v4.1
 
 **Sources**
 
-- `reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json` และ temp 0.3 report สำหรับ v4.1 hard-contrast failure source (source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
-- `scripts/create_v4_2_sqli_priority_diagnostic_slice.py`, `reports/phase-8-v4-2-sqli-priority-diagnostic-slice.json` และ `.md` สำหรับ v4.2 diagnostic slice (source: scripts/create_v4_2_sqli_priority_diagnostic_slice.py, source: reports/phase-8-v4-2-sqli-priority-diagnostic-slice.json)
+- `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json` และ temp 0.3 report สำหรับ v4.1 hard-contrast failure source (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-0-2048-hard-contrast-memorization-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-1-temp-03-2048-hard-contrast-memorization-probe.json)
+- `scripts/create_v4_2_sqli_priority_diagnostic_slice.py`, `reports/phase-8/phase-8-v4-2-sqli-priority-diagnostic-slice.json` และ `.md` สำหรับ v4.2 diagnostic slice (source: scripts/create_v4_2_sqli_priority_diagnostic_slice.py, source: reports/phase-8/phase-8-v4-2-sqli-priority-diagnostic-slice.json)
 - `scripts/model_adapters/prompt_contract.py` และ `scripts/model_adapters/openai_compatible.py` สำหรับ runtime-selectable prompt profile และ metadata (source: scripts/model_adapters/prompt_contract.py, source: scripts/model_adapters/openai_compatible.py)
 - `tests/test_openai_adapter_config.py` และ `tests/test_v4_2_sqli_priority_prompt_workflow.py` สำหรับ regression checks (source: tests/test_openai_adapter_config.py, source: tests/test_v4_2_sqli_priority_prompt_workflow.py)
 - `docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md` สำหรับ v4.1 hold decision และ gate context (source: docs/output-structure-fix/phase-8-v4-1-sqli-boundary-repair-plan.md)
-- `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json` และ temp 0.3 report สำหรับ v4.2 hard-contrast probe results (source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json, source: reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json)
+- `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json` และ temp 0.3 report สำหรับ v4.2 hard-contrast probe results (source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json, source: reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json)
 - operator-provided `--no-write` fixed split sanity output for v4.1 default prompt, recorded as context only because no report artifact was written
 
 **Last updated**
@@ -27,8 +27,8 @@ Hard-contrast probed; held. v4.2 adds `triage-json-v2.2-sqli-priority` as an opt
 `scripts/create_v4_2_sqli_priority_diagnostic_slice.py` อ่านเฉพาะ v4.1 temp 0/temp 0.3 hard-contrast reports และ source hard-contrast split ไม่อ่าน fixed test split แล้วเขียน:
 
 ```text
-reports/phase-8-v4-2-sqli-priority-diagnostic-slice.json
-reports/phase-8-v4-2-sqli-priority-diagnostic-slice.md
+reports/phase-8/phase-8-v4-2-sqli-priority-diagnostic-slice.json
+reports/phase-8/phase-8-v4-2-sqli-priority-diagnostic-slice.md
 ```
 
 union label failures มี `6` ids:
@@ -101,8 +101,8 @@ OPENAI_COMPATIBLE_TEMPERATURE=0 \
 .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.md
 ```
 
 Hard-contrast temp 0.3 probe:
@@ -118,8 +118,8 @@ OPENAI_COMPATIBLE_EXTRA_BODY='{"min_p":0.15,"repetition_penalty":1.05}' \
 .venv/bin/python scripts/evaluate.py \
   --adapter openai-compatible \
   --split data/generated/v3-hard-contrast-security-triage.jsonl \
-  --out reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json \
-  --comparison-out reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.md
+  --out reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json \
+  --comparison-out reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.md
 ```
 
 ## Gates
@@ -158,7 +158,7 @@ This result is useful as evidence that v4.1 did not collapse on the older fixed 
 | Date | Actor | Work | Evidence | Status |
 | --- | --- | --- | --- | --- |
 | 2026-05-22 | Codex | Added v4.2 prompt-priority diagnostic slice, runtime prompt profile, adapter config support, tests, and docs | `scripts/create_v4_2_sqli_priority_diagnostic_slice.py`, `scripts/model_adapters/prompt_contract.py`, `scripts/model_adapters/openai_compatible.py`, `tests/test_v4_2_sqli_priority_prompt_workflow.py` | Prepared |
-| 2026-05-22 | Codex | Ran v4.2 hard-contrast temp 0/temp 0.3 prompt probes | `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json`, `reports/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json` | Held |
+| 2026-05-22 | Codex | Ran v4.2 hard-contrast temp 0/temp 0.3 prompt probes | `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-0-2048-sqli-priority-prompt-probe.json`, `reports/phase-8/openai-compatible-vllm-structured-outputs-v4-2-temp-03-2048-sqli-priority-prompt-probe.json` | Held |
 | 2026-05-22 | User/Codex | Recorded manual v4.1 fixed split sanity check as non-gate context | operator `--no-write` command output, `config-adapter.yml` default prompt behavior | Context only |
 
 ## Decision Log

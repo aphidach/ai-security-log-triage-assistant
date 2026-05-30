@@ -88,7 +88,7 @@ fine-tuned endpoint รอบก่อนหน้านี้แพ้ตั้
 
 ความหมายของรอบนี้คือ adapter path ใหม่ทำหน้าที่ validate แบบ strict ได้แล้ว แต่ backend/model ยัง generate markdown-fenced JSON ใน 4/5 samples ทำให้ Pydantic เห็นเป็น invalid JSON ตั้งแต่ line 1 column 1 ไม่ใช่ parsed object ที่ validate fields ต่อได้ ดังนั้น `responses_parse` ใน endpoint นี้ยังเป็น validation path มากกว่า constrained decoding path (source: user-provided terminal output, 2026-05-19)
 
-บันทึกแยกของ v2 run นี้อยู่ที่ [[model-output/v2-lfm2-350m-security-triage-responses-parse]] เพื่อไม่ให้ปนกับหน้า v1 historical baseline และเพื่อเตือนว่ารอบถัดไปควรใช้ `--out` / `--comparison-out` แยกตาม mode เช่น `reports/openai-compatible-responses-parse-eval.json` (source: docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md)
+บันทึกแยกของ v2 run นี้อยู่ที่ [[model-output/v2-lfm2-350m-security-triage-responses-parse]] เพื่อไม่ให้ปนกับหน้า v1 historical baseline และเพื่อเตือนว่ารอบถัดไปควรใช้ `--out` / `--comparison-out` แยกตาม mode เช่น `reports/structured-output/smoke/openai-compatible-responses-parse-eval.json` (source: docs/model-output/v2-lfm2-350m-security-triage-responses-parse.md)
 
 ### Smoke Split
 

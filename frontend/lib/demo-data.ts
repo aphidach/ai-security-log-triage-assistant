@@ -55,7 +55,7 @@ export const SAMPLE_LOGS: SampleLog[] = [
 export const METRIC_SNAPSHOTS: MetricSnapshot[] = [
   {
     name: "Heuristic fixed split",
-    source: "reports/phase-7-heuristic-fixed-split-eval.json",
+    source: "reports/phase-7/phase-7-heuristic-fixed-split-eval.json",
     split: "fixed test split, 75 samples",
     status: "ready",
     metrics: [
@@ -68,7 +68,7 @@ export const METRIC_SNAPSHOTS: MetricSnapshot[] = [
   {
     name: "Latest fine-tuned v4.7",
     source:
-      "reports/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json",
+      "reports/phase-8/openai-compatible-vllm-structured-outputs-qwen3.5-8B-v4-7-temp-0-hard-contrast-memorization-probe.json",
     split: "Qwen3.5 v4.7 hard-contrast probe, 50 samples; not fixed split",
     status: "held",
     metrics: [
